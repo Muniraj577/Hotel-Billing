@@ -27,7 +27,7 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <form action="{{ route('admin.room.store') }}" method="POST" enctype="multipart/form-data"
+                            <form action="{{ route('admin.booking.store') }}" method="POST" enctype="multipart/form-data"
                                 id="form">
                                 @csrf
                                 <h2><u>{{ strtoupper('Customer Details') }}</u></h2>
@@ -218,8 +218,7 @@
                                                                 class="req">*</span></label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <input type="file" name="signature"
-                                                            value="{{ old('signature') }}" class="form-control"
+                                                        <input type="file" name="signature" class="form-control"
                                                             onchange="showImg(this, 'preview')">
                                                         <img src="#" id="preview" alt="">
                                                         @error('signature')
@@ -344,7 +343,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <h2><u>{{ strtoupper("Room Details") }}</u></h2>
+                                <h2><u>{{ strtoupper('Room Details') }}</u></h2>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="col-md-12">
@@ -354,30 +353,24 @@
                                                         <label for="no_of_room">No of Rooms</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <input type="text" name="no_of_rooms" onchange="onEnterRoomNo($(this))" class="form-control" id="no_of_room" placeholder="Enter no of rooms">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <label for="">Select Room</label>
-                                                    </div>
-                                                    <div class="col-md-8">
-                                                        <select name="room_no" class="form-control">
-                                                            <option value="">Select Room</option>
-                                                            @foreach($rooms as $room)
-                                                                <option value="{{ $room->id }}">{{ $room->name . "(".$room->room_no.")" }}</option>
-                                                            @endforeach
-                                                        </select>
+                                                        <input type="text" name="no_of_rooms"
+                                                            value="{{ old('no_of_rooms') }}"
+                                                            onchange="onEnterRoomNo($(this))" class="form-control"
+                                                            id="no_of_room" placeholder="Enter no of rooms">
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="room_data">
+                                                @if (old('room_no') != '')
+                                                    @include('admin.partial.booking.redirectCreate')
+                                                @endif
 
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-primary">Submit</button>
                                 </div>
                             </form>
                         </div>
@@ -413,20 +406,20 @@
             });
         });
 
-        function onEnterRoomNo(room_no){
+        function onEnterRoomNo(room_no) {
             var no_of_room = $(room_no).val();
             var html = ""
-            for(var i = 0; i < no_of_room; i++){
+            for (var i = 0; i < no_of_room; i++) {
                 html += `<div class="form-group">
                                 <div class="row">
                                     <div class="col-md-4">
                                         <label for="">Select Room</label>
                                     </div>
                                     <div class="col-md-8">
-                                        <select name="room_no" class="form-control">
+                                        <select name="room_no[]" class="form-control" id="room_no`+i+`">
                                             <option value="">Select Room</option>
-                                            @foreach($rooms as $room)
-                                                <option value="{{ $room->id }}">{{ $room->name . "(".$room->room_no.")" }}</option>                                               
+                                            @foreach ($rooms as $room)
+                                                <option value="{{ $room->id }}">{{ $room->name . '(' . $room->room_no . ')' }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -436,15 +429,60 @@
             $(".room_data").html(html);
         }
 
-        $('#form').validate({
-            onfocusout: true,
+
+        $('#form').validate({            
             rules: {
-                name: "required",
-                room_no: "required"
+                first_name: "required",
+                last_name: "required",
+                gender: "required",
+                age: {
+                    required: true,
+                    digits: true,
+                    max: 100,
+                },
+                nationality: "required",
+                address: "required",
+                contact_no: "required",
+                occupation: "required",
+                identity_no: "required",
+                signature:{
+                    accept: "image/*",
+                    extension: "jpg|jpeg|png"
+                },
+                arrival_date: "required",
+                arrival_time: "required",
+                no_of_rooms: {
+                    required: true,
+                    digits: true,
+                },
+                "room_no[]": "required",
+
             },
             messages: {
-                name: "Name field is required",
-                room_no: "Enter room number"
+                first_name: "First Name is required",
+                last_name: "Surname is required",
+                gender: "Gender is required",
+                age:{
+                    required: "Age is required",
+                    digits: "Age must be a number",
+                    max: "Age must be between 0 and 100",
+                },
+                nationality: "Nationality is required",
+                address: "Address is required",
+                contact_no: "Contact number is required",
+                occupation: "Occupation is required",
+                identity_no: "Citizenship number is required",
+                signature:{
+                    accept: "Please upload a valid image",
+                    extension: "Image must be of type jpg, jpeg, png",
+                },
+                arrival_date: "Arrival date is required",
+                arrival_time: "Arrival time is required",
+                no_of_rooms: {
+                    required: "Please enter no. of rooms",
+                    digits: "This field must be number",
+                },
+                "room_no[]": "Please select room",
 
             },
             submitHandler: function(form) {

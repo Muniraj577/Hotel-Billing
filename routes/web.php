@@ -40,5 +40,6 @@ Route::group(["prefix"=>"admin/", "as"=>"admin."], function(){
 
     Route::group(["prefix"=>"booking/", "as" => "booking."], function(){
         Route::get("create", [AdminBookingController::class, 'create'])->name("create");
+        Route::post("store", [AdminBookingController::class,'store'])->name('store');
     });
 });
