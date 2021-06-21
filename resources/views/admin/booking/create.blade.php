@@ -4,13 +4,6 @@
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/datepicker.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/gif.css') }}">
-    <style>
-        .ui-widget.ui-widget-content {
-            border: 1px solid #ccc1c1;
-        }
-        
-
-    </style>
 @endsection
 @section('content')
     <section class="content-header">
@@ -61,7 +54,7 @@
                                 id="form">
                                 @csrf
                                 <h3><u>{{ strtoupper('Customer Details') }}</u></h3>
-                                <input type="hidden" class="form-control" name="customer_id" value="" id="client_id">
+                                <input type="hidden" class="form-control" name="customer_id" id="client_id">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="col-md-12">
@@ -528,7 +521,6 @@
 
         $("#search_user").autocomplete({
             source: function(data, cb) {
-                console.log(data);
                 $.ajax({
                     url: "{{ route('admin.getCustomer') }}",
                     type: "POST",
@@ -542,15 +534,23 @@
                     selectInitial: true,
 
                     success: function(res) {
-                        console.log(res);
                         if (res.length) {
                             var datas = $.map(res, function(value) {
                                 return {
                                     label: value.first_name,
                                     id: value.id,
-                                    // item_name: value.name,
-                                    // stock: value.qty,
-                                    // barcode: value.barcode,
+                                    first_name: value.first_name,
+                                    middle_name: value.middle_name,
+                                    last_name: value.last_name,
+                                    gender: value.gender,
+                                    age: value.age,
+                                    nationality: value.nationality,
+                                    address: value.address,
+                                    contact_no: value.contact_no,
+                                    occupation: value.occupation,
+                                    identity: value.identity_no,
+                                    license: value.driving_license_no,
+                                    sign: value.signature,
                                 }
                             });
                         } else {
@@ -576,8 +576,8 @@
                 if (el.content == undefined) {
                     // console.log('no data found');
                 } else if (el.content.length == 1) {
-                    $(this).data('ui-autocomplete')._trigger('select', 'autocompleteselect', el);
-                    $(this).autocomplete("close");
+                    // $(this).data('ui-autocomplete')._trigger('select', 'autocompleteselect', el);
+                    // $(this).autocomplete("close");
 
                 }
                 $('.spinner').hide();
@@ -586,18 +586,48 @@
 
 
             select: function(e, ui) {
-                console.log(ui);
+                console.log(typeof ui.content);
                 e.preventDefault();
                 if (typeof ui.content != 'undefined') {
                     if (isNaN(ui.content[0].id)) {
                         return;
                     }
-                    var stock = ui.content[0].stock;
-                    var item_id = ui.content[0].id;
+                    var cus_id = ui.content[0].id,
+                        first_name = ui.content[0].first_name,
+                        middle_name = ui.content[0].middle_name,
+                        last_name = ui.content[0].last_name,
+                        gender = ui.content[0].gender,
+                        age = ui.content[0].age,
+                        nationality = ui.content[0].nationality,
+                        address = ui.content[0].address,
+                        contact_no = ui.content[0].contact_no,
+                        occupation = ui.content[0].occupation,
+                        identity = ui.content[0].identity,
+                        license = ui.content[0].license,
+                        sign = ui.content[0].sign;
                 } else {
-                    var stock = ui.item.stock;
-                    var item_id = ui.item.id;
+                    console.log(ui.item);
+                    var cus_id = ui.item.id,
+                        first_name = ui.item.first_name,
+                        middle_name = ui.item.middle_name,
+                        last_name = ui.item.last_name,
+                        gender = ui.item.gender,
+                        age = ui.item.age,
+                        nationality = ui.item.nationality,
+                        address = ui.item.address,
+                        contact_no = ui.item.contact_no,
+                        occupation = ui.item.occupation,
+                        identity = ui.item.identity,
+                        license = ui.item.license,
+                        sign = ui.item.sign;
+
                 }
+
+                // set value
+
+                set_values(cus_id, first_name, middle_name, last_name, gender, age,
+                    nationality, address, contact_no, occupation, identity, license,
+                    sign);
 
                 $("input#search_user").val('');
             },
@@ -607,5 +637,21 @@
         $("#search_user").bind('paste', (e) => {
             $("#search_user").autocomplete('search');
         });
+
+        function set_values(customer_id, fname, midname, lname, gender, age, nationality, address, contact_no, occupation, identity,
+            license, sign) {
+            $("#client_id").val(customer_id);
+            $("#firstName").val(fname);
+            $("#middleName").val(midname);
+            $("#surName").val(lname);
+            $("#gender").val(gender);
+            $("#age").val(age);
+            $("#nationality").val(nationality);
+            $("#address").val(address);
+            $("#contact_no").val(contact_no);
+            $("#occupation").val(occupation);
+            $("#identity").val(identity);
+            $("#license").val(license);
+        }
     </script>
 @endsection
