@@ -66,12 +66,10 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <select name="is_active" class="form-control">
-                                                        <option value="1"
-                                                            {{ $room->is_active == '1' ? 'selected' : '' }}>
+                                                        <option value="1" {{ $room->is_active == '1' ? 'selected' : '' }}>
                                                             Active
                                                         </option>
-                                                        <option value="0"
-                                                            {{ $room->is_active == '0' ? 'selected' : '' }}>
+                                                        <option value="0" {{ $room->is_active == '0' ? 'selected' : '' }}>
                                                             Inactive
                                                         </option>
                                                     </select>
@@ -104,6 +102,7 @@
                                             <button type="submit" class="btn btn-primary">Submit</button>
                                         </div>
                                     </div>
+                                </div>
                             </form>
                         </div>
                     </div>

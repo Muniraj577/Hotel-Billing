@@ -4,6 +4,12 @@
         <p>Rooms</p>
     </a>
 </li>
+<li class="nav-item">
+    <a href="{{ route("admin.booking.create") }}" class="nav-link @yield("booking")">
+        <i class="nav-icon fas fa-tachometer-alt iCheck"></i>
+        <p>Add Booking</p>
+    </a>
+</li>
 {{-- <li class="nav-item">
     <a href="#" class="nav-link {{ $catNav || $brandNav || $unitNav || $warehousenav || $branchNav ? 'active menu-open' : '' }}">
         <i class="nav-icon fas fa-user iCheck"></i>

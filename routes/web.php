@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\RoomController as AdminRoomController;
+use App\Http\Controllers\Admin\BookingController as AdminBookingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,5 +36,9 @@ Route::group(["prefix"=>"admin/", "as"=>"admin."], function(){
         Route::get('edit/{id}', [AdminRoomController::class, 'edit'])->name('edit');
         Route::put('update/{id}', [AdminRoomController::class, 'update'])->name('update');
         Route::delete('delete/{id}', [AdminRoomController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::group(["prefix"=>"booking/", "as" => "booking."], function(){
+        Route::get("create", [AdminBookingController::class, 'create'])->name("create");
     });
 });

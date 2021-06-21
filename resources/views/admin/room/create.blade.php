@@ -19,7 +19,8 @@
                     <div class="card">
                         <div class="card-header">
                             <div class="card-title float-right">
-                                <a href="{{ route('admin.room.index') }}" class="btn btn-primary"><i class="fa fa-arrow-left iCheck"></i>&nbsp;Back to List</a>
+                                <a href="{{ route('admin.room.index') }}" class="btn btn-primary"><i
+                                        class="fa fa-arrow-left iCheck"></i>&nbsp;Back to List</a>
                             </div>
                         </div>
                         <div class="card-body">
@@ -81,6 +82,7 @@
                                             <button type="submit" class="btn btn-primary">Submit</button>
                                         </div>
                                     </div>
+                                </div>
                             </form>
                         </div>
                     </div>
