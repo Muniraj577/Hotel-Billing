@@ -42,4 +42,6 @@ Route::group(["prefix"=>"admin/", "as"=>"admin."], function(){
         Route::get("create", [AdminBookingController::class, 'create'])->name("create");
         Route::post("store", [AdminBookingController::class,'store'])->name('store');
     });
+
+    Route::post('get-all-customers', [AdminDashboardController::class, 'getCustomer'])->name('getCustomer');
 });

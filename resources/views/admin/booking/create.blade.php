@@ -3,6 +3,14 @@
 @section('booking', 'active')
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/datepicker.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/gif.css') }}">
+    <style>
+        .ui-widget.ui-widget-content {
+            border: 1px solid #ccc1c1;
+        }
+        
+
+    </style>
 @endsection
 @section('content')
     <section class="content-header">
@@ -17,20 +25,43 @@
     </section>
     <section class="content">
         <div class="container-fluid">
+
             <div class="row">
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <div class="card-title float-right">
-                                <a href="{{ route('admin.room.index') }}" class="btn btn-primary"><i
-                                        class="fa fa-arrow-left iCheck"></i>&nbsp;Back to List</a>
+                            {{-- <div class="card-title"> --}}
+                            <div class="row">
+                                <div class="col-md-5 my-auto">
+                                    <div class="input-group inputcontainer">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bar-input" id="basic-addon1"><i
+                                                    class="fa fa-user barcode"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control" placeholder="Search by user name or phone"
+                                            id="search_user" value="">
+                                        <div class="spinner">
+                                            <div class="rect1"></div>
+                                            <div class="rect2"></div>
+                                            <div class="rect3"></div>
+                                            <div class="rect4"></div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-md-7 my-auto float-right">
+                                    <a href="{{ route('admin.room.index') }}" class="btn btn-primary float-right"><i
+                                            class="fa fa-arrow-left iCheck"></i>&nbsp;Back to List</a>
+                                </div>
                             </div>
+                            {{-- </div> --}}
                         </div>
                         <div class="card-body">
                             <form action="{{ route('admin.booking.store') }}" method="POST" enctype="multipart/form-data"
                                 id="form">
                                 @csrf
-                                <h2><u>{{ strtoupper('Customer Details') }}</u></h2>
+                                <h3><u>{{ strtoupper('Customer Details') }}</u></h3>
+                                <input type="hidden" class="form-control" name="customer_id" value="" id="client_id">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="col-md-12">
@@ -43,7 +74,7 @@
                                                     <div class="col-md-8">
                                                         <input type="text" name="first_name"
                                                             value="{{ old('first_name') }}" class="form-control"
-                                                            placeholder="Enter First Name">
+                                                            placeholder="Enter First Name" id="firstName">
                                                         @error('first_name')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -58,7 +89,7 @@
                                                     <div class="col-md-8">
                                                         <input type="text" name="middle_name"
                                                             value="{{ old('middle_name') }}" class="form-control"
-                                                            placeholder="Enter Middle Name">
+                                                            placeholder="Enter Middle Name" id="middleName">
                                                         @error('middle_name')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -73,7 +104,7 @@
                                                     </div>
                                                     <div class="col-md-8">
                                                         <input type="text" name="last_name" value="{{ old('last_name') }}"
-                                                            class="form-control" placeholder="Enter Surname">
+                                                            class="form-control" placeholder="Enter Surname" id="surName">
                                                         @error('last_name')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -86,7 +117,7 @@
                                                         <label for="gender">Gender&nbsp;<span class="req">*</span></label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <select name="gender" class="form-control">
+                                                        <select name="gender" class="form-control" id="gender">
                                                             <option value="">Select Gender</option>
                                                             <option value="Male"
                                                                 {{ old('gender') == 'Male' ? 'selected' : '' }}>Male
@@ -111,7 +142,7 @@
                                                     </div>
                                                     <div class="col-md-8">
                                                         <input type="text" name="age" value="{{ old('age') }}"
-                                                            class="form-control">
+                                                            class="form-control" id="age">
                                                         @error('age')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -126,7 +157,8 @@
                                                     </div>
                                                     <div class="col-md-8">
                                                         <input type="text" name="nationality"
-                                                            value="{{ old('nationality') }}" class="form-control">
+                                                            value="{{ old('nationality') }}" class="form-control"
+                                                            id="nationality">
                                                         @error('nationality')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -144,7 +176,7 @@
                                                     </div>
                                                     <div class="col-md-8">
                                                         <input type="text" name="address" value="{{ old('address') }}"
-                                                            class="form-control">
+                                                            class="form-control" id="address">
                                                         @error('address')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -159,7 +191,8 @@
                                                     </div>
                                                     <div class="col-md-8">
                                                         <input type="text" name="contact_no"
-                                                            value="{{ old('contact_no') }}" class="form-control">
+                                                            value="{{ old('contact_no') }}" class="form-control"
+                                                            id="contact_no">
                                                         @error('contact_no')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -174,7 +207,8 @@
                                                     </div>
                                                     <div class="col-md-8">
                                                         <input type="text" name="occupation"
-                                                            value="{{ old('occupation') }}" class="form-control">
+                                                            value="{{ old('occupation') }}" class="form-control"
+                                                            id="occupation">
                                                         @error('occupation')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -189,7 +223,8 @@
                                                     </div>
                                                     <div class="col-md-8">
                                                         <input type="text" name="identity_no"
-                                                            value="{{ old('identity_no') }}" class="form-control">
+                                                            value="{{ old('identity_no') }}" class="form-control"
+                                                            id="identity">
                                                         @error('identity_no')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -204,7 +239,7 @@
                                                     <div class="col-md-8">
                                                         <input type="text" name="driving_license_no"
                                                             value="{{ old('driving_license_no') }}" class="form-control"
-                                                            placeholder="Enter Driving License number">
+                                                            placeholder="Enter Driving License number" id="license">
                                                         @error('driving_license_no')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -230,7 +265,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <h2><u>{{ strtoupper('Booking Details') }}</u></h2>
+                                <h3><u>{{ strtoupper('Booking Details') }}</u></h3>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="col-md-12">
@@ -343,7 +378,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <h2><u>{{ strtoupper('Room Details') }}</u></h2>
+                                <h3><u>{{ strtoupper('Room Details') }}</u></h3>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="col-md-12">
@@ -408,7 +443,7 @@
 
         function onEnterRoomNo(room_no) {
             var no_of_room = $(room_no).val();
-            var html = ""
+            var html = "";
             for (var i = 0; i < no_of_room; i++) {
                 html += `<div class="form-group">
                                 <div class="row">
@@ -416,7 +451,7 @@
                                         <label for="">Select Room</label>
                                     </div>
                                     <div class="col-md-8">
-                                        <select name="room_no[]" class="form-control" id="room_no`+i+`">
+                                        <select name="room_no[]" class="form-control" id="room_no` + i + `">
                                             <option value="">Select Room</option>
                                             @foreach ($rooms as $room)
                                                 <option value="{{ $room->id }}">{{ $room->name . '(' . $room->room_no . ')' }}</option>
@@ -430,7 +465,7 @@
         }
 
 
-        $('#form').validate({            
+        $('#form').validate({
             rules: {
                 first_name: "required",
                 last_name: "required",
@@ -445,7 +480,7 @@
                 contact_no: "required",
                 occupation: "required",
                 identity_no: "required",
-                signature:{
+                signature: {
                     accept: "image/*",
                     extension: "jpg|jpeg|png"
                 },
@@ -462,7 +497,7 @@
                 first_name: "First Name is required",
                 last_name: "Surname is required",
                 gender: "Gender is required",
-                age:{
+                age: {
                     required: "Age is required",
                     digits: "Age must be a number",
                     max: "Age must be between 0 and 100",
@@ -472,7 +507,7 @@
                 contact_no: "Contact number is required",
                 occupation: "Occupation is required",
                 identity_no: "Citizenship number is required",
-                signature:{
+                signature: {
                     accept: "Please upload a valid image",
                     extension: "Image must be of type jpg, jpeg, png",
                 },
@@ -488,6 +523,89 @@
             submitHandler: function(form) {
                 form.submit();
             }
+        });
+
+
+        $("#search_user").autocomplete({
+            source: function(data, cb) {
+                console.log(data);
+                $.ajax({
+                    url: "{{ route('admin.getCustomer') }}",
+                    type: "POST",
+                    data: {
+                        'keyword': data.term
+                    },
+                    dataType: 'json',
+                    autoFocus: true,
+                    showHintOnFocus: true,
+                    autoSelect: true,
+                    selectInitial: true,
+
+                    success: function(res) {
+                        console.log(res);
+                        if (res.length) {
+                            var datas = $.map(res, function(value) {
+                                return {
+                                    label: value.first_name,
+                                    id: value.id,
+                                    // item_name: value.name,
+                                    // stock: value.qty,
+                                    // barcode: value.barcode,
+                                }
+                            });
+                        } else {
+
+                            $('.spinner').hide();
+                        }
+                        cb(datas);
+
+                    },
+                    error: function() {
+                        $('.spinner').hide();
+                    },
+
+                });
+            },
+            search: function(e, ui) {
+                $('.spinner').show();
+
+
+
+            },
+            response: function(e, el) {
+                if (el.content == undefined) {
+                    // console.log('no data found');
+                } else if (el.content.length == 1) {
+                    $(this).data('ui-autocomplete')._trigger('select', 'autocompleteselect', el);
+                    $(this).autocomplete("close");
+
+                }
+                $('.spinner').hide();
+                // console.log('hiding');
+            },
+
+
+            select: function(e, ui) {
+                console.log(ui);
+                e.preventDefault();
+                if (typeof ui.content != 'undefined') {
+                    if (isNaN(ui.content[0].id)) {
+                        return;
+                    }
+                    var stock = ui.content[0].stock;
+                    var item_id = ui.content[0].id;
+                } else {
+                    var stock = ui.item.stock;
+                    var item_id = ui.item.id;
+                }
+
+                $("input#search_user").val('');
+            },
+
+        });
+
+        $("#search_user").bind('paste', (e) => {
+            $("#search_user").autocomplete('search');
         });
     </script>
 @endsection
