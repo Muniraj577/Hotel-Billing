@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\RoomController as AdminRoomController;
 use App\Http\Controllers\Admin\BookingController as AdminBookingController;
 use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
+use App\Http\Controllers\Admin\AdminController as AdminUserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,8 +28,18 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::group(["prefix"=>"admin/", "as"=>"admin."], function(){
+Route::group(["prefix"=>"admin/", "middleware" => "auth", "as"=>"admin."], function(){
     Route::get('dashboard', [AdminDashboardController::class, 'dashboard'])->name('dashboard');
+
+    Route::group(["prefix"=>"user/", "as"=>"user."], function(){
+        Route::get("",[AdminUserController::class, "index"])->name("index");
+        Route::get("create", [AdminUserController::class, "create"])->name("create");
+        Route::post("store", [AdminUserController::class, "store"])->name("store");
+        Route::get("edit/{id}", [AdminUserController::class, "edit"])->name("edit");
+        Route::put("update/{id}", [AdminUserController::class, "update"])->name("update");
+        
+        Route::post("update-user-status",[AdminUserController::class,"updateStatus"])->name("updateStatus");
+    });
 
     Route::group(["prefix" => "room/", "as"=>"room."], function(){
         Route::get('', [AdminRoomController::class,'index'])->name('index');

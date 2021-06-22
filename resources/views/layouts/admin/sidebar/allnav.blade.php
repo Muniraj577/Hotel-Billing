@@ -1,4 +1,10 @@
 <li class="nav-item">
+    <a href="{{ route("admin.user.index") }}" class="nav-link @yield("user")">
+        <i class="nav-icon fas fa-tachometer-alt iCheck"></i>
+        <p>Users</p>
+    </a>
+</li>
+<li class="nav-item">
     <a href="{{route('admin.room.index')}}" class="nav-link @yield('room')">
         <i class="nav-icon fas fa-tachometer-alt iCheck"></i>
         <p>Rooms</p>

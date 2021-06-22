@@ -23,7 +23,7 @@
 <script src="{{ asset('newjs/jquery-ui.js') }}"></script>
 <script src="{{ asset('jquery-validation/dist/jquery.validate.min.js') }}"></script>
 <script src="{{ asset('jquery-validation/dist/additional-methods.min.js') }}"></script>
-
+<script src="{{ asset('custom-validation/validation.js') }}"></script>
 
 <script>
     var update = function() {

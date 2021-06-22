@@ -20,6 +20,11 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'address', 
+        'phone',
+        'status',
+        'avatar',
+        'type',
     ];
 
     /**
@@ -40,4 +45,13 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function avatarImg($img)
+    {
+        if($img != null){
+            return asset("images/admin/avatars/".$img);
+        } else {
+            return asset("images/default.png");
+        }
+    }
 }
