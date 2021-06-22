@@ -1,6 +1,6 @@
 @extends('layouts.admin.app')
 @section('title', 'Booking')
-@section('booking', 'active')
+@section('add-booking', 'active')
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/datepicker.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/gif.css') }}">
@@ -43,7 +43,7 @@
 
                                 </div>
                                 <div class="col-md-7 my-auto float-right">
-                                    <a href="{{ route('admin.room.index') }}" class="btn btn-primary float-right"><i
+                                    <a href="{{ route('admin.booking.index') }}" class="btn btn-primary float-right"><i
                                             class="fa fa-arrow-left iCheck"></i>&nbsp;Back to List</a>
                                 </div>
                             </div>
@@ -320,8 +320,7 @@
                                             <div class="form-group">
                                                 <div class="row">
                                                     <div class="col-md-4">
-                                                        <label for="departure_date">Departure Date&nbsp;<span
-                                                                class="req">*</span></label>
+                                                        <label for="departure_date">Departure Date</label>
                                                     </div>
                                                     <div class="col-md-8">
                                                         <input type="text"
@@ -341,8 +340,7 @@
                                             <div class="form-group">
                                                 <div class="row">
                                                     <div class="col-md-4">
-                                                        <label for="departure_time">Departure Time&nbsp;<span
-                                                                class="req">*</span></label>
+                                                        <label for="departure_time">Departure Time</label>
                                                     </div>
                                                     <div class="col-md-8">
                                                         <input type="time" name="departure_time"
@@ -378,7 +376,7 @@
                                             <div class="form-group">
                                                 <div class="row">
                                                     <div class="col-md-4">
-                                                        <label for="no_of_room">No of Rooms</label>
+                                                        <label for="no_of_room">No of Rooms&nbsp;<span class="req">*</span></label>
                                                     </div>
                                                     <div class="col-md-8">
                                                         <input type="text" name="no_of_rooms"
@@ -398,7 +396,7 @@
                                     </div>
                                 </div>
                                 <div class="text-center">
-                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                    <button type="submit" name="save" value="save" class="btn btn-primary">Submit</button>
                                 </div>
                             </form>
                         </div>
@@ -441,7 +439,7 @@
                 html += `<div class="form-group">
                                 <div class="row">
                                     <div class="col-md-4">
-                                        <label for="">Select Room</label>
+                                        <label for="">Select Room&nbsp;<span class="req">*</span></label>
                                     </div>
                                     <div class="col-md-8">
                                         <select name="room_no[]" class="form-control" id="room_no` + i + `">
@@ -537,7 +535,7 @@
                         if (res.length) {
                             var datas = $.map(res, function(value) {
                                 return {
-                                    label: value.first_name,
+                                    label: value.first_name + "(" + value.contact_no + ")",
                                     id: value.id,
                                     first_name: value.first_name,
                                     middle_name: value.middle_name,

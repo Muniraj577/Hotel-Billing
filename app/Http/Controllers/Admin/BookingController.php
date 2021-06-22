@@ -19,7 +19,8 @@ class BookingController extends Controller
     private $redirectTo = "admin.booking.index";
     public function index()
     {
-        return view($this->page . 'index')->with("id");
+        $booking_details = BookingDetail::with("customer")->orderBy("id", "desc")->get();
+        return view($this->page . 'index', compact("booking_details"))->with("id");
     }
 
     public function create()
@@ -39,21 +40,21 @@ class BookingController extends Controller
                 DB::beginTransaction();
 
                 $client = Customer::find($request->customer_id);
-                if($client != null){
+                if ($client != null) {
                     $oldImage = $client->signature;
-                    if($request->hasFile('signature')){
+                    if ($request->hasFile('signature')) {
                         $image = Upload::image($request, 'signature', $this->destination, $oldImage);
                     } else {
                         $image = $oldImage;
                     }
                 } else {
-                    if($request->hasFile('signature')){
+                    if ($request->hasFile('signature')) {
                         $image = Upload::image($request, 'signature', $this->destination, null);
                     } else {
                         $image = '';
                     }
                 }
-                
+
                 $customer = Customer::updateOrCreate([
                     'id' => $request->customer_id,
                 ], [
@@ -79,6 +80,55 @@ class BookingController extends Controller
         }
     }
 
+    public function show($id)
+    {
+        $booking_detail = BookingDetail::where("id", $id)->with("customer")->with("booking_rooms")->firstOrFail();
+        return view($this->page . "show", compact("booking_detail"));
+    }
+
+    public function getDepartureModel($id)
+    {
+        $booking_detail = BookingDetail::findOrFail($id);
+        return view("admin.partial.booking.updatedeparture", compact("booking_detail"));
+    }
+
+    public function updateDeparture(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            "departure_date" => "required",
+            "departure_time" => "required",
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()]);
+        }
+        if ($validator->passes()) {
+            try {
+                DB::beginTransaction();
+                $booking = BookingDetail::find($id);
+                $booking->update([
+                    "departure_date" => $request->departure_date,
+                    "nepali_departure_date" => $request->nepali_departure_date,
+                    "departure_time" => $request->departure_time,
+                ]);
+                date_default_timezone_set("Asia/Kathmandu");
+                $a = date("y-m-d H:i");
+                $b = $request->departure_date . " ". $request->departure_time;
+                if(strtotime($a) > strtotime($b)){
+                    foreach($booking->booking_rooms as $booking_room){
+                        $room = Room::where('id', $booking_room->room_id)->first();
+                        $room->update(['status' => 'Available']);
+                    }
+                }
+                DB::commit();
+                date_default_timezone_set("UTC");
+                return 200;
+            } catch (\Exception $e) {
+                DB::rollBack();
+                return response()->json($e->getMessage());
+            }
+        }
+    }
+
     private function __createBooking($data, $customerId)
     {
         $bkd = BookingDetail::create([
@@ -98,14 +148,14 @@ class BookingController extends Controller
 
     private function __createRoomDetail($data, $customerId, $booking_id)
     {
-        foreach($data->input('room_no') as $key => $value){
+        foreach ($data->input('room_no') as $key => $value) {
             $rd = BookingRoom::create([
                 'customer_id' => $customerId,
                 'booking_id' => $booking_id,
                 'room_id' => $value,
             ]);
         }
-        
+
     }
 
     private function validation(array $data)

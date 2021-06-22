@@ -10,4 +10,9 @@ class BookingRoom extends Model
     use HasFactory;
 
     protected $fillable = ["customer_id", "booking_id", "room_id"];
+
+    public function room()
+    {
+        return $this->belongsTo("App\Models\Room", "room_id", "id");
+    }
 }

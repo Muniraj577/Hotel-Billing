@@ -5,9 +5,21 @@
     </a>
 </li>
 <li class="nav-item">
-    <a href="{{ route("admin.booking.create") }}" class="nav-link @yield("booking")">
+    <a href="{{ route("admin.booking.index") }}" class="nav-link @yield("booking")">
+        <i class="nav-icon fas fa-tachometer-alt iCheck"></i>
+        <p>All Bookings</p>
+    </a>
+</li>
+<li class="nav-item">
+    <a href="{{ route("admin.booking.create") }}" class="nav-link @yield("add-booking")">
         <i class="nav-icon fas fa-tachometer-alt iCheck"></i>
         <p>Add Booking</p>
+    </a>
+</li>
+<li class="nav-item">
+    <a href="{{ route("admin.customer.index") }}" class="nav-link @yield("customer")">
+        <i class="nav-icon fas fa-tachometer-alt iCheck"></i>
+        <p>Customers</p>
     </a>
 </li>
 {{-- <li class="nav-item">

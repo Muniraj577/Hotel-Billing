@@ -11,10 +11,8 @@ class Room extends Model
 
     protected $fillable = ['name', 'room_no', 'is_active', 'status'];
 
-    // public function room_status()
-    // {
-    //     return [
-    //         "Available", "UnAvailable"
-    //     ];
-    // }
+    public function booking_room()
+    {
+        return $this->belongsTo("App\Models\BookingRoom", "room_id", "id");
+    }
 }

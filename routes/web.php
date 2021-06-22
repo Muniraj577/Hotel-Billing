@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\RoomController as AdminRoomController;
 use App\Http\Controllers\Admin\BookingController as AdminBookingController;
+use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,8 +40,17 @@ Route::group(["prefix"=>"admin/", "as"=>"admin."], function(){
     });
 
     Route::group(["prefix"=>"booking/", "as" => "booking."], function(){
-        Route::get("create", [AdminBookingController::class, 'create'])->name("create");
-        Route::post("store", [AdminBookingController::class,'store'])->name('store');
+        Route::get("", [AdminBookingController::class, "index"])->name("index");
+        Route::get("create", [AdminBookingController::class, "create"])->name("create");
+        Route::post("store", [AdminBookingController::class,"store"])->name("store");
+        Route::get("detail/{id}", [AdminBookingController::class, "show"])->name("show");
+
+        Route::get("update-departure/{id}", [AdminBookingController::class, "getDepartureModel"])->name("getDepartureModel");
+        Route::post("update-departure/{id}", [AdminBookingController::class, "updateDeparture"])->name("updateDeparture");
+    });
+
+    Route::group(["prefix"=>"customers/", "as" => "customer."], function(){
+        Route::get("",[AdminCustomerController::class, "index"])->name("index");
     });
 
     Route::post('get-all-customers', [AdminDashboardController::class, 'getCustomer'])->name('getCustomer');
