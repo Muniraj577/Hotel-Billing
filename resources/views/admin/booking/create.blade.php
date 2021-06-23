@@ -294,7 +294,7 @@
                                                             <input id="timepicker1" type="text" class="form-control input-small">
                                                             <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
                                                         </div> --}}
-                                                        <input type="text" name="arrival_time" onclick="timepick($(this));"
+                                                        <input type="text" name="arrival_time" onfocus="timepick($(this));"
                                                             value="{{ old('arrival_time') }}" class="form-control"
                                                             id="arrival_time" readonly>
                                                         @error('arrival_time')
@@ -347,7 +347,8 @@
                                                         <label for="departure_time">Departure Time</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <input type="text" name="departure_time" onclick="timepick($(this));"
+                                                        <input type="text" name="departure_time"
+                                                            onfocus="timepick($(this));"
                                                             value="{{ old('departure_time') }}" class="form-control"
                                                             id="departure_time" readonly>
                                                         @error('departure_time')
@@ -380,7 +381,8 @@
                                             <div class="form-group">
                                                 <div class="row">
                                                     <div class="col-md-4">
-                                                        <label for="no_of_room">No of Rooms&nbsp;<span class="req">*</span></label>
+                                                        <label for="no_of_room">No of Rooms&nbsp;<span
+                                                                class="req">*</span></label>
                                                     </div>
                                                     <div class="col-md-8">
                                                         <input type="text" name="no_of_rooms"
@@ -396,6 +398,49 @@
                                                 @endif
 
                                             </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <h3><u>{{ strtoupper('Relatives') }}</u></h3>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <label for="no_of_relatives">No of Relatives&nbsp;<span
+                                                                class="req">*</span></label>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <input type="text" name="no_of_relatives"
+                                                            value="{{ old('no_of_relatives') }}"
+                                                            onchange="addRelative($(this))" class="form-control"
+                                                            id="no_of_relative" placeholder="Enter no of relatives">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row relativeTable d-none">
+                                    <div class="col-md-12">
+                                        <div>
+                                            <button class="btn btn-primary float-right" type="button"
+                                                onclick="addRow();">Add</button>
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                    <th>First Name</th>
+                                                    <th>Middle Name</th>
+                                                    <th>Last Name</th>
+                                                    <th>Phone no</th>
+                                                    <th style="width: 10%;">Age</th>
+                                                    <th>Relation</th>
+                                                    <th>Action</th>
+                                                </thead>
+                                                <tbody class="relative_data">
+
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
                                 </div>
@@ -435,13 +480,15 @@
                 $('#arrival_date').datepicker('setEndDate', minDate);
             });
 
-            
-            $('#timepicker1').on("click", function(){
-                $(this).timepicker('showWidget');
-                $(".glyphicon-chevron-up").removeClass("glyphicon glyphicon-chevron-up").addClass("fa fa-chevron-up");
-                $(".glyphicon-chevron-down").removeClass("glyphicon glyphicon-chevron-down").addClass("fa fa-chevron-down");
-            });
-        
+
+            // $(".timepicker").timepicker({
+            //     minuteStep: 1,
+            //     icons: {
+            //         up: 'fa fa-chevron-up',
+            //         down: 'fa fa-chevron-down'
+            //     }
+            // });
+
         });
 
         function onEnterRoomNo(room_no) {
@@ -468,20 +515,118 @@
         }
 
 
+        function addRelative(relative_no) {
+            $(".relativeTable").removeClass("d-none");
+            var no_of_relative = $(relative_no).val();
+            var html = "";
+            for (var i = 0; i < no_of_relative; i++) {
+                html += `<tr>
+                            <td>
+                                <input type="text" class="form-control" name="relative_first_name[]">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="relative_middle_name[]">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="relative_last_name[]">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="relative_contact_no[]">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="relative_age[]">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="relative_relation">
+                            </td>
+                            <td>
+                                <div class="d-inline-flex">
+                                    <button type="button" onclick="removeRow($(this));" class="btn btn-sm">
+                                        <i class="fa fa-times req"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>`;
+            }
+            $(".relative_data").html(html);
+        }
+
+
+        function addRow() {
+            let html = `<tr>
+                            <td>
+                                <input type="text" class="form-control" name="relative_first_name[]">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="relative_middle_name[]">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="relative_last_name[]">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="relative_contact_no[]">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="relative_age[]">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="relative_relation">
+                            </td>
+                            <td>
+                                <div class="d-inline-flex">
+                                    <button type="button" onclick="removeRow($(this));" class="btn btn-sm">
+                                        <i class="fa fa-times req"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>`;
+            $(".relative_data").append(html);
+            var new_no_of_relative = parseInt($("#no_of_relative").val()) + 1;
+            $("#no_of_relative").val(new_no_of_relative);
+        }
+
+
+        function removeRow(row) {
+            $(row).closest("tr").remove();
+            var new_no_of_relative = parseInt($("#no_of_relative").val()) - 1;
+            $("#no_of_relative").val(new_no_of_relative);
+            var no_of_relative = $("#no_of_relative").val();
+            if (no_of_relative == 0) {
+                $(".relativeTable").addClass("d-none");
+                $("#no_of_relative").val('');
+            }
+        }
+
+
         $('#form').validate({
             rules: {
-                first_name: "required",
-                last_name: "required",
+                first_name: {
+                    required: true,
+                    lettersonly: true,
+                },
+                middle_name: {
+                    lettersonly: true,
+                },
+                last_name: {
+                    required: true,
+                    lettersonly: true,
+                },
                 gender: "required",
                 age: {
                     required: true,
                     digits: true,
                     max: 100,
                 },
-                nationality: "required",
+                nationality: {
+                    required: true,
+                    lettersonly: true,
+                },
                 address: "required",
                 contact_no: "required",
-                occupation: "required",
+                occupation: {
+                    required: true,
+                    lettersonly: true,
+                },
                 identity_no: "required",
                 signature: {
                     accept: "image/*",
@@ -494,21 +639,57 @@
                     digits: true,
                 },
                 "room_no[]": "required",
+                "relative_first_name[]":{
+                    required: function(element){
+                        return $("#no_of_relative").val() != '';
+                    },
+                    lettersonly: true,
+                },
+                "relative_middle_name[]":{
+                    lettersonly: true,
+                },
+                "relative_last_name[]":{
+                    required: function(element){
+                        return $("#no_of_relative").val() != '';
+                    },
+                    lettersonly: true,
+                },
+                "relative_age[]":{
+                    required: function(element){
+                        return $("#no_of_relative").val() != '';
+                    }
+                },
+                "relative_relation[]":{
+                    required: function(element){
+                        return $("#no_of_relative").val() != '';
+                    },
+                    lettersonly: true,
+                },
 
             },
             messages: {
-                first_name: "First Name is required",
-                last_name: "Surname is required",
+                first_name: {
+                    required: "First Name is required",
+                    lettersonly: "Only alphabets suppported",
+                },
+                last_name: {
+                    required: "Surname is required",
+                    lettersonly: "Only alphabets suppported",
+                },
                 gender: "Gender is required",
                 age: {
                     required: "Age is required",
                     digits: "Age must be a number",
                     max: "Age must be between 0 and 100",
                 },
-                nationality: "Nationality is required",
+                nationality: {
+                    required: "Nationality is required"
+                },
                 address: "Address is required",
                 contact_no: "Contact number is required",
-                occupation: "Occupation is required",
+                occupation: {
+                    required: "Occupation is required",
+                },
                 identity_no: "Citizenship number is required",
                 signature: {
                     accept: "Please upload a valid image",
@@ -521,6 +702,7 @@
                     digits: "This field must be number",
                 },
                 "room_no[]": "Please select room",
+                "relative_first_name[]": "This field is required", 
 
             },
             submitHandler: function(form) {
@@ -648,7 +830,8 @@
             $("#search_user").autocomplete('search');
         });
 
-        function set_values(customer_id, fname, midname, lname, gender, age, nationality, address, contact_no, occupation, identity,
+        function set_values(customer_id, fname, midname, lname, gender, age, nationality, address, contact_no, occupation,
+            identity,
             license, sign) {
             $("#client_id").val(customer_id);
             $("#firstName").val(fname);

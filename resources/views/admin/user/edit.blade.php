@@ -19,9 +19,9 @@
                     <div class="card">
                         <div class="card-header">
                             <div class="card-title float-right">
-                                <button class="btn btn-primary">
-                                    <i class="fa fa-edit"></i> Edit User
-                                </button>
+                                <a href="{{ route("admin.user.index") }}" class="btn btn-primary">
+                                    <i class="fa fa-arrow-left"></i> Back to List
+                                </a>
                             </div>
                         </div>
                         <div class="card-body">

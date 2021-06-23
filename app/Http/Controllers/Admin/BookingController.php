@@ -161,20 +161,24 @@ class BookingController extends Controller
     private function validation(array $data)
     {
         return Validator::make($data, [
-            "first_name" => "required",
-            "last_name" => "required",
-            "gender" => "required",
+            "first_name" => "required|string",
+            "last_name" => "required|string",
+            "gender" => "required|string",
             "age" => "required|integer|max:100",
-            "nationality" => "required",
+            "nationality" => "required|string",
             "address" => "required",
             "contact_no" => "required",
-            "occupation" => "required",
+            "occupation" => "required|string",
             "identity_no" => "required",
             "signature" => "image|mimes:jpeg,jpg,png|max:2048",
             "arrival_date" => "required",
             "arrival_time" => "required",
             "no_of_rooms" => "required|integer",
             "room_no.*" => "required",
+            "relative_first_name.*" => "required_with:no_of_relatives|string",
+            "relative_last_name.*" => "required_with:no_of_relatives|string",
+            "relative_age.*" => "required_with:no_of_relatives",
+            "relative_relation.*" => "required_with:no_of_relatives|string",
         ], $this->messages());
     }
 
@@ -199,6 +203,10 @@ class BookingController extends Controller
             "room_no.*.required" => "Please select room",
             "no_of_rooms.required" => "Please enter no. of rooms",
             "no_of_rooms.integer" => "This field must be number",
+            "relative_first_name.required_with" => "This field is required",
+            "relative_last_name.required_with" => "This field is required",
+            "relative_age.required_with" => "This field is required",
+            "relative_relation.required_with" => "This field is required",
         ];
     }
 }

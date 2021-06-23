@@ -77,11 +77,13 @@
                                                         <a class='dropdown-item'
                                                             href="{{ route('admin.booking.show', $booking_detail->id) }}"><i
                                                                 class='fa fa-eye iCheck'></i>&nbsp;View Booking Detail</a>
-                                                        <button class="dropdown-item" type="button" class="btn btn-primary"
-                                                            data-toggle="modal" data-target="#departureModal"
+
+                                                        <button class="dropdown-item" type="button" data-toggle="modal"
+                                                            data-target="#departureModal"
                                                             data-target-id="{{ $booking_detail->id }}">
                                                             <i class="fa fa-edit"></i>Update Departure
                                                         </button>
+
                                                         {{-- <button class='dropdown-item' onclick='alertPayMessage();'><i class='far fa-money-bill-alt iCheck'></i>&nbsp;Add Payment</button> --}}
                                                     </div>
                                                 </div>
@@ -187,7 +189,9 @@
 
         $(document).ready(function() {
             $("#departureModal").on("show.bs.modal", function(e) {
+                console.log($(e.relatedTarget));
                 var id = $(e.relatedTarget).data("target-id");
+                console.log(id);
                 var url = "{{ route('admin.booking.getDepartureModel', ':id') }}",
                     url = url.replace(":id", id);
                 $.get(url, function(data) {
@@ -232,5 +236,6 @@
                 }
             });
         });
+
     </script>
 @endsection

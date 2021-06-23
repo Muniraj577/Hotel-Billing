@@ -353,16 +353,13 @@
     function timepick(time) {
         $(time).timepicker({
             minuteStep: 1,
-            showWidget: true,
             icons: {
                 up: 'fa fa-chevron-up',
                 down: 'fa fa-chevron-down'
             }
-
-
         });
-        $(".glyphicon-chevron-up").removeClass("glyphicon glyphicon-chevron-up").addClass("fa fa-chevron-up");
-        $(".glyphicon-chevron-down").removeClass("glyphicon glyphicon-chevron-down").addClass("fa fa-chevron-down");
+        // $(".glyphicon-chevron-up").removeClass("glyphicon glyphicon-chevron-up").addClass("fa fa-chevron-up");
+        // $(".glyphicon-chevron-down").removeClass("glyphicon glyphicon-chevron-down").addClass("fa fa-chevron-down");
     }
 </script>
 <script>
