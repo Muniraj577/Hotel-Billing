@@ -433,6 +433,7 @@
                                                     <th>Middle Name</th>
                                                     <th>Last Name</th>
                                                     <th>Phone no</th>
+                                                    <th>Gender</th>
                                                     <th style="width: 10%;">Age</th>
                                                     <th>Relation</th>
                                                     <th>Action</th>
@@ -534,10 +535,13 @@
                                 <input type="text" class="form-control" name="relative_contact_no[]">
                             </td>
                             <td>
+                                <input type="text" class="form-control" name="relative_gender[]">
+                            </td>
+                            <td>
                                 <input type="text" class="form-control" name="relative_age[]">
                             </td>
                             <td>
-                                <input type="text" class="form-control" name="relative_relation">
+                                <input type="text" class="form-control" name="relative_relation[]">
                             </td>
                             <td>
                                 <div class="d-inline-flex">
@@ -567,10 +571,13 @@
                                 <input type="text" class="form-control" name="relative_contact_no[]">
                             </td>
                             <td>
+                                <input type="text" class="form-control" name="relative_gender[]">
+                            </td>
+                            <td>
                                 <input type="text" class="form-control" name="relative_age[]">
                             </td>
                             <td>
-                                <input type="text" class="form-control" name="relative_relation">
+                                <input type="text" class="form-control" name="relative_relation[]">
                             </td>
                             <td>
                                 <div class="d-inline-flex">
@@ -654,10 +661,17 @@
                     },
                     lettersonly: true,
                 },
+                "relative_gender[]":{
+                    required: function(element){
+                        return $("#no_of_relative").val() != '';
+                    },
+                    lettersonly: true,
+                },
                 "relative_age[]":{
                     required: function(element){
                         return $("#no_of_relative").val() != '';
-                    }
+                    },
+                    digits: true,
                 },
                 "relative_relation[]":{
                     required: function(element){
@@ -702,7 +716,18 @@
                     digits: "This field must be number",
                 },
                 "room_no[]": "Please select room",
-                "relative_first_name[]": "This field is required", 
+                "relative_first_name[]": {
+                    required: "This field is required",
+                }, 
+                "relative_last_name[]":{
+                    required: "This field is required",
+                },
+                "relative_gender[]":{
+                    required: "This field is required",
+                },
+                "relative_age[]":{
+                    required: "This field is required",
+                },
 
             },
             submitHandler: function(form) {

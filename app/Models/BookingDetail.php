@@ -10,7 +10,7 @@ class BookingDetail extends Model
     use HasFactory;
 
     protected $fillable = ["customer_id", "arrival_date", "nepali_arrival_date", "arrival_time",
-        "departure_date", "nepali_departure_date", "departure_time", "no_of_rooms", "purpose", "remarks"];
+        "departure_date", "nepali_departure_date", "departure_time", "no_of_rooms", "no_of_relative", "purpose", "remarks"];
 
     public function customer()
     {
@@ -20,5 +20,10 @@ class BookingDetail extends Model
     public function booking_rooms()
     {
         return $this->hasMany("App\Models\BookingRoom", "booking_id", "id");
+    }
+
+    public function relatives()
+    {
+        return $this->hasMany("App\Models\Relative", "booking_id", "id");
     }
 }

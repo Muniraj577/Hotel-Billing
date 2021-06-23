@@ -224,18 +224,85 @@
                                         <thead>
                                             <th>Room No</th>
                                             <th>Room Name</th>
+                                            <th>Action</th>
                                         </thead>
                                         <tbody>
                                             @foreach ($booking_detail->booking_rooms as $booking_room)
                                                 <tr>
                                                     <td>{{ $booking_room->room->room_no }}</td>
                                                     <td>{{ $booking_room->room->name }}</td>
+                                                    <td>
+                                                        <form
+                                                            action="{{ route('admin.booking_room.destroy', $booking_room->id) }}"
+                                                            method="POST">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="btn btn-sm btn-primary">
+                                                                Delete
+                                                            </button>
+                                                        </form>
+                                                    </td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
+                            @if ($booking_detail->no_of_relative > 0)
+                                <h3><u>{{ strtoupper('Relative Details') }}</u></h3>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <label for="no_of_room">No of relatives:</label>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <span>{{ $booking_detail->no_of_relative }}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <th>Name</th>
+                                                <th>Phone no</th>
+                                                <th>Age</th>
+                                                <th>Gender</th>
+                                                <th>Relation</th>
+                                                <th>Action</th>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($booking_detail->relatives as $relative)
+                                                    <tr>
+                                                        <td>{{ $relative->full_name }}</td>
+                                                        <td>{{ $relative->contact_no }}</td>
+                                                        <td>{{ $relative->age }}</td>
+                                                        <td>{{ $relative->gender }}</td>
+                                                        <td>{{ $relative->relation }}</td>
+                                                        <td>
+                                                            <form
+                                                                action="{{ route('admin.relative.destroy', $relative->id) }}"
+                                                                method="POST">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="btn btn-sm btn-primary">
+                                                                    Delete
+                                                                </button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -243,4 +310,3 @@
         </div>
     </section>
 @endsection
-

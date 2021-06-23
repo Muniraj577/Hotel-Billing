@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\BookingDetail;
 use App\Models\BookingRoom;
 use App\Models\Customer;
+use App\Models\Relative;
 use App\Models\Room;
 use App\Models\Upload;
 use Illuminate\Http\Request;
@@ -31,6 +32,7 @@ class BookingController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request->all());
         $validator = $this->validation($request->all());
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
@@ -142,8 +144,10 @@ class BookingController extends Controller
             'purpose' => $data->purpose,
             'remarks' => $data->remarks,
             'no_of_rooms' => $data->no_of_rooms,
+            'no_of_relative' => $data->no_of_relatives,
         ]);
         $this->__createRoomDetail($data, $customerId, $bkd->id);
+        $this->__createRelative($data, $customerId, $bkd->id);
     }
 
     private function __createRoomDetail($data, $customerId, $booking_id)
@@ -156,6 +160,23 @@ class BookingController extends Controller
             ]);
         }
 
+    }
+
+    private function __createRelative($data, $customerId, $booking_id)
+    {
+        foreach($data->input("relative_first_name") as $key => $value){
+            $relative = Relative::create([
+                'customer_id' => $customerId,
+                'booking_id' => $booking_id,
+                'first_name' => $value,
+                'middle_name' => $data->get('relative_middle_name')[$key],
+                'last_name' => $data->get('relative_last_name')[$key],
+                'gender' => $data->get('relative_gender')[$key],
+                'age' => $data->get('relative_age')[$key],
+                'contact_no' => $data->get('relative_contact_no')[$key],
+                'relation' => $data->get('relative_relation')[$key],
+            ]);
+        }
     }
 
     private function validation(array $data)
@@ -177,8 +198,9 @@ class BookingController extends Controller
             "room_no.*" => "required",
             "relative_first_name.*" => "required_with:no_of_relatives|string",
             "relative_last_name.*" => "required_with:no_of_relatives|string",
-            "relative_age.*" => "required_with:no_of_relatives",
+            "relative_age.*" => "required_with:no_of_relatives|numeric",
             "relative_relation.*" => "required_with:no_of_relatives|string",
+            "relative_gender.*" => "required_with:no_of_relatives|string",
         ], $this->messages());
     }
 
