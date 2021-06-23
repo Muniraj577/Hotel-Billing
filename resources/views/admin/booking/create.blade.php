@@ -290,9 +290,13 @@
                                                                 class="req">*</span></label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <input type="time" name="arrival_time"
+                                                        {{-- <div class="input-group bootstrap-timepicker timepicker">
+                                                            <input id="timepicker1" type="text" class="form-control input-small">
+                                                            <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
+                                                        </div> --}}
+                                                        <input type="text" name="arrival_time" onclick="timepick($(this));"
                                                             value="{{ old('arrival_time') }}" class="form-control"
-                                                            id="arrival_time">
+                                                            id="arrival_time" readonly>
                                                         @error('arrival_time')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -343,9 +347,9 @@
                                                         <label for="departure_time">Departure Time</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <input type="time" name="departure_time"
+                                                        <input type="text" name="departure_time" onclick="timepick($(this));"
                                                             value="{{ old('departure_time') }}" class="form-control"
-                                                            id="departure_time">
+                                                            id="departure_time" readonly>
                                                         @error('departure_time')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -430,6 +434,14 @@
                 var minDate = new Date(selected.date.valueOf());
                 $('#arrival_date').datepicker('setEndDate', minDate);
             });
+
+            
+            $('#timepicker1').on("click", function(){
+                $(this).timepicker('showWidget');
+                $(".glyphicon-chevron-up").removeClass("glyphicon glyphicon-chevron-up").addClass("fa fa-chevron-up");
+                $(".glyphicon-chevron-down").removeClass("glyphicon glyphicon-chevron-down").addClass("fa fa-chevron-down");
+            });
+        
         });
 
         function onEnterRoomNo(room_no) {

@@ -21,6 +21,7 @@
 <link rel="stylesheet" href="{{ asset('css/toastr.min.css') }}">
 <link rel="stylesheet" href="{{ asset('css/nepali.datepicker.min.css') }}">
 <link rel="stylesheet" href="{{ asset('css/jquery-confirm.min.css') }}">
+<link rel="stylesheet" href="{{ asset('bootstrap-timepicker/css/bootstrap-timepicker.min.css') }}">
 
 <style>
     .toast-top-container {

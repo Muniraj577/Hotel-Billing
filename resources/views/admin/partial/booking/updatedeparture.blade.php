@@ -23,7 +23,7 @@
                 <label for="departure_time">Departure Time</label>
             </div>
             <div class="col-md-8">
-                <input type="time" name="departure_time"
+                <input type="text" onclick="timepick($(this));" name="departure_time"
                     value="{{ old('departure_time', $booking_detail->departure_time) }}" class="form-control"
                     id="departure_time">
                 <div class="require departure_time"></div>

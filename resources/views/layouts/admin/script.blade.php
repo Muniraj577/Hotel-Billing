@@ -24,6 +24,7 @@
 <script src="{{ asset('jquery-validation/dist/jquery.validate.min.js') }}"></script>
 <script src="{{ asset('jquery-validation/dist/additional-methods.min.js') }}"></script>
 <script src="{{ asset('custom-validation/validation.js') }}"></script>
+<script src="{{ asset('bootstrap-timepicker/js/bootstrap-timepicker.min.js') }}"></script>
 
 <script>
     var update = function() {
@@ -126,19 +127,20 @@
 
     }
 
-    function showImg(img, previewId){
+    function showImg(img, previewId) {
         readInputURL(img, previewId);
     }
 
     function readInputURL(input, idName) {
         if (input.files && input.files[0]) {
             let reader = new FileReader();
-            reader.onload = function (e) {
-                $("#"+idName).attr('src', e.target.result).width(100).height(100);
+            reader.onload = function(e) {
+                $("#" + idName).attr('src', e.target.result).width(100).height(100);
             };
             reader.readAsDataURL(input.files[0]);
         }
     }
+
     function dataTablePosition() {
         $('.buttons-collection').detach().appendTo('.dataTables_filter');
     }
@@ -219,7 +221,7 @@
         }
     }
 
-    function unauthorize(){
+    function unauthorize() {
         $.alert({
             title: 'Alert !',
             content: 'You are not authorized for this operation',
@@ -289,7 +291,7 @@
 
     var today = new Date();
     var today_date = today.getFullYear() + '-' + ('0' + (today.getMonth() + 1)).slice(-2) + '-' + ('0' + today
-    .getDate()).slice(-2);
+        .getDate()).slice(-2);
     $(document).ready(function() {
         setInterval(update, 1000);
         var nep_date = $('#led_eng_date').val(today_date);
@@ -321,7 +323,7 @@
                 $(email).focus();
             }
         }
-      
+
         return false;
     }
 
@@ -348,6 +350,20 @@
         });
     }
 
+    function timepick(time) {
+        $(time).timepicker({
+            minuteStep: 1,
+            showWidget: true,
+            icons: {
+                up: 'fa fa-chevron-up',
+                down: 'fa fa-chevron-down'
+            }
+
+
+        });
+        $(".glyphicon-chevron-up").removeClass("glyphicon glyphicon-chevron-up").addClass("fa fa-chevron-up");
+        $(".glyphicon-chevron-down").removeClass("glyphicon glyphicon-chevron-down").addClass("fa fa-chevron-down");
+    }
 </script>
 <script>
     toastr.options = {
@@ -387,6 +403,5 @@
         break;
         }
     @endif
-
 </script>
 @yield('scripts')
