@@ -447,6 +447,7 @@
                                 </div>
                                 <div class="text-center">
                                     <button type="submit" name="save" value="save" class="btn btn-primary">Submit</button>
+                                    <button type="submit" name="save" value="save_and_add_relative" class="btn btn-primary">Save and Add Relative</button>
                                 </div>
                             </form>
                         </div>

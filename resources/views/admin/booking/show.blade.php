@@ -211,15 +211,22 @@
                                                     <label for="no_of_room">No of Rooms:</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <span>{{ $booking_detail->no_of_rooms }}</span>
+                                                    <span>{{ count($booking_detail->booking_rooms) }}</span>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            @include('admin.partial.room.createModal')
                             <div class="row">
                                 <div class="col-md-12">
+                                    <div class="float-right mb-1">
+                                        <button type="button" class="btn btn-primary" data-toggle="modal"
+                                            data-target="#createRoomModal" data-target-id="{{ $booking_detail->id }}">
+                                            Add Room
+                                        </button>
+                                    </div>
                                     <table class="table table-bordered">
                                         <thead>
                                             <th>Room No</th>
@@ -232,15 +239,20 @@
                                                     <td>{{ $booking_room->room->room_no }}</td>
                                                     <td>{{ $booking_room->room->name }}</td>
                                                     <td>
-                                                        <form
-                                                            action="{{ route('admin.booking_room.destroy', $booking_room->id) }}"
-                                                            method="POST">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="btn btn-sm btn-primary">
-                                                                Delete
-                                                            </button>
-                                                        </form>
+                                                        <div class="d-inline-flex">
+                                                            <button type="button" class="btn btn-sm btn-primary" data-target="#editRoomModal" data-toggle="modal" data-target-id="{{ $booking_room->id }}">
+                                                                Edit
+                                                            </button>&nbsp;&nbsp;
+                                                            <form
+                                                                action="{{ route('admin.booking_room.destroy', $booking_room->id) }}"
+                                                                method="POST">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="btn btn-sm btn-danger">
+                                                                    Delete
+                                                                </button>
+                                                            </form>
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -248,7 +260,7 @@
                                     </table>
                                 </div>
                             </div>
-                            @if ($booking_detail->no_of_relative > 0)
+                            @if (count($booking_detail->relatives) > 0)
                                 <h3><u>{{ strtoupper('Relative Details') }}</u></h3>
                                 <div class="row">
                                     <div class="col-md-6">
@@ -259,15 +271,22 @@
                                                         <label for="no_of_room">No of relatives:</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <span>{{ $booking_detail->no_of_relative }}</span>
+                                                        <span>{{ count($booking_detail->relatives) }}</span>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                                @include('admin.partial.room.editModal')
                                 <div class="row">
                                     <div class="col-md-12">
+                                        <div class="float-right mb-1">
+                                            <a href="{{ route('admin.relative.create', $booking_detail->id) }}"
+                                                class="btn btn-primary">
+                                                Add Relative
+                                            </a>
+                                        </div>
                                         <table class="table table-bordered">
                                             <thead>
                                                 <th>Name</th>
@@ -286,15 +305,23 @@
                                                         <td>{{ $relative->gender }}</td>
                                                         <td>{{ $relative->relation }}</td>
                                                         <td>
-                                                            <form
-                                                                action="{{ route('admin.relative.destroy', $relative->id) }}"
-                                                                method="POST">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button type="submit" class="btn btn-sm btn-primary">
-                                                                    Delete
-                                                                </button>
-                                                            </form>
+                                                            <div class="d-inline-flex">
+                                                                <a href="{{ route('admin.relative.edit', $relative->id) }}}"
+                                                                    class="btn btn-sm btn-primary">Edit</a>&nbsp;&nbsp;
+                                                                <a href="{{ route('admin.customer.show', $relative->id) }}"
+                                                                    class="btn btn-sm btn-primary">
+                                                                    View Detail
+                                                                </a>&nbsp;&nbsp;
+                                                                <form
+                                                                    action="{{ route('admin.relative.destroy', $relative->id) }}"
+                                                                    method="POST">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                    <button type="submit" class="btn btn-sm btn-danger">
+                                                                        Delete
+                                                                    </button>
+                                                                </form>
+                                                            </div>
                                                         </td>
                                                     </tr>
                                                 @endforeach
@@ -309,4 +336,107 @@
             </div>
         </div>
     </section>
+@endsection
+@section('scripts')
+    <script>
+        $(document).ready(function() {
+            $("#createRoomModal").on("show.bs.modal", function(e) {
+                console.log($(e.relatedTarget));
+                var id = $(e.relatedTarget).data("target-id");
+                console.log(id);
+                var url = "{{ route('admin.booking_room.getForm', ':id') }}",
+                    url = url.replace(":id", id);
+                $.get(url, function(data) {
+                    $(".modal-body").html(data);
+                });
+            });
+
+            $("#createRoomModal").on('hidden.bs.modal', function() {
+                $(this).find('form')[0].reset();
+                $('.require').css('display', 'none');
+            });
+
+
+            $("#editRoomModal").on("show.bs.modal", function(e) {
+                var id = $(e.relatedTarget).data("target-id");
+                var url = "{{ route('admin.booking_room.edit', ':id') }}",
+                    url = url.replace(":id", id);
+                $.get(url, function(data) {
+                    $(".modal-body").html(data);
+                });
+            });
+
+            $("#editRoomModal").on('hidden.bs.modal', function() {
+                $(this).find('form')[0].reset();
+                $('.require').css('display', 'none');
+            });
+        });
+
+        $("#saveRoom").on("click", function(e){
+            $('.require').css('display', 'none');
+            e.preventDefault();
+            var formData = new FormData($('#roomForm')[0]);
+            var action = $("#roomForm").attr('action');
+            $.ajax({
+                url: action,
+                type: 'post',
+                data: formData,
+                dataType: 'json',
+                processData: false,
+                contentType: false,
+                success: function(data) {
+                    if (data.errors) {
+                        var error_html = "";
+                        $.each(data.errors, function(key, value) {
+                            error_html = '<div>' + value + '</div>';
+                            $('.' + key).css('display', 'block').css('color', 'red');
+                            $('.' + key).html(error_html);
+                        });
+                    } else {
+                        $("#createRoomModal").modal('hide');
+                        location.reload();
+                        toastr.success(data.msg);
+
+                    }
+
+                }
+            });
+        });
+
+
+        $("#editRoom").on("click", function(e){
+            console.log("Hi");
+            $('.require').css('display', 'none');
+            e.preventDefault();
+            // var formData = new FormData($('#editRoomForm')[0]);
+            // console.log(formData);
+            var formData = $("#editRoomForm").serialize();
+            console.log(formData);
+            var action = $("#editRoomForm").attr('action');
+            $.ajax({
+                url: action,
+                type: 'post',
+                data: formData,
+                dataType: 'json',
+                // processData: false,
+                // contentType: false,
+                success: function(data) {
+                    if (data.errors) {
+                        var error_html = "";
+                        $.each(data.errors, function(key, value) {
+                            error_html = '<div>' + value + '</div>';
+                            $('.' + key).css('display', 'block').css('color', 'red');
+                            $('.' + key).html(error_html);
+                        });
+                    } else {
+                        $("#editRoomModal").modal('hide');
+                        location.reload();
+                        toastr.success(data.msg);
+
+                    }
+
+                }
+            });
+        });
+    </script>
 @endsection

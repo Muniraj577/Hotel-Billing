@@ -13,4 +13,10 @@ class CustomerController extends Controller
         $customers = Customer::orderBy("id", "desc")->get();
         return view("admin.customer.index",compact("customers"))->with("id");
     }
+
+    public function show($id)
+    {
+        $customer = Customer::findOrFail($id);
+        return view("admin.customer.show", compact("customer"));
+    }
 }

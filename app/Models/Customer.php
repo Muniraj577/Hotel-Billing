@@ -27,5 +27,12 @@ class Customer extends Model
         return ucfirst($this->first_name) . " " . ucfirst($this->middle_name) . " ". ucfirst($this->last_name);
     }
 
+    public function getSign($sign)
+    {
+        if($sign != null){
+            return asset("images/customers/signature/".$sign);
+        }
+    }
+
     protected $appends = ["full_name"];
 }

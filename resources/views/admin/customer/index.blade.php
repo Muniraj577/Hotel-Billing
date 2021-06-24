@@ -39,6 +39,7 @@
                                         <th>Age</th>
                                         <th>Citizenship</th>
                                         <th>Nationality</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -53,6 +54,13 @@
                                             <td>{{ $customer->age }}</td>
                                             <td>{{ $customer->identity_no }}</td>
                                             <td>{{ $customer->nationality }}</td>
+                                            <td>
+                                                <div class="d-inline-flex">
+                                                    <a href="{{ route("admin.customer.show", $customer->id) }}" class="btn btn-primary btn-sm">
+                                                        View Detail
+                                                    </a>
+                                                </div>
+                                            </td>
                                         </tr>
                                     @endforeach
                                 </tbody>

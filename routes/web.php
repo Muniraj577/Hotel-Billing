@@ -63,15 +63,24 @@ Route::group(["prefix"=>"admin/", "middleware" => "auth", "as"=>"admin."], funct
     });
 
     Route::group(["prefix"=>"booking/room/", "as" => "booking_room."],function(){
+        Route::get("create-form/{id}", [BookingRoomController::class, "getForm"])->name("getForm");
+        Route::post("add-room/{id}", [BookingRoomController::class, "addRoom"])->name("addRoom");
+        Route::get("edit/{id}", [BookingRoomController::class, "edit"])->name("edit");
+        Route::post("update/{id}", [BookingRoomController::class, "update"])->name("update");
         Route::delete("delete/{id}", [BookingRoomController::class, "destroy"])->name("destroy");
     });
 
     Route::group(["prefix"=>"relative/", "as"=>"relative."], function(){
+        Route::get("create/{id}", [AdminRelativeController::class,"create"])->name("create");
+        Route::post("store/{id}", [AdminRelativeController::class, "store"])->name("store");
+        Route::get("edit/{id}", [AdminRelativeController::class, "edit"])->name("edit");
+        Route::put("update/{id}", [AdminRelativeController::class, "update"])->name("udpate");
         Route::delete("delete/{id}", [AdminRelativeController::class, "destroy"])->name("destroy");
     });
 
     Route::group(["prefix"=>"customers/", "as" => "customer."], function(){
         Route::get("",[AdminCustomerController::class, "index"])->name("index");
+        Route::get("show/{id}", [AdminCustomerController::class, "show"])->name("show");
     });
 
     Route::post('get-all-customers', [AdminDashboardController::class, 'getCustomer'])->name('getCustomer');

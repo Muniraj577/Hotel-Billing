@@ -73,10 +73,28 @@ class BookingController extends Controller
                     'driving_license_no' => $request->driving_license_no,
                     'signature' => $image,
                 ]);
-                $this->__createBooking($request, $customer->id);
+                $bkd = BookingDetail::create([
+                    'customer_id' => $customer->id,
+                    'arrival_date' => $request->arrival_date,
+                    'nepali_arrival_date' => $request->nepali_arrival_date,
+                    'arrival_time' => date("H:i", strtotime($request->arrival_time)),
+                    'departure_date' => $request->departure_date,
+                    'nepali_departure_date' => $request->nepali_departure_date,
+                    'departure_time' => date("H:i", strtotime($request->departure_time)),
+                    'purpose' => $request->purpose,
+                    'remarks' => $request->remarks,
+                    'no_of_rooms' => $request->no_of_rooms,
+                    'no_of_relative' => $request->no_of_relatives,
+                ]);
+                $this->__createRoomDetail($request, $customer->id, $bkd->id);
                 DB::commit();
-                return redirect()->back()->with(notify("success", "Booking created successfully"));
+                if ($request->save == "save") {
+                    return redirect()->back()->with(notify("success", "Booking created successfully"));
+                } else if ($request->save == "save_and_add_relative") {
+                    return redirect()->route("admin.relative.create", $bkd->id)->with(notify("success", "Booking created successfully"));
+                }
             } catch (\Exception $e) {
+                DB::rollBack();
                 return redirect()->back()->with(notify("warning", $e->getMessage()));
             }
         }
@@ -114,9 +132,9 @@ class BookingController extends Controller
                 ]);
                 date_default_timezone_set("Asia/Kathmandu");
                 $a = date("y-m-d H:i");
-                $b = $request->departure_date . " ". $request->departure_time;
-                if(strtotime($a) > strtotime($b)){
-                    foreach($booking->booking_rooms as $booking_room){
+                $b = $request->departure_date . " " . $request->departure_time;
+                if (strtotime($a) > strtotime($b)) {
+                    foreach ($booking->booking_rooms as $booking_room) {
                         $room = Room::where('id', $booking_room->room_id)->first();
                         $room->update(['status' => 'Available']);
                     }
@@ -133,6 +151,7 @@ class BookingController extends Controller
 
     private function __createBooking($data, $customerId)
     {
+        // dd($data->save);
         $bkd = BookingDetail::create([
             'customer_id' => $customerId,
             'arrival_date' => $data->arrival_date,
@@ -147,7 +166,20 @@ class BookingController extends Controller
             'no_of_relative' => $data->no_of_relatives,
         ]);
         $this->__createRoomDetail($data, $customerId, $bkd->id);
-        $this->__createRelative($data, $customerId, $bkd->id);
+        if ($data->no_of_relatives != null || $data->no_of_relatives > 0) {
+            $this->__createRelative($data, $customerId, $bkd->id);
+        }
+        if ($data->save == "save") {
+            return redirect()->back()->with(notify("success", "Booking created successfully"));
+        } else if ($data->save == "save_and_add_relative") {
+            return redirect()->route("admin.relative.create", $bkd->id)->with(notify("success", "Booking created successfully"));
+        }
+
+    }
+
+    private function __getBookingId($booking_id)
+    {
+        return $booking_id;
     }
 
     private function __createRoomDetail($data, $customerId, $booking_id)
@@ -164,7 +196,7 @@ class BookingController extends Controller
 
     private function __createRelative($data, $customerId, $booking_id)
     {
-        foreach($data->input("relative_first_name") as $key => $value){
+        foreach ($data->input("relative_first_name") as $key => $value) {
             $relative = Relative::create([
                 'customer_id' => $customerId,
                 'booking_id' => $booking_id,

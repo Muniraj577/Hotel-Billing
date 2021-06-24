@@ -12,6 +12,13 @@ use Illuminate\Support\Facades\Validator;
 
 class RoomController extends Controller
 {
+    public function getForm(Request $request, $id)
+    {
+        $booking_detail = BookingDetail::findOrFail($id);
+        $rooms = Room::all();
+        return view("admin.partial.room.createForm", compact("rooms", "booking_detail"));
+    }
+
     public function addRoom(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
@@ -27,11 +34,46 @@ class RoomController extends Controller
                 DB::beginTransaction();
                 $bkd = BookingDetail::findOrFail($id);
                 $booking_room = new BookingRoom();
+                $booking_room->room_id = $request->room_id;
                 $booking_room->booking_id = $id;
                 $booking_room->customer_id = $bkd->customer_id;
                 $booking_room->save();
                 DB::commit();
-                return response()->json(["success" => "Room added successfully"]);
+                return response()->json(["msg" => "Room added successfully"]);
+            } catch (\Exception $e) {
+                DB::rollBack();
+                return response()->json(["error" => $e->getMessage()]);
+            }
+        }
+    }
+
+    public function edit($id)
+    {
+        $booking_room = BookingRoom::findOrFail($id);
+        $rooms = Room::all();
+        return view("admin.partial.room.editForm", compact("booking_room", "rooms"));
+    }
+
+    public function update(Request $request, $id)
+    {
+        dd($request->all());
+        $validator = Validator::make($request->all(), [
+            'roomid' => "required",
+        ], [
+            "roomid.required" => "This field is required",
+        ]);
+        if ($validator->fails()) {
+            return response()->json(["errors" => $validator->errors()]);
+        }
+        if ($validator->passes()) {
+            try {
+                DB::beginTransaction();
+                $booking_room = BookingRoom::findOrFail($id);
+                $booking_room->update([
+                    "room_id" => $request->roomid,
+                ]);
+                DB::commit();
+                return response()->json(["msg" => "Room updated successfully"]);
             } catch (\Exception $e) {
                 DB::rollBack();
                 return response()->json(["error" => $e->getMessage()]);

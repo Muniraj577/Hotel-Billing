@@ -24,6 +24,6 @@ class BookingDetail extends Model
 
     public function relatives()
     {
-        return $this->hasMany("App\Models\Relative", "booking_id", "id");
+        return $this->hasMany("App\Models\Customer", "booking_id", "id");
     }
 }
