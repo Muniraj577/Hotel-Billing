@@ -62,7 +62,7 @@
                                                 {{ $booking_detail->nepali_departure_date ? $booking_detail->nepali_departure_date : ($booking_detail->departure_date ? $booking_detail->departure_date : ucwords('Not available')) }}
                                             </td>
                                             <td>
-                                                {{ $booking_detail->departure_time != null ? date('h:i a', strtotime($booking_detail->departure_time)) : '00:00' }}
+                                                {{ $booking_detail->departure_time != null ? date('h:i a', strtotime($booking_detail->departure_time)) : 'Not Available' }}
                                             </td>
                                             <td>{{ $booking_detail->no_of_rooms }}</td>
                                             <td>
@@ -77,12 +77,14 @@
                                                         <a class='dropdown-item'
                                                             href="{{ route('admin.booking.show', $booking_detail->id) }}"><i
                                                                 class='fa fa-eye iCheck'></i>&nbsp;View Booking Detail</a>
-
+                                                        <a class="dropdown-item" href="{{ route("admin.booking.edit", $booking_detail->id) }}">
+                                                            <i class="fa fa-edit iCheck"></i>&nbsp;Edit Booking Detail</a>
                                                         <button class="dropdown-item" type="button" data-toggle="modal"
                                                             data-target="#departureModal"
                                                             data-target-id="{{ $booking_detail->id }}">
                                                             <i class="fa fa-edit"></i>Update Departure
                                                         </button>
+
 
                                                         {{-- <button class='dropdown-item' onclick='alertPayMessage();'><i class='far fa-money-bill-alt iCheck'></i>&nbsp;Add Payment</button> --}}
                                                     </div>
@@ -236,6 +238,5 @@
                 }
             });
         });
-
     </script>
 @endsection

@@ -57,6 +57,8 @@ Route::group(["prefix"=>"admin/", "middleware" => "auth", "as"=>"admin."], funct
         Route::get("create", [AdminBookingController::class, "create"])->name("create");
         Route::post("store", [AdminBookingController::class,"store"])->name("store");
         Route::get("detail/{id}", [AdminBookingController::class, "show"])->name("show");
+        Route::get("edit/{id}", [AdminBookingController::class, "edit"])->name("edit");
+        Route::put("update/{id}", [AdminBookingController::class, "update"])->name("update");
 
         Route::get("update-departure/{id}", [AdminBookingController::class, "getDepartureModel"])->name("getDepartureModel");
         Route::post("update-departure/{id}", [AdminBookingController::class, "updateDeparture"])->name("updateDeparture");

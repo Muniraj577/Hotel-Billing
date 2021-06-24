@@ -240,7 +240,7 @@
                                                     <td>{{ $booking_room->room->name }}</td>
                                                     <td>
                                                         <div class="d-inline-flex">
-                                                            <button type="button" class="btn btn-sm btn-primary" data-target="#editRoomModal" data-toggle="modal" data-target-id="{{ $booking_room->id }}">
+                                                            <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editRoomModal" data-target-id="{{ $booking_room->id }}">
                                                                 Edit
                                                             </button>&nbsp;&nbsp;
                                                             <form
@@ -341,9 +341,7 @@
     <script>
         $(document).ready(function() {
             $("#createRoomModal").on("show.bs.modal", function(e) {
-                console.log($(e.relatedTarget));
                 var id = $(e.relatedTarget).data("target-id");
-                console.log(id);
                 var url = "{{ route('admin.booking_room.getForm', ':id') }}",
                     url = url.replace(":id", id);
                 $.get(url, function(data) {
@@ -359,6 +357,7 @@
 
             $("#editRoomModal").on("show.bs.modal", function(e) {
                 var id = $(e.relatedTarget).data("target-id");
+                console.log(id);
                 var url = "{{ route('admin.booking_room.edit', ':id') }}",
                     url = url.replace(":id", id);
                 $.get(url, function(data) {
@@ -375,7 +374,9 @@
         $("#saveRoom").on("click", function(e){
             $('.require').css('display', 'none');
             e.preventDefault();
-            var formData = new FormData($('#roomForm')[0]);
+            var formData = $('#roomForm').serialize();
+            // var formData = new FormData($('#roomForm')[0]);
+            console.log(formData);
             var action = $("#roomForm").attr('action');
             $.ajax({
                 url: action,
@@ -405,6 +406,7 @@
 
 
         $("#editRoom").on("click", function(e){
+        
             console.log("Hi");
             $('.require').css('display', 'none');
             e.preventDefault();
@@ -412,6 +414,7 @@
             // console.log(formData);
             var formData = $("#editRoomForm").serialize();
             console.log(formData);
+            
             var action = $("#editRoomForm").attr('action');
             $.ajax({
                 url: action,

@@ -16,6 +16,8 @@
 
 <script>
     function clickfunc(room){
-        console.log($(room).val());
+        var new_value = $(room).val();
+        $(room).children().removeAttr("selected");
+        $("#roomId").val(new_value);
     }
 </script>

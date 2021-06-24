@@ -15,12 +15,13 @@ class RoomController extends Controller
     public function getForm(Request $request, $id)
     {
         $booking_detail = BookingDetail::findOrFail($id);
-        $rooms = Room::all();
+        $rooms = Room::where("status", "Available")->where("is_active", 1)->get();
         return view("admin.partial.room.createForm", compact("rooms", "booking_detail"));
     }
 
     public function addRoom(Request $request, $id)
     {
+        // dd($request->all());
         $validator = Validator::make($request->all(), [
             'room_id' => "required",
         ], [
@@ -38,6 +39,10 @@ class RoomController extends Controller
                 $booking_room->booking_id = $id;
                 $booking_room->customer_id = $bkd->customer_id;
                 $booking_room->save();
+                $no_of_room = $bkd->no_of_rooms;
+                $bkd->update([
+                    "no_of_rooms" => $no_of_room + 1,
+                ]);
                 DB::commit();
                 return response()->json(["msg" => "Room added successfully"]);
             } catch (\Exception $e) {
@@ -50,13 +55,13 @@ class RoomController extends Controller
     public function edit($id)
     {
         $booking_room = BookingRoom::findOrFail($id);
-        $rooms = Room::all();
+        $rooms = Room::where("is_active", 1)->where("status", "Available")->orWhere("id", $booking_room->room_id)->get();
         return view("admin.partial.room.editForm", compact("booking_room", "rooms"));
     }
 
     public function update(Request $request, $id)
     {
-        dd($request->all());
+        // dd($request->all());
         $validator = Validator::make($request->all(), [
             'roomid' => "required",
         ], [
@@ -69,9 +74,11 @@ class RoomController extends Controller
             try {
                 DB::beginTransaction();
                 $booking_room = BookingRoom::findOrFail($id);
+                $room = Room::where("id", $booking_room->room_id)->first()->update(["status" => "Available"]);
                 $booking_room->update([
                     "room_id" => $request->roomid,
                 ]);
+                Room::where("id", $booking_room->room_id)->first()->update(["status" => "UnAvailable"]);
                 DB::commit();
                 return response()->json(["msg" => "Room updated successfully"]);
             } catch (\Exception $e) {

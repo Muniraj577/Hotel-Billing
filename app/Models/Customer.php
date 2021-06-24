@@ -9,8 +9,8 @@ class Customer extends Model
 {
     use HasFactory;
 
-    protected $fillable = ["first_name", "middle_name", "last_name", "gender", "age", "nationality",
-        "address", "contact_no", "occupation", "identity_no", "driving_license_no", "signature"];
+    protected $fillable = ["parent_id", "booking_id", "first_name", "middle_name", "last_name", "gender", "age", "nationality",
+        "address", "contact_no", "occupation", "identity_no", "driving_license_no", "signature", "relation"];
 
     public function booking_details()
     {
@@ -19,7 +19,7 @@ class Customer extends Model
 
     public static function getCustomer($keyword)
     {
-        return self::where('first_name', "LIKE", "%". $keyword . "%")->orWhere('contact_no', $keyword)->get();
+        return self::where("parent_id",null)->where('first_name', "LIKE", "%". $keyword . "%")->orWhere('contact_no', $keyword)->get();
     }
     
     public function getFullNameAttribute()

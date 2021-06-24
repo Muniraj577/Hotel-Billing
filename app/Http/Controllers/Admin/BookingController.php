@@ -80,7 +80,7 @@ class BookingController extends Controller
                     'arrival_time' => date("H:i", strtotime($request->arrival_time)),
                     'departure_date' => $request->departure_date,
                     'nepali_departure_date' => $request->nepali_departure_date,
-                    'departure_time' => date("H:i", strtotime($request->departure_time)),
+                    'departure_time' => $request->departure_time != null ? date("H:i", strtotime($request->departure_time)) : null,
                     'purpose' => $request->purpose,
                     'remarks' => $request->remarks,
                     'no_of_rooms' => $request->no_of_rooms,
@@ -106,6 +106,75 @@ class BookingController extends Controller
         return view($this->page . "show", compact("booking_detail"));
     }
 
+    public function edit($id)
+    {
+        $booking_detail = BookingDetail::where("id", $id)->with("customer")->firstOrFail();
+        return view($this->page . "edit", compact("booking_detail"));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(),[
+            "first_name" => "required|string",
+            "last_name" => "required|string",
+            "gender" => "required|string",
+            "age" => "required|integer|max:100",
+            "nationality" => "required|string",
+            "address" => "required",
+            "contact_no" => "required",
+            "occupation" => "required|string",
+            "identity_no" => "required",
+            "signature" => "image|mimes:jpeg,jpg,png|max:2048",
+            "arrival_date" => "required",
+            "arrival_time" => "required",
+        ],[
+            "first_name.required" => "First Name is required",
+            "last_name.required" => "Surname is required",
+            "gender.required" => "Gender is required",
+            "age.required" => "Age is required",
+            "age.integer" => "Age must be a number",
+            "age.max" => "Age must be between 0 and 100",
+            "nationality.required" => "Nationality is required",
+            "address.required" => "Address is required",
+            "contact_no.required" => "Contact number is required",
+            "occupation.required" => "Occupation is required",
+            "identity_no.required" => "Citizenship number is required",
+            "signature.image" => "Please upload a valid image",
+            "signature.mimes" => "Image must be of type jpg, jpeg, png",
+            "arrival_date.required" => "Arrival date is required",
+            "arrival_time.required" => "Arrival time is required",
+        ]);
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+        if ($validator->passes()) {
+            try {
+                DB::beginTransaction();
+                $booking_detail = BookingDetail::findOrFail($id);
+                if ($request->customer_id != null) {
+                    $this->__updateCustomer($request, $request->customer_id, $booking_detail->id);
+                    $booking_rooms = BookingRoom::where("booking_id", $id)->get();
+                    $customers = Customer::where("booking_id", $id)->get();
+                    foreach ($booking_rooms as $booking_room) {
+                        $booking_room->update(["customer_id" => $request->customer_id]);
+                    }
+                    foreach ($customers as $customer) {
+                        $customer->update(["parent_id" => $request->customer_id]);
+                    }
+                    
+                } else if ($request->customer_id == null) {
+                    $this->__updateCustomer($request, $booking_detail->customer_id, $booking_detail->id);
+                }
+
+                DB::commit();
+                return redirect()->route($this->redirectTo)->with(notify("success", "Booking detail updated successfully"));
+            } catch (\Exception $e) {
+                DB::rollBack();
+                return redirect()->back()->with(notify("warning", $e->getMessage));
+            }
+        }
+    }
+
     public function getDepartureModel($id)
     {
         $booking_detail = BookingDetail::findOrFail($id);
@@ -128,7 +197,7 @@ class BookingController extends Controller
                 $booking->update([
                     "departure_date" => $request->departure_date,
                     "nepali_departure_date" => $request->nepali_departure_date,
-                    "departure_time" => $request->departure_time,
+                    "departure_time" => $request->departure_time != null ? date("H:i", strtotime($request->departure_time)) : null,
                 ]);
                 date_default_timezone_set("Asia/Kathmandu");
                 $a = date("y-m-d H:i");
@@ -151,7 +220,6 @@ class BookingController extends Controller
 
     private function __createBooking($data, $customerId)
     {
-        // dd($data->save);
         $bkd = BookingDetail::create([
             'customer_id' => $customerId,
             'arrival_date' => $data->arrival_date,
@@ -159,7 +227,7 @@ class BookingController extends Controller
             'arrival_time' => date("H:i", strtotime($data->arrival_time)),
             'departure_date' => $data->departure_date,
             'nepali_departure_date' => $data->nepali_departure_date,
-            'departure_time' => date("H:i", strtotime($data->departure_time)),
+            'departure_time' => $data->departure_time != null ? date("H:i", strtotime($data->departure_time)) : null,
             'purpose' => $data->purpose,
             'remarks' => $data->remarks,
             'no_of_rooms' => $data->no_of_rooms,
@@ -177,11 +245,6 @@ class BookingController extends Controller
 
     }
 
-    private function __getBookingId($booking_id)
-    {
-        return $booking_id;
-    }
-
     private function __createRoomDetail($data, $customerId, $booking_id)
     {
         foreach ($data->input('room_no') as $key => $value) {
@@ -190,8 +253,45 @@ class BookingController extends Controller
                 'booking_id' => $booking_id,
                 'room_id' => $value,
             ]);
+            $room = Room::where("id", $value)->firstOrFail();
+            $room->update(["status" => "UnAvailable"]);
         }
 
+    }
+
+    private function __updateCustomer($data, $customerId, $booking_id)
+    {
+        $customer = Customer::where("id", $customerId)->firstOrFail();
+        $oldSign = $customer->signature;
+        $customer->first_name = $data->first_name;
+        $customer->middle_name = $data->middle_name;
+        $customer->last_name = $data->last_name;
+        $customer->gender = $data->gender;
+        $customer->age = $data->age;
+        $customer->nationality = $data->nationality;
+        $customer->address = $data->address;
+        $customer->contact_no = $data->contact_no;
+        $customer->occupation = $data->occupation;
+        $customer->identity_no = $data->identity_no;
+        $customer->driving_license_no = $data->driving_license_no;
+        if ($data->has("signature")) {
+            $customer->signature = Upload::image($data, "signature", $this->destination, $oldSign);
+        } else {
+            $customer->signature = $oldSign;
+        }
+        $customer->save();
+        $booking_detail = BookingDetail::findOrFail($booking_id);
+        $booking_detail->update([
+            'customer_id' => $customerId,
+            'arrival_date' => $data->arrival_date,
+            'nepali_arrival_date' => $data->nepali_arrival_date,
+            'arrival_time' => date("H:i", strtotime($data->arrival_time)),
+            'departure_date' => $data->departure_date,
+            'nepali_departure_date' => $data->nepali_departure_date,
+            'departure_time' => $data->departure_time != null ? date("H:i", strtotime($data->departure_time)) : null,
+            'purpose' => $data->purpose,
+            'remarks' => $data->remarks,
+        ]);
     }
 
     private function __createRelative($data, $customerId, $booking_id)
