@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -20,7 +19,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'address', 
+        'address',
         'phone',
         'status',
         'avatar',
@@ -46,12 +45,8 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function avatarImg($img)
+    public function avatarImg($img = "default.png")
     {
-        if($img != null){
-            return asset("images/admin/avatars/".$img);
-        } else {
-            return asset("images/default.png");
-        }
+        return asset("images/admin/avatars/" . $img);
     }
 }

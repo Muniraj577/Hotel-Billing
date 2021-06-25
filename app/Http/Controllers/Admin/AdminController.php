@@ -6,9 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\AdminRequest;
 use App\Models\Upload;
 use App\Models\User;
+use App\Rules\MatchPassword;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Validator;
 
 class AdminController extends Controller
 {
@@ -89,6 +93,75 @@ class AdminController extends Controller
         $status_data = $user->status == 1 ? 'Active' : 'Inactive';
         $user->update(['status' => $status]);
         return response()->json(['msg' => 'Admin status updated successfully', 'status' => $user->status]);
+    }
+
+
+    public function profile()
+    {
+        $user = getUser();
+        return view($this->page . 'profile', compact('user'));
+    }
+
+    public function adminNewPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'current_password' => ['required', new MatchPassword()],
+            'password' => 'required|confirmed|min:10|regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!@&$#%(){}^*+-]).*$/',
+        ], [
+            'password.regex' => 'Password must contain at least one uppercase , lowercase, digit and special character',
+        ]);
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+        if ($validator->passes()) {
+            try {
+                User::find(getUser()->id)->update(['password' => Hash::make($request->password)]);
+                Auth::logout();
+                Session::flush();
+                return redirect()->route('login');
+            } catch (\Exception $e) {
+                return redirect()->back()->with(notify('warning', $e->getMessage()));
+            }
+        }
+
+    }
+
+    public function changeAdminEmail(Request $request)
+    {
+        $this->validate($request, [
+            'email' => 'required|email:dns',
+        ]);
+        User::find(getUser()->id)->update(['email' => $request->email]);
+        $notification = array(
+            'alert-type' => 'success',
+            'message' => 'Email changed successfully.'
+        );
+        return redirect()->back()->with($notification);
+    }
+
+    public function chageAdminAvatar(Request $request)
+    {
+        $this->validate($request, [
+            'phone' => "nullable|numeric|digits_between:10,13",
+            'image' => 'image|mimes:jpeg,png,jpg,svg|max:2048',
+        ],[
+            'phone.min' =>'Phone must have at least 10 digits',
+            'phone.numeric' => "Phone must contain only numeric value",
+            'phone.digits_between'=>"The Phone length must be 10 to 13",
+        ]);
+        $input = $request->except('_token');
+        $oldImage = getUser()->avatar;
+        if ($request->hasFile('image')) {
+            $input['avatar'] = Upload::image($request, 'image', $this->destination, $oldImage);
+        } else {
+            $input['avatar'] = $oldImage;
+        }
+        getUser()->update($input);
+        $notification = array(
+            'alert-type' => 'success',
+            'message' => 'Profile changed successfully.'
+        );
+        return redirect()->back()->with($notification);
     }
 
     private $page = "admin.user.";

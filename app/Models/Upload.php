@@ -16,7 +16,7 @@ class Upload extends Model
         }
         $image = $request->$filename;
         $imageName = time() . '.' . $image->getClientOriginalExtension();
-        if ($oldImage != null && file_exists($path . $oldImage)) {
+        if ($oldImage != null && file_exists($path . $oldImage) && $oldImage != "default.png") {
             unlink($path . $oldImage);
         }
         $image->move($path, $imageName);

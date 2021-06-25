@@ -698,7 +698,12 @@
                     lettersonly: true,
                 },
                 address: "required",
-                contact_no: "required",
+                contact_no: {
+                    required: true,
+                    digits: true,
+                    minlength: 10,
+                    maxlength: 13
+                },
                 occupation: {
                     required: true,
                     lettersonly: true,
@@ -769,7 +774,13 @@
                     required: "Nationality is required"
                 },
                 address: "Address is required",
-                contact_no: "Contact number is required",
+                
+                contact_no: {
+                    required: "Contact number is required",
+                    digits: "Contact number must contain only numeric value",
+                    minlength: "Contact number must have at least 10 digits",
+                    maxlength: "The phone length must not be greater than 13",
+                },
                 occupation: {
                     required: "Occupation is required",
                 },

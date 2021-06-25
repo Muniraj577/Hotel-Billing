@@ -1,10 +1,9 @@
 <?php
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Auth;
-// $user = Auth::guard('admin')->user();
 $menu = 'menu-open';
-$active = 'active';
-$catNav = Request::is('admin/category*');
+$active = 'active menu-open';
+$bookNav = Request::is('admin/booking*');
 
 ?>
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
@@ -16,11 +15,11 @@ $catNav = Request::is('admin/category*');
     <div class="sidebar">
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
             <div class="image">
-                <img src="{{asset('images/admin/avatars/default.png')}}" class="img-circle elevation-2"
+                <img src="{{ getUser()->avatarImg(getUser()->avatar) }}" class="img-circle elevation-2"
                      alt="User Image">
             </div>
             <div class="info">
-                <a href="#" class="d-block">Muniraj Rajbanshi</a>
+                <a href="#" class="d-block">{{ getUser()->name }}</a>
             </div>
         </div>
         <!-- Sidebar Menu -->

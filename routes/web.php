@@ -41,6 +41,12 @@ Route::group(["prefix"=>"admin/", "middleware" => "auth", "as"=>"admin."], funct
         Route::put("update/{id}", [AdminUserController::class, "update"])->name("update");
         
         Route::post("update-user-status",[AdminUserController::class,"updateStatus"])->name("updateStatus");
+
+        // User Profile
+        Route::get("profile/", [AdminUserController::class, "profile"])->name("profile");
+        Route::post("change-admin-password", [AdminUserController::class, "adminNewPassword"])->name("adminNewPassword");
+        Route::post("change-admin-email",[AdminUserController::class, "changeAdminEmail"])->name("changeAdminEmail");
+        Route::post("change-admin-profile", [AdminUserController::class, "chageAdminAvatar"])->name("chageAdminAvatar");
     });
 
     Route::group(["prefix" => "room/", "as"=>"room."], function(){

@@ -19,13 +19,13 @@
                 aria-haspopup="true" aria-expanded="false" v-pre>
                 <img
                     class="img-circle elevation-2 img-size-32 mr-1 ml-3"
-                    src="{{asset('images/admin/avatars/default.png')}}"
-                    alt="Muniraj">
-                Muniraj Rajbanshi <span class="caret"></span>
+                    src="{{ getUser()->avatarImg(getUser()->avatar) }}"
+                    alt="{{ getUser()->name }}">
+                {{ getUser()->name }} <span class="caret"></span>
             </a>
 
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                <a href="#" class="dropdown-item">
+                <a href="{{ route("admin.user.profile") }}" class="dropdown-item">
                     <i class="far fa-user-circle nav-icon"></i> User Profile
                 </a>
                 <a class="dropdown-item" href="#" onclick="event.preventDefault();

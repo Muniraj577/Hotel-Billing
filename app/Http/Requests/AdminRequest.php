@@ -60,7 +60,7 @@ class AdminRequest extends FormRequest
             'address.required'=>'Address is required',
             'phone.min' =>'Phone must have at least 10 digits',
             'phone.numeric' => "Phone must contain only numeric value",
-            'phone.max'=>"The phone length must not be greater than 13",
+            'phone.digits_between'=>"The phone length must be 10 to 13",
         ];
     }
 }

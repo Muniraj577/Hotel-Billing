@@ -164,9 +164,9 @@
                                                         <label for="avatar">Upload profile pic</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <input type="file" name="avatar" id="img"
+                                                        <input type="file" name="avatar" id="img" onchange="showImg(this, 'imgPreview')"
                                                             class="form-control @error('avatar') is-invalid @enderror">
-                                                        <img src="" id="imgPreview" alt="">
+                                                        <img src="#" id="imgPreview" alt="">
                                                         @error('avatar')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror

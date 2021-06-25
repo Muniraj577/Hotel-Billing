@@ -162,7 +162,7 @@
                                                         <label for="avatar">Upload profile pic</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <input type="file" name="avatar" id="img"
+                                                        <input type="file" name="avatar" id="img" onchange="showImg(this, 'imgPreview')"
                                                             class="form-control @error('avatar') is-invalid @enderror">
                                                         <img src="{{ $user->avatarImg($user->avatar) }}" id="imgPreview"
                                                             class="imgSize" alt="">

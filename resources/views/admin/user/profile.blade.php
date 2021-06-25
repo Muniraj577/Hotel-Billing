@@ -8,7 +8,7 @@
         }
 
     </style>
-    <?php $admin = getAdmin(); ?>
+    <?php $user = getUser(); ?>
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
@@ -26,11 +26,11 @@
                         <div class="card-body box-profile">
                             <div class="text-center">
                                 <img class="profile-user-img img-fluid img-circle"
-                                    src="{{ asset('images/admin/avatars/' . $admin->avatar) }}" alt="User profile picture">
+                                    src="{{ $user->avatarImg($user->avatar) }}" alt="User profile picture">
                             </div>
-                            <h3 class="profile-username text-center"><i class="fas fa-user"></i> {{ $admin->name }}
+                            <h3 class="profile-username text-center"><i class="fas fa-user"></i> {{ $user->name }}
                             </h3>
-                            <p class="text-center"><i class="fas fa-envelope"></i> {{ $admin->email }}
+                            <p class="text-center"><i class="fas fa-envelope"></i> {{ $user->email }}
                             </p>
                         </div>
                     </div>
@@ -46,8 +46,8 @@
                                         href="#change-email" data-toggle="tab">Change
                                         Email</a></li>
                                 <li class="nav-item"><a class="nav-link{{ $errors->has('image') ? 'active' : '' }}"
-                                        href="#change-image" data-toggle="tab">Change
-                                        Image</a></li>
+                                        href="#change-image" data-toggle="tab">Update
+                                        Profile</a></li>
                             </ul>
                         </div>
                         <div class="card-body">
@@ -55,7 +55,7 @@
                                 <div class="tab-pane {{ $errors->has('current_password') || $errors->has('password') ? 'active' : '' }}"
                                     id="change-password">
                                     <form class="form-horizontal" method="POST"
-                                        action="{{ route('admin.adminNewPassword') }}">
+                                        action="{{ route('admin.user.adminNewPassword') }}" id="passwordForm">
                                         @csrf
                                         {{-- @foreach ($errors->all() as $error)
                                             <p class="text-danger">{{ $error }}</p>
@@ -64,8 +64,8 @@
                                             <label for="password" class="col-sm-2 col-form-label">Current
                                                 Password</label>
                                             <div class="col-sm-10">
-                                                <input type="password" class="form-control" id="password"
-                                                    name="current_password" autocomplete="current-password">
+                                                <input type="password" class="form-control" name="current_password"
+                                                    autocomplete="current-password">
                                                 @error('current_password')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
@@ -75,7 +75,7 @@
                                             <label for="new_password" class="col-sm-2 col-form-label">New
                                                 Password</label>
                                             <div class="col-sm-10">
-                                                <input type="password" class="form-control" name="password">
+                                                <input type="password" class="form-control" name="password" id="password">
                                                 @error('password')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
@@ -95,13 +95,13 @@
                                 </div>
                                 <div class="tab-pane {{ $errors->has('email') ? 'active' : '' }}" id="change-email">
                                     <form class="form-horizontal" method="POST"
-                                        action="{{ route('admin.changeAdminEmail') }}">
+                                        action="{{ route('admin.user.changeAdminEmail') }}" id="changeEmailForm">
                                         @csrf
                                         <div class="form-group row">
                                             <label for="email" class="col-sm-2 col-form-label">Email</label>
                                             <div class="col-sm-10">
                                                 <input type="email" class="form-control" id="email" placeholder="Email"
-                                                    value="{{ $admin->email }}" readonly="readonly">
+                                                    value="{{ $user->email }}" readonly="readonly">
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -124,8 +124,42 @@
                                 </div>
                                 <div class="tab-pane {{ $errors->has('image') ? 'active' : '' }}" id="change-image">
                                     <form class="form-horizontal" method="POST"
-                                        action="{{ route('admin.chageAdminAvatar') }}" enctype="multipart/form-data">
+                                        action="{{ route('admin.user.chageAdminAvatar') }}"
+                                        enctype="multipart/form-data" id="updateProfileForm">
                                         @csrf
+                                        <div class="form-group row">
+                                            <label for="name" class="col-sm-2 col-form-label">Full Name:</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" value="{{ old('name', $user->name) }}"
+                                                    class="form-control" name="name" id="name">
+                                                @error('name')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="address" class="col-sm-2 col-form-label">Address:</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control"
+                                                    value="{{ old('address', $user->address) }}" name="address"
+                                                    id="address">
+                                                @error('address')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="phone" class="col-sm-2 col-form-label">Phone:</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control"
+                                                    value="{{ old('phone', $user->phone) }}" name="phone" id="phone">
+                                                @error('phone')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+
+
+                                        </div>
                                         <div class="form-group row">
                                             <label for="image" class="col-sm-2 col-form-label">Choose Image:</label>
                                             <div class="col-sm-10">
@@ -134,8 +168,9 @@
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
                                             </div>
-                                            <img id="imgPreview" src="{{ asset('images/admin/avatars/' . $admin->avatar) }}"
-                                                alt="" style="width: 100px; height: 100px;">
+                                            <img id="imgPreview"
+                                                src="{{ asset('images/admin/avatars/' . $user->avatar) }}" alt=""
+                                                style="width: 100px; height: 100px;">
 
                                         </div>
 
@@ -153,4 +188,91 @@
             </div>
         </div>
     </section>
+@endsection
+
+@section('scripts')
+    <script>
+        $("#passwordForm").validate({
+            rules: {
+                current_password: {
+                    required: true,
+                },
+                password: {
+                    required: true,
+                    passwordCheck: true,
+                    minlength: 10,
+                },
+                password_confirmation: {
+                    equalTo: "#password",
+                },
+            },
+            messages: {
+                password: {
+                    required: "New Password is required",
+                    minlength: "Password must be of at least 10 characters.",
+                    passwordCheck: "Password must contain at least one uppercase , lowercase, digit and special character",
+                },
+                password_confirmation: {
+                    equalTo: "Password confirmation does not match.",
+                },
+            },
+            submitHandler: function(form) {
+                form.submit();
+            }
+        });
+
+        $("#changeEmailForm").validate({
+            rules: {
+                email: {
+                    required: {
+                        depends: function() {
+                            $(this).val($.trim($(this).val()));
+                            return true;
+                        }
+                    },
+                    customemail: true,
+                },
+            },
+            messages: {
+                email: {
+                    required: "Email is required",
+                    customemail: "Please enter valid email address",
+                },
+            },
+            submitHandler: function(form) {
+                form.submit();
+            }
+        });
+
+        $("#updateProfileForm").validate({
+            rules: {
+                name: {
+                    required: true,
+                    lettersonly: true,
+                },
+                address:{
+                    lettersonly: true,
+                },
+                phone: {
+                    digits: true,
+                    minlength: 10,
+                    maxlength: 13
+                },
+            },
+            messages: {
+                email: {
+                    required: "Email is required",
+                    customemail: "Please enter valid email address",
+                },
+                phone: {
+                    digits: "Phone must contain only numeric value",
+                    minlength: "Phone must have at least 10 digits",
+                    maxlength: "The phone length must not be greater than 13",
+                },
+            },
+            submitHandler: function(form) {
+                form.submit();
+            }
+        });
+    </script>
 @endsection
