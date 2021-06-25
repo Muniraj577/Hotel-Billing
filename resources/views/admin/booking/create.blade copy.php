@@ -158,6 +158,10 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="col-md-12">
                                             <div class="form-group">
                                                 <div class="row">
                                                     <div class="col-md-4">
@@ -172,10 +176,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="col-md-12">
                                             <div class="form-group">
                                                 <div class="row">
                                                     <div class="col-md-4">
@@ -250,22 +250,6 @@
                                                             onchange="showImg(this, 'preview')">
                                                         <img src="#" id="preview" alt="">
                                                         @error('signature')
-                                                            <span class="text-danger">{{ $message }}</span>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <label for="profile_pic">Upload Profile Photo</label>
-                                                    </div>
-                                                    <div class="col-md-8">
-                                                        <input type="file" name="profile_pic" class="form-control"
-                                                            onchange="showImg(this, 'preprofile')">
-                                                        <img src="#" id="preprofile" alt="">
-                                                        @error('profile_pic')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </div>
@@ -417,6 +401,49 @@
                                         </div>
                                     </div>
                                 </div>
+                                <h3><u>{{ strtoupper('Relatives') }}</u></h3>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <label for="no_of_relatives">No of Relatives</label>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <input type="text" name="no_of_relatives"
+                                                            value="{{ old('no_of_relatives') }}"
+                                                            onchange="addRelative($(this))" class="form-control"
+                                                            id="no_of_relative" placeholder="Enter no of relatives">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row relativeTable d-none">
+                                    <div class="col-md-12">
+                                        <div>
+                                            <button class="btn btn-primary float-right" type="button"
+                                                onclick="addRow();">Add</button>
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                    <th>First Name</th>
+                                                    <th>Middle Name</th>
+                                                    <th>Last Name</th>
+                                                    <th>Phone no</th>
+                                                    <th>Gender</th>
+                                                    <th style="width: 10%;">Age</th>
+                                                    <th>Relation</th>
+                                                    <th>Action</th>
+                                                </thead>
+                                                <tbody class="relative_data">
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="text-center">
                                     <button type="submit" name="save" value="save" class="btn btn-primary">Save</button>
                                     <button type="submit" name="save" value="save_and_add_relative"
@@ -454,9 +481,34 @@
                 var minDate = new Date(selected.date.valueOf());
                 $('#arrival_date').datepicker('setEndDate', minDate);
             });
+
+
+            // $(".timepicker").timepicker({
+            //     minuteStep: 1,
+            //     icons: {
+            //         up: 'fa fa-chevron-up',
+            //         down: 'fa fa-chevron-down'
+            //     }
+            // });
+
+
+
         });
 
         let selectedList = [];
+
+        // function onRoomChange(this_room) {
+        //     var $selects = $(".no_of_room");
+        //     var $select = $(this_room),
+        //         $options = $selects.not($select).find('option'),
+        //         selectedValue = $select.children('option:selected').val();
+        //     console.log(selectedValue);
+        //     var $optionsToDisable = $options.filter(function() {
+        //         return $(this).val() == selectedValue && $(this).val() != '';
+        //     });
+        //     $optionsToDisable.prop("disabled", true);
+        //     // $optionsToDisable.hide();
+        // }
 
         function onRoomChange() { // Working code;
             updateSelectedList();
@@ -512,6 +564,7 @@
                             </div>`;
                     }
                     $(".room_data").html(html);
+                    selectRefresh();
                 } else {
                     $.alert({
                         title: "Alert !",
@@ -530,6 +583,96 @@
             }
 
         }
+
+
+        function addRelative(relative_no) {
+            $(".relativeTable").removeClass("d-none");
+            var no_of_relative = $(relative_no).val();
+            var html = "";
+            for (var i = 0; i < no_of_relative; i++) {
+                html += `<tr>
+                            <td>
+                                <input type="text" class="form-control" name="relative_first_name[]">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="relative_middle_name[]">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="relative_last_name[]">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="relative_contact_no[]">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="relative_gender[]">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="relative_age[]">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="relative_relation[]">
+                            </td>
+                            <td>
+                                <div class="d-inline-flex">
+                                    <button type="button" onclick="removeRow($(this));" class="btn btn-sm">
+                                        <i class="fa fa-times req"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>`;
+            }
+            $(".relative_data").html(html);
+        }
+
+
+        function addRow() {
+            let html = `<tr>
+                            <td>
+                                <input type="text" class="form-control" name="relative_first_name[]">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="relative_middle_name[]">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="relative_last_name[]">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="relative_contact_no[]">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="relative_gender[]">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="relative_age[]">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="relative_relation[]">
+                            </td>
+                            <td>
+                                <div class="d-inline-flex">
+                                    <button type="button" onclick="removeRow($(this));" class="btn btn-sm">
+                                        <i class="fa fa-times req"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>`;
+            $(".relative_data").append(html);
+            var new_no_of_relative = parseInt($("#no_of_relative").val()) + 1;
+            $("#no_of_relative").val(new_no_of_relative);
+        }
+
+
+        function removeRow(row) {
+            $(row).closest("tr").remove();
+            var new_no_of_relative = parseInt($("#no_of_relative").val()) - 1;
+            $("#no_of_relative").val(new_no_of_relative);
+            var no_of_relative = $("#no_of_relative").val();
+            if (no_of_relative == 0) {
+                $(".relativeTable").addClass("d-none");
+                $("#no_of_relative").val('');
+            }
+        }
+
 
         $('#form').validate({
             rules: {
@@ -570,10 +713,6 @@
                     accept: "image/*",
                     extension: "jpg|jpeg|png"
                 },
-                profile_pic: {
-                    accept: "image/*",
-                    extension: "jpg|jpeg|png"
-                },
                 arrival_date: "required",
                 arrival_time: "required",
                 no_of_rooms: {
@@ -581,6 +720,40 @@
                     digits: true,
                 },
                 "room_no[]": "required",
+                "relative_first_name[]": {
+                    required: function(element) {
+                        return $("#no_of_relative").val() != '';
+                    },
+                    lettersonly: true,
+                },
+                "relative_middle_name[]": {
+                    lettersonly: true,
+                },
+                "relative_last_name[]": {
+                    required: function(element) {
+                        return $("#no_of_relative").val() != '';
+                    },
+                    lettersonly: true,
+                },
+                "relative_gender[]": {
+                    required: function(element) {
+                        return $("#no_of_relative").val() != '';
+                    },
+                    lettersonly: true,
+                },
+                "relative_age[]": {
+                    required: function(element) {
+                        return $("#no_of_relative").val() != '';
+                    },
+                    digits: true,
+                },
+                "relative_relation[]": {
+                    required: function(element) {
+                        return $("#no_of_relative").val() != '';
+                    },
+                    lettersonly: true,
+                },
+
             },
             messages: {
                 first_name: {
@@ -616,10 +789,6 @@
                     accept: "Please upload a valid image",
                     extension: "Image must be of type jpg, jpeg, png",
                 },
-                profile_pic: {
-                    accept: "Please upload a valid image",
-                    extension: "Image must be of type jpg, jpeg, png",
-                },
                 arrival_date: "Arrival date is required",
                 arrival_time: "Arrival time is required",
                 no_of_rooms: {
@@ -627,6 +796,19 @@
                     digits: "This field must be number",
                 },
                 "room_no[]": "Please select room",
+                "relative_first_name[]": {
+                    required: "This field is required",
+                },
+                "relative_last_name[]": {
+                    required: "This field is required",
+                },
+                "relative_gender[]": {
+                    required: "This field is required",
+                },
+                "relative_age[]": {
+                    required: "This field is required",
+                },
+
             },
             submitHandler: function(form) {
                 form.submit();

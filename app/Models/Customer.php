@@ -10,7 +10,7 @@ class Customer extends Model
     use HasFactory;
 
     protected $fillable = ["parent_id", "booking_id", "first_name", "middle_name", "last_name", "gender", "age", "nationality",
-        "address", "contact_no", "occupation", "identity_no", "driving_license_no", "signature", "relation"];
+        "address", "contact_no", "occupation", "identity_no", "driving_license_no", "signature", "profile_pic", "relation"];
 
     public function booking_details()
     {
@@ -32,6 +32,11 @@ class Customer extends Model
         if($sign != null){
             return asset("images/customers/signature/".$sign);
         }
+    }
+
+    public function getAvatar($avatar = "default.png")
+    {
+        return asset("images/customers/profile/".$avatar);
     }
 
     protected $appends = ["full_name"];

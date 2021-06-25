@@ -17,6 +17,7 @@ class BookingController extends Controller
 {
     private $page = "admin.booking.";
     private $destination = 'images/customers/signature/';
+    private $prfdest = "images/customers/profile/";
     private $redirectTo = "admin.booking.index";
     public function index()
     {
@@ -45,16 +46,27 @@ class BookingController extends Controller
                 $client = Customer::find($request->customer_id);
                 if ($client != null) {
                     $oldImage = $client->signature;
+                    $oldProfile = $client->profile_pic;
                     if ($request->hasFile('signature')) {
                         $image = Upload::image($request, 'signature', $this->destination, $oldImage);
                     } else {
                         $image = $oldImage;
+                    }
+                    if($request->hasFile("profile_pic")){
+                        $profile = Upload::image($request, "profile_pic", $this->prfdest, $oldProfile);
+                    } else {
+                        $profile = $oldProfile;
                     }
                 } else {
                     if ($request->hasFile('signature')) {
                         $image = Upload::image($request, 'signature', $this->destination, null);
                     } else {
                         $image = '';
+                    }
+                    if($request->hasFile("profile_pic")){
+                        $profile = Upload::image($request, "profile_pic", $this->prfdest, null);
+                    } else {
+                        $profile = '';
                     }
                 }
 
@@ -73,6 +85,7 @@ class BookingController extends Controller
                     'identity_no' => $request->identity_no,
                     'driving_license_no' => $request->driving_license_no,
                     'signature' => $image,
+                    'profile_pic' => $profile,
                 ]);
                 $bkd = BookingDetail::create([
                     'customer_id' => $customer->id,
@@ -126,6 +139,7 @@ class BookingController extends Controller
             "occupation" => "required|string",
             "identity_no" => "required",
             "signature" => "image|mimes:jpeg,jpg,png|max:2048",
+            "profile_pic" => "image|mimes:jpeg,jpg,png|max:2048",
             "arrival_date" => "required",
             "arrival_time" => "required",
         ],[
@@ -145,6 +159,8 @@ class BookingController extends Controller
             "identity_no.required" => "Citizenship number is required",
             "signature.image" => "Please upload a valid image",
             "signature.mimes" => "Image must be of type jpg, jpeg, png",
+            "profile_pic.image" => "Please upload a valid image",
+            "profile_pic.mimes" => "Image must be of type jpg, jpeg, png",
             "arrival_date.required" => "Arrival date is required",
             "arrival_time.required" => "Arrival time is required",
         ]);
@@ -174,7 +190,7 @@ class BookingController extends Controller
                 return redirect()->route($this->redirectTo)->with(notify("success", "Booking detail updated successfully"));
             } catch (\Exception $e) {
                 DB::rollBack();
-                return redirect()->back()->with(notify("warning", $e->getMessage));
+                return redirect()->back()->with(notify("warning", $e->getMessage()));
             }
         }
     }
@@ -267,6 +283,7 @@ class BookingController extends Controller
     {
         $customer = Customer::where("id", $customerId)->firstOrFail();
         $oldSign = $customer->signature;
+        $oldProfile = $customer->profile_pic;
         $customer->first_name = $data->first_name;
         $customer->middle_name = $data->middle_name;
         $customer->last_name = $data->last_name;
@@ -278,10 +295,15 @@ class BookingController extends Controller
         $customer->occupation = $data->occupation;
         $customer->identity_no = $data->identity_no;
         $customer->driving_license_no = $data->driving_license_no;
-        if ($data->has("signature")) {
+        if ($data->hasFile("signature")) {
             $customer->signature = Upload::image($data, "signature", $this->destination, $oldSign);
         } else {
             $customer->signature = $oldSign;
+        }
+        if($data->hasFile("profile_pic")){
+            $customer->profile_pic = Upload::image($data, "profile_pic", $this->prfdest, $oldProfile);
+        } else {
+            $customer->profile_pic = $oldProfile;
         }
         $customer->save();
         $booking_detail = BookingDetail::findOrFail($booking_id);
@@ -328,6 +350,7 @@ class BookingController extends Controller
             "occupation" => "required|string",
             "identity_no" => "required",
             "signature" => "image|mimes:jpeg,jpg,png|max:2048",
+            "profile_pic" => "image|mimes:jpeg,jpg,png|max:2048",
             "arrival_date" => "required",
             "arrival_time" => "required",
             "no_of_rooms" => "required|integer",
@@ -359,6 +382,8 @@ class BookingController extends Controller
             "identity_no.required" => "Citizenship number is required",
             "signature.image" => "Please upload a valid image",
             "signature.mimes" => "Image must be of type jpg, jpeg, png",
+            "profile_pic.image" => "Please upload a valid image",
+            "profile_pic.mimes" => "Image must be of type jpg, jpeg, png",
             "arrival_date.required" => "Arrival date is required",
             "arrival_time.required" => "Arrival time is required",
             "room_no.*.required" => "Please select room",

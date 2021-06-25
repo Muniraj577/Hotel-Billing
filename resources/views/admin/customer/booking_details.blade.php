@@ -6,7 +6,7 @@
         <div class="container-fluid">
             <div class="row col-12 mb-2">
                 <div class="col-sm-6">
-                    <h1>All Customers</h1>
+                    <h1>Booking Details</h1>
                 </div>
 
             </div>
@@ -17,12 +17,12 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card">
-
+                        
                         <div class="card-header">
-                            <div class="card-title float-right">
-                                <span class="btn btn-primary">
-                                    <i class="fa fa-th-list iCheck"></i> Customers
-                                </span>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h5>All Booking Details of {{ $customer->full_name }}</h5>
+                                </div>
                             </div>
                         </div>
                         <!-- /.card-header -->
@@ -32,45 +32,37 @@
                                 <thead>
                                     <tr>
                                         <th>S.N</th>
-                                        <th>Name</th>
-                                        <th>Address</th>
-                                        <th>Contact No</th>
-                                        <th>Gender</th>
-                                        <th>Age</th>
-                                        <th>Citizenship</th>
-                                        <th>Nationality</th>
+                                        <th>Arrival Date</th>
+                                        <th>Arrival Time</th>
+                                        <th>Departure Date</th>
+                                        <th>Departure Time</th>
+                                        <th>No of Rooms</th>
+                                        <th>No of relatives</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($customers as $key => $customer)
+                                    @foreach ($customer->booking_details as $key => $bkd)
 
                                         <tr>
                                             <td>{{ ++$id }}</td>
-                                            <td>{{ $customer->full_name }}</td>
-                                            <td>{{ $customer->address }}</td>
-                                            <td>{{ $customer->contact_no }}</td>
-                                            <td>{{ $customer->gender }}</td>
-                                            <td>{{ $customer->age }}</td>
-                                            <td>{{ $customer->identity_no }}</td>
-                                            <td>{{ $customer->nationality }}</td>
                                             <td>
-                                                <div class='dropdown action_dropdown'>
-                                                    <button class='action_button btn dropdown-toggle' type='button'
-                                                        id='dropdownMenuButton' data-toggle='dropdown' aria-haspopup='true'
-                                                        aria-expanded='false'>
-                                                        Action
-                                                    </button>
-                                                    <div class='dropdown-menu dropdown-menu-right'
-                                                        aria-labelledby='dropdownMenuButton'>
-                                                        <a class='dropdown-item'
-                                                            href="{{ route('admin.customer.show', $customer->id) }}"><i
-                                                                class='fa fa-eye iCheck'></i>&nbsp;View Detail</a>
-                                                        <a class="dropdown-item"
-                                                            href="{{ route('admin.customer.booking.detail', $customer->id) }}">
-                                                            <i class="fa fa-eye iCheck"></i>&nbsp;View Booking Details</a>
-                                                        
-                                                    </div>
+                                                {{ $bkd->nepali_arrival_date ? $bkd->nepali_arrival_date : $bkd->arrival_date }}
+                                            </td>
+                                            <td>{{ getTime($bkd->arrival_time) }}</td>
+                                            <td>
+                                                {{ $bkd->nepali_departure_date ? $bkd->nepali_departure_date : ($bkd->departure_date ? $bkd->departure_date : "Staying") }}
+                                            </td>
+                                            <td>
+                                                {{ $bkd->departure_time ? getTime($bkd->departure_time) : "Not available" }}
+                                            </td>
+                                            <td>{{ count($bkd->booking_rooms) }}</td>
+                                            <td>{{ count($bkd->relatives) }}</td>
+                                            <td>
+                                                <div class="d-inline-flex">
+                                                    <a href="{{ route("admin.booking.show", $bkd->id) }}" class="btn btn-primary btn-sm">
+                                                        View Detail
+                                                    </a>
                                                 </div>
                                             </td>
                                         </tr>
@@ -138,8 +130,8 @@
 
                     },
                     {
-                        extend: 'colvis',
-                        columns: ':not(.hidden)'
+                       extend:'colvis',
+                       columns: ':not(.hidden)' 
                     }
                 ],
                 "language": {
@@ -150,5 +142,6 @@
             });
             dataTablePosition();
         });
+
     </script>
 @endsection

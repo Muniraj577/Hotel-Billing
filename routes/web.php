@@ -26,9 +26,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// Route::get('/home')
+
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::group(["prefix"=>"admin/", "middleware" => "auth", "as"=>"admin."], function(){
     Route::get('dashboard', [AdminDashboardController::class, 'dashboard'])->name('dashboard');
@@ -89,6 +91,11 @@ Route::group(["prefix"=>"admin/", "middleware" => "auth", "as"=>"admin."], funct
     Route::group(["prefix"=>"customers/", "as" => "customer."], function(){
         Route::get("",[AdminCustomerController::class, "index"])->name("index");
         Route::get("show/{id}", [AdminCustomerController::class, "show"])->name("show");
+    });
+
+    // Customer Booking Details
+    Route::group(["prefix" => "customer/booking/", "as" => "customer.booking."], function(){
+        Route::get("detail/{id}", [AdminCustomerController::class, "booking_detail"])->name("detail");
     });
 
     Route::post('get-all-customers', [AdminDashboardController::class, 'getCustomer'])->name('getCustomer');

@@ -157,10 +157,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="col-md-12">
                                             <div class="form-group">
                                                 <div class="row">
                                                     <div class="col-md-4">
@@ -175,6 +171,10 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="col-md-12">
                                             <div class="form-group">
                                                 <div class="row">
                                                     <div class="col-md-4">
@@ -249,6 +249,21 @@
                                                             onchange="showImg(this, 'preview')">
                                                         <img src="{{ $customer->getSign($customer->signature) }}" id="preview" alt="" style="width:10px;height:10px;">
                                                         @error('signature')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <label for="profile_pic">Upload Profile Photo</label>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <input type="file" name="profile_pic" class="form-control"
+                                                            onchange="showImg(this, 'prfview')">
+                                                        <img src="{{ $customer->getAvatar($customer->profile_pic) }}" id="prfview" alt="" style="width:10px;height:10px;">
+                                                        @error('profile_pic')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </div>

@@ -124,6 +124,18 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <label for="profile_pic">Profile Photo:</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <span>
+                                                        <img class="imageSize" src="{{ $customer->getAvatar($customer->profile_pic) }}" alt="">
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

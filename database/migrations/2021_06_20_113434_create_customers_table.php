@@ -15,6 +15,8 @@ class CreateCustomersTable extends Migration
     {
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
+            $table->bigInteger("parent_id")->nullable();
+            $table->bigInteger("booking_id")->nullable();
             $table->string("first_name");
             $table->string("middle_name")->nullable();
             $table->string("last_name");
@@ -27,6 +29,8 @@ class CreateCustomersTable extends Migration
             $table->string("identity_no")->nullable();
             $table->string("driving_license_no")->nullable();
             $table->string("signature")->nullable();
+            $table->string("profile_pic")->default("default.png")->nullable();
+            $table->string("relation")->nullable();
             $table->timestamps();
         });
     }

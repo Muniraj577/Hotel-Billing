@@ -162,10 +162,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="col-md-12">
                                             <div class="form-group">
                                                 <div class="row">
                                                     <div class="col-md-4">
@@ -182,6 +178,11 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="col-md-12">
+
                                             <div class="form-group">
                                                 <div class="row">
                                                     <div class="col-md-4">
@@ -255,9 +256,28 @@
                                                     <div class="col-md-8">
                                                         <input type="file" name="signature" class="form-control"
                                                             onchange="showImg(this, 'preview')">
-                                                        <img src="{{ $customer->getSign($customer->signature) }}"
-                                                            id="preview" style="height: 20px; width: 20px;" alt="">
+
+                                                        @if ($customer->signature != null)
+                                                            <img src="{{ $customer->getSign($customer->signature) }}"
+                                                                id="preview" style="height: 50px; width: 50px;" alt="">
+                                                        @endif
                                                         @error('signature')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <label for="profile_pic">Upload Profile Photo</label>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <input type="file" name="profile_pic" class="form-control"
+                                                            onchange="showImg(this, 'prfview')">
+                                                        <img src="{{ $customer->getAvatar($customer->profile_pic) }}"
+                                                            id="prfview" style="height: 50px; width: 50px;" alt="">
+                                                        @error('profile_pic')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </div>
@@ -322,6 +342,10 @@
                     accept: "image/*",
                     extension: "jpg|jpeg|png"
                 },
+                profile_pic: {
+                    accept: "image/*",
+                    extension: "jpg|jpeg|png"
+                },
             },
             messages: {
                 first_name: {
@@ -356,6 +380,10 @@
                     required: "Relation field is required",
                 },
                 signature: {
+                    accept: "Please upload a valid image",
+                    extension: "Image must be of type jpg, jpeg, png",
+                },
+                profile_pic: {
                     accept: "Please upload a valid image",
                     extension: "Image must be of type jpg, jpeg, png",
                 },
