@@ -27,7 +27,8 @@ class BookingController extends Controller
     public function create()
     {
         $rooms = Room::where("is_active", 1)->where("status", "Available")->get();
-        return view($this->page . "create", compact("rooms"));
+        $countRoom = Room::where("is_active",1)->where("status", "Available")->count();
+        return view($this->page . "create", compact("rooms", "countRoom"));
     }
 
     public function store(Request $request)

@@ -446,7 +446,8 @@
                                 </div>
                                 <div class="text-center">
                                     <button type="submit" name="save" value="save" class="btn btn-primary">Save</button>
-                                    <button type="submit" name="save" value="save_and_add_relative" class="btn btn-primary">Save and Add Relative</button>
+                                    <button type="submit" name="save" value="save_and_add_relative"
+                                        class="btn btn-primary">Save and Add Relative</button>
                                 </div>
                             </form>
                         </div>
@@ -490,19 +491,69 @@
             //     }
             // });
 
+
+
         });
 
+        let selectedList = [];
+
+        // function onRoomChange(this_room) {
+        //     var $selects = $(".no_of_room");
+        //     var $select = $(this_room),
+        //         $options = $selects.not($select).find('option'),
+        //         selectedValue = $select.children('option:selected').val();
+        //     console.log(selectedValue);
+        //     var $optionsToDisable = $options.filter(function() {
+        //         return $(this).val() == selectedValue && $(this).val() != '';
+        //     });
+        //     $optionsToDisable.prop("disabled", true);
+        //     // $optionsToDisable.hide();
+        // }
+
+        function onRoomChange() { // Working code;
+            updateSelectedList();
+            disableAlreadySelected();
+        }
+
+        function updateSelectedList() {
+            selectedList = [];
+            let selectedValue;
+            $('.no_of_room').each(function() {
+                selectedValue = $(this).find('option:selected').val();
+                if (selectedValue != "" && $.inArray(selectedValue, selectedList) == "-1") {
+                    selectedList.push(selectedValue);
+                }
+            });
+        }
+
+        function disableAlreadySelected() {
+            $('.no_of_room option').each(function() {
+                if ($.inArray(this.value, selectedList) != "-1") {
+                    $(this).hide();
+                } else {
+                    $(this).show();
+                }
+            });
+        }
+
         function onEnterRoomNo(room_no) {
+            var count_room = "{{ $countRoom }}";
             var no_of_room = $(room_no).val();
+            console.log(count_room - no_of_room);
+            console.log(count_room >= no_of_room);
             var html = "";
-            for (var i = 0; i < no_of_room; i++) {
-                html += `<div class="form-group">
+            if (no_of_room.match(/^\d+$/) && no_of_room != '') {
+                if ((count_room - no_of_room) >= 0) {
+                    for (var i = 0; i < no_of_room; i++) {
+                        html +=
+                            `<div class="form-group">
                                 <div class="row">
                                     <div class="col-md-4">
                                         <label for="">Select Room&nbsp;<span class="req">*</span></label>
                                     </div>
                                     <div class="col-md-8">
-                                        <select name="room_no[]" class="form-control" id="room_no` + i + `">
+                                        <select name="room_no[]" class="form-control no_of_room" onchange="onRoomChange();" id="room_no` +
+                            i + `">
                                             <option value="">Select Room</option>
                                             @foreach ($rooms as $room)
                                                 <option value="{{ $room->id }}">{{ $room->name . '(' . $room->room_no . ')' }}</option>
@@ -511,8 +562,26 @@
                                     </div>
                                 </div>
                             </div>`;
+                    }
+                    $(".room_data").html(html);
+                    selectRefresh();
+                } else {
+                    $.alert({
+                        title: "Alert !",
+                        content: "No of room exceeds the room available",
+                        icon: "fa fa-exclamationtriangle",
+                        theme: "modern",
+                    });
+                }
+            } else {
+                $.alert({
+                    title: "Alert !",
+                    content: "Please enter only number",
+                    icon: "fa fa-fa-exclamationtriangle",
+                    theme: "modern",
+                });
             }
-            $(".room_data").html(html);
+
         }
 
 
@@ -646,35 +715,35 @@
                     digits: true,
                 },
                 "room_no[]": "required",
-                "relative_first_name[]":{
-                    required: function(element){
+                "relative_first_name[]": {
+                    required: function(element) {
                         return $("#no_of_relative").val() != '';
                     },
                     lettersonly: true,
                 },
-                "relative_middle_name[]":{
+                "relative_middle_name[]": {
                     lettersonly: true,
                 },
-                "relative_last_name[]":{
-                    required: function(element){
+                "relative_last_name[]": {
+                    required: function(element) {
                         return $("#no_of_relative").val() != '';
                     },
                     lettersonly: true,
                 },
-                "relative_gender[]":{
-                    required: function(element){
+                "relative_gender[]": {
+                    required: function(element) {
                         return $("#no_of_relative").val() != '';
                     },
                     lettersonly: true,
                 },
-                "relative_age[]":{
-                    required: function(element){
+                "relative_age[]": {
+                    required: function(element) {
                         return $("#no_of_relative").val() != '';
                     },
                     digits: true,
                 },
-                "relative_relation[]":{
-                    required: function(element){
+                "relative_relation[]": {
+                    required: function(element) {
                         return $("#no_of_relative").val() != '';
                     },
                     lettersonly: true,
@@ -718,14 +787,14 @@
                 "room_no[]": "Please select room",
                 "relative_first_name[]": {
                     required: "This field is required",
-                }, 
-                "relative_last_name[]":{
+                },
+                "relative_last_name[]": {
                     required: "This field is required",
                 },
-                "relative_gender[]":{
+                "relative_gender[]": {
                     required: "This field is required",
                 },
-                "relative_age[]":{
+                "relative_age[]": {
                     required: "This field is required",
                 },
 

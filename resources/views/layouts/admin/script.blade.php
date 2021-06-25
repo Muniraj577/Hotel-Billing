@@ -361,6 +361,15 @@
         // $(".glyphicon-chevron-up").removeClass("glyphicon glyphicon-chevron-up").addClass("fa fa-chevron-up");
         // $(".glyphicon-chevron-down").removeClass("glyphicon glyphicon-chevron-down").addClass("fa fa-chevron-down");
     }
+
+    function checknumber(num) {
+        var rege = "/^\d+$/;"
+        if (num.match(/^\d+$/)) {
+            alert("Matched");
+        } else {
+            alert("Not Matched");
+        }
+    }
 </script>
 <script>
     toastr.options = {
