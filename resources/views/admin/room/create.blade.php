@@ -36,7 +36,7 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <input type="text" name="name" value="{{ old('name') }}"
-                                                        class="form-control" placeholder="Enter category name">
+                                                        class="form-control" placeholder="Enter room name">
                                                     @error('name')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
@@ -52,6 +52,20 @@
                                                     <input type="text" name="room_no" value="{{ old('room_no') }}"
                                                         class="form-control">
                                                     @error('room_no')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <label for="price">Price&nbsp;<span class="req">*</span></label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <input type="text" name="price" value="{{ old('price') }}"
+                                                        class="form-control">
+                                                    @error('price')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
                                                 </div>
@@ -106,11 +120,20 @@
         $('#form').validate({
             onfocusout: true,
             rules: {
-                name: "required",
-                room_no: "required"
+                name: {
+                    required: true,
+                    lettersonly: true,
+                },
+                room_no: "required",
+
+                price: {
+                    number:true,
+                },
             },
             messages: {
-                name: "Name field is required",
+                name: {
+                    required: "Name field is required",
+                },
                 room_no: "Enter room number"
 
             },

@@ -17,6 +17,7 @@ class CreateRoomsTable extends Migration
             $table->id();
             $table->string('name')->nullable();
             $table->string('room_no')->nullable();
+            $table->decimal("price", 10, 2)->nullable();
             $table->tinyInteger('is_active')->default(0)->nullable();
             $table->enum('status', ['Available', 'UnAvailable'])->default("Available")->nullable();
             $table->timestamps();

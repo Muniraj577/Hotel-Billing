@@ -2,7 +2,10 @@
 @section('title', 'Booking')
 @section('booking', 'active')
 @section('content')
-    <?php $customer = $booking_detail->customer; ?>
+    <?php 
+    $customer = $booking_detail->customer;
+    $status = $booking_detail->status;
+    ?>
     <section class="content-header">
         <div class="container-fluid">
             <div class="row col-12 mb-2">
@@ -221,23 +224,28 @@
                             @include('admin.partial.room.createModal')
                             <div class="row">
                                 <div class="col-md-12">
+                                    @if($status == 1)
                                     <div class="float-right mb-1">
                                         <button type="button" class="btn btn-primary" data-toggle="modal"
                                             data-target="#createRoomModal" data-target-id="{{ $booking_detail->id }}">
                                             Add Room
                                         </button>
                                     </div>
+                                    @endif
                                     <table class="table table-bordered">
                                         <thead>
                                             <th>Room No</th>
                                             <th>Room Name</th>
+                                            @if($status == 1)
                                             <th>Action</th>
+                                            @endif
                                         </thead>
                                         <tbody>
                                             @foreach ($booking_detail->booking_rooms as $booking_room)
                                                 <tr>
                                                     <td>{{ $booking_room->room->room_no }}</td>
                                                     <td>{{ $booking_room->room->name }}</td>
+                                                    @if($status == 1)
                                                     <td>
                                                         <div class="d-inline-flex">
                                                             <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editRoomModal" data-target-id="{{ $booking_room->id }}">
@@ -254,6 +262,7 @@
                                                             </form>
                                                         </div>
                                                     </td>
+                                                    @endif
                                                 </tr>
                                             @endforeach
                                         </tbody>
@@ -281,12 +290,14 @@
                                 @include('admin.partial.room.editModal')
                                 <div class="row">
                                     <div class="col-md-12">
+                                        @if($status == 1)
                                         <div class="float-right mb-1">
                                             <a href="{{ route('admin.relative.create', $booking_detail->id) }}"
                                                 class="btn btn-primary">
                                                 Add Relative
                                             </a>
                                         </div>
+                                        @endif
                                         <table class="table table-bordered">
                                             <thead>
                                                 <th>Name</th>
@@ -294,7 +305,9 @@
                                                 <th>Age</th>
                                                 <th>Gender</th>
                                                 <th>Relation</th>
+                                            
                                                 <th>Action</th>
+                                                
                                             </thead>
                                             <tbody>
                                                 @foreach ($booking_detail->relatives as $relative)
@@ -304,14 +317,18 @@
                                                         <td>{{ $relative->age }}</td>
                                                         <td>{{ $relative->gender }}</td>
                                                         <td>{{ $relative->relation }}</td>
+                                                        
                                                         <td>
                                                             <div class="d-inline-flex">
-                                                                <a href="{{ route('admin.relative.edit', $relative->id) }}}"
+                                                                @if($status == 1)
+                                                                <a href="{{ route('admin.relative.edit', $relative->id) }}"
                                                                     class="btn btn-sm btn-primary">Edit</a>&nbsp;&nbsp;
+                                                                @endif
                                                                 <a href="{{ route('admin.customer.show', $relative->id) }}"
                                                                     class="btn btn-sm btn-primary">
                                                                     View Detail
                                                                 </a>&nbsp;&nbsp;
+                                                                @if($status == 1)
                                                                 <form
                                                                     action="{{ route('admin.relative.destroy', $relative->id) }}"
                                                                     method="POST">
@@ -321,8 +338,10 @@
                                                                         Delete
                                                                     </button>
                                                                 </form>
+                                                                @endif
                                                             </div>
                                                         </td>
+                                                        
                                                     </tr>
                                                 @endforeach
                                             </tbody>

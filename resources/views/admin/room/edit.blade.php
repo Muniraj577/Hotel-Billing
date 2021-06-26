@@ -48,12 +48,26 @@
                                         <div class="form-group">
                                             <div class="row">
                                                 <div class="col-md-4">
-                                                    <label for="room_no">Room No</label>
+                                                    <label for="room_no">Room No&nbsp;<span class="req">*</span></label>
                                                 </div>
                                                 <div class="col-md-8">
                                                     <input type="text" name="room_no" class="form-control"
                                                         value="{{ $room->room_no }}">
                                                     @error('room_no')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <label for="price">Price</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <input type="text" name="price" class="form-control"
+                                                        value="{{ $room->price }}">
+                                                    @error('price')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
                                                 </div>
@@ -120,12 +134,20 @@
         $('#form').validate({
             onfocusout: true,
             rules: {
-                name: "required",
+                name: {
+                    required: true,
+                    lettersonly: true,
+                },
                 room_no: "required",
+                price:{
+                    number: true,
+                },
                 status: "required",
             },
             messages: {
-                name: "Name field is required",
+                name: {
+                    required: "Name field is required",
+                },
                 room_no: "Enter room number",
             },
             submitHandler: function(form) {

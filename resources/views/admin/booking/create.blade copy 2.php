@@ -408,17 +408,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div>
-                                                <table class="table table-bordered">
-                                                    <thead>
-                                                        <th>Room No</th>
-                                                        <th>Price</th>
-                                                        <th>Action</th>
-                                                    </thead>
-                                                    <tbody class="room_data">
-
-                                                    </tbody>
-                                                </table>
+                                            <div class="room_data">
                                                 @if (old('room_no') != '')
                                                     @include('admin.partial.booking.redirectCreate')
                                                 @endif
@@ -504,22 +494,22 @@
                 if ((count_room - no_of_room) >= 0) {
                     for (var i = 0; i < no_of_room; i++) {
                         html +=
-                        `<tr>
-                            <td>
-                                <select name="room_no[]" onchange="onRoomChange();" class="form-control no_of_room" id="room_no` +
+                            `<div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for="">Select Room&nbsp;<span class="req">*</span></label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <select name="room_no[]" class="form-control no_of_room" onchange="onRoomChange();" id="room_no` +
                             i + `">
-                                    <option value="">Select Room</option>
-                                    @foreach ($rooms as $room)
-                                        <option value="{{ $room->id }}">{{ $room->name . '(' . $room->room_no . ')' . '(Rs. ' . $room->price . ')' }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </td>
-                            <td>
-                                <input type="text" class="form-control" value="500">
-                            </td>
-                            <td>X</td>
-                        </tr>`;
+                                            <option value="">Select Room</option>
+                                            @foreach ($rooms as $room)
+                                                <option value="{{ $room->id }}">{{ $room->name . '(' . $room->room_no . ')' }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>`;
                     }
                     $(".room_data").html(html);
                 } else {
@@ -542,7 +532,6 @@
         }
 
         $('#form').validate({
-            ignore: [],
             rules: {
                 first_name: {
                     required: true,
@@ -591,7 +580,6 @@
                     required: true,
                     digits: true,
                 },
-
                 "room_no[]": "required",
             },
             messages: {
@@ -613,7 +601,7 @@
                     required: "Nationality is required"
                 },
                 address: "Address is required",
-
+                
                 contact_no: {
                     required: "Contact number is required",
                     digits: "Contact number must contain only numeric value",

@@ -34,6 +34,7 @@
                                         <th>S.N</th>
                                         <th>Name</th>
                                         <th>Room No</th>
+                                        <th>Price</th>
                                         <th>Is Active</th>
                                         <th>Status</th>
                                         <th class="hidden">Action</th>
@@ -47,6 +48,7 @@
                                             
                                             <td>{{ $room->name }}</td>
                                             <td>{{ $room->room_no }}</td>
+                                            <td>{{ $room->price }}</td>
                                             <td>
                                                 {{ $room->is_active ? 'Active' : 'Inactive' }}
                                             </td>
@@ -59,14 +61,7 @@
                                                         class="btn btn-sm btn-primary" title="Edit Room">
                                                         <i class="fa fa-edit iCheck"></i> Edit
                                                     </a>
-                                                    {{-- <form
-                                                            action="{{ route('admin.category.delete', $category->id) }}"
-                                                            method="POST">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button class="btn btn-sm"><i
-                                                                    class="fas fa-trash red"></i></button>
-                                                        </form> --}}
+                                                    
                                                 </div>
                                             </td>
                                         </tr>

@@ -19,6 +19,7 @@ class BookingController extends Controller
     private $destination = 'images/customers/signature/';
     private $prfdest = "images/customers/profile/";
     private $redirectTo = "admin.booking.index";
+    
     public function index()
     {
         $booking_details = BookingDetail::with("customer")->orderBy("id", "desc")->get();
