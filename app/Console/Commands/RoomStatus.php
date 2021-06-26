@@ -39,11 +39,16 @@ class RoomStatus extends Command
      */
     public function handle()
     {
-        $booking_details = BookingDetail::all();
+        $booking_details = BookingDetail::where("status", 1)->get();
         foreach ($booking_details as $booking_detail) {
             $end_date_time = $booking_detail->departure_date . " " . $booking_detail->departure_time;
             \date_default_timezone_set("Asia/Kathmandu");
             $current_date_time = date("Y-m-d H:i");
+            if (strtotime($current_date_time) > strtotime($end_date_time)) {
+                $booking_detail->update(["status" => 0]);
+            } else {
+                $booking_detail->update(["status" => 1]);
+            }
             foreach ($booking_detail->booking_rooms as $booking_room) {
                 $room = Room::where('id', $booking_room->room_id)->first();
                 if (strtotime($current_date_time) > strtotime($end_date_time)) {

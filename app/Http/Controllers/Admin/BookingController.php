@@ -28,7 +28,7 @@ class BookingController extends Controller
     public function create()
     {
         $rooms = Room::where("is_active", 1)->where("status", "Available")->get();
-        $countRoom = Room::where("is_active",1)->where("status", "Available")->count();
+        $countRoom = Room::where("is_active", 1)->where("status", "Available")->count();
         return view($this->page . "create", compact("rooms", "countRoom"));
     }
 
@@ -52,7 +52,7 @@ class BookingController extends Controller
                     } else {
                         $image = $oldImage;
                     }
-                    if($request->hasFile("profile_pic")){
+                    if ($request->hasFile("profile_pic")) {
                         $profile = Upload::image($request, "profile_pic", $this->prfdest, $oldProfile);
                     } else {
                         $profile = $oldProfile;
@@ -63,7 +63,7 @@ class BookingController extends Controller
                     } else {
                         $image = '';
                     }
-                    if($request->hasFile("profile_pic")){
+                    if ($request->hasFile("profile_pic")) {
                         $profile = Upload::image($request, "profile_pic", $this->prfdest, null);
                     } else {
                         $profile = '';
@@ -99,6 +99,7 @@ class BookingController extends Controller
                     'remarks' => $request->remarks,
                     'no_of_rooms' => $request->no_of_rooms,
                     'no_of_relative' => $request->no_of_relatives,
+                    'status' => 1,
                 ]);
                 $this->__createRoomDetail($request, $customer->id, $bkd->id);
                 DB::commit();
@@ -128,7 +129,7 @@ class BookingController extends Controller
 
     public function update(Request $request, $id)
     {
-        $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             "first_name" => "required|string",
             "last_name" => "required|string",
             "gender" => "required|string",
@@ -142,7 +143,7 @@ class BookingController extends Controller
             "profile_pic" => "image|mimes:jpeg,jpg,png|max:2048",
             "arrival_date" => "required",
             "arrival_time" => "required",
-        ],[
+        ], [
             "first_name.required" => "First Name is required",
             "last_name.required" => "Surname is required",
             "gender.required" => "Gender is required",
@@ -152,9 +153,9 @@ class BookingController extends Controller
             "nationality.required" => "Nationality is required",
             "address.required" => "Address is required",
             "contact_no.required" => "Contact number is required",
-            "contact_no.min" =>"Contact number must have at least 10 digits",
+            "contact_no.min" => "Contact number must have at least 10 digits",
             "contact_no.numeric" => "Contact number must contain only numeric value",
-            "contact_no.digits_between"=>"The Contact number length must be 10 to 13",
+            "contact_no.digits_between" => "The Contact number length must be 10 to 13",
             "occupation.required" => "Occupation is required",
             "identity_no.required" => "Citizenship number is required",
             "signature.image" => "Please upload a valid image",
@@ -181,7 +182,7 @@ class BookingController extends Controller
                     foreach ($customers as $customer) {
                         $customer->update(["parent_id" => $request->customer_id]);
                     }
-                    
+
                 } else if ($request->customer_id == null) {
                     $this->__updateCustomer($request, $booking_detail->customer_id, $booking_detail->id);
                 }
@@ -223,6 +224,7 @@ class BookingController extends Controller
                 $a = date("y-m-d H:i");
                 $b = $request->departure_date . " " . $request->departure_time;
                 if (strtotime($a) > strtotime($b)) {
+                    $booking->update(["status" => 0]);
                     foreach ($booking->booking_rooms as $booking_room) {
                         $room = Room::where('id', $booking_room->room_id)->first();
                         $room->update(['status' => 'Available']);
@@ -252,6 +254,7 @@ class BookingController extends Controller
             'remarks' => $data->remarks,
             'no_of_rooms' => $data->no_of_rooms,
             'no_of_relative' => $data->no_of_relatives,
+            'status' => 1,
         ]);
         $this->__createRoomDetail($data, $customerId, $bkd->id);
         if ($data->no_of_relatives != null || $data->no_of_relatives > 0) {
@@ -300,13 +303,24 @@ class BookingController extends Controller
         } else {
             $customer->signature = $oldSign;
         }
-        if($data->hasFile("profile_pic")){
+        if ($data->hasFile("profile_pic")) {
             $customer->profile_pic = Upload::image($data, "profile_pic", $this->prfdest, $oldProfile);
         } else {
             $customer->profile_pic = $oldProfile;
         }
         $customer->save();
         $booking_detail = BookingDetail::findOrFail($booking_id);
+        date_default_timezone_set("Asia/Kathmandu");
+        $a = date("y-m-d H:i");
+        $b = $data->departure_date . " " . $data->departure_time;
+        if (strtotime($a) > strtotime($b)) {
+            $booking_detail->update(["status" => 0]);
+            foreach ($booking_detail->booking_rooms as $booking_room) {
+                $room = Room::where('id', $booking_room->room_id)->first();
+                $room->update(['status' => 'Available']);
+            }
+        }
+        date_default_timezone_set("UTC");
         $booking_detail->update([
             'customer_id' => $customerId,
             'arrival_date' => $data->arrival_date,
@@ -375,9 +389,9 @@ class BookingController extends Controller
             "nationality.required" => "Nationality is required",
             "address.required" => "Address is required",
             "contact_no.required" => "Contact number is required",
-            'contact_no.min' =>'Contact number must have at least 10 digits',
+            'contact_no.min' => 'Contact number must have at least 10 digits',
             'contact_no.numeric' => "Contact number must contain only numeric value",
-            'contact_no.digits_between'=>"The Contact number length must be 10 to 13",
+            'contact_no.digits_between' => "The Contact number length must be 10 to 13",
             "occupation.required" => "Occupation is required",
             "identity_no.required" => "Citizenship number is required",
             "signature.image" => "Please upload a valid image",

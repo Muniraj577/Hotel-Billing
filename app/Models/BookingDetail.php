@@ -9,8 +9,9 @@ class BookingDetail extends Model
 {
     use HasFactory;
 
-    protected $fillable = ["customer_id", "arrival_date", "nepali_arrival_date", "arrival_time",
-        "departure_date", "nepali_departure_date", "departure_time", "no_of_rooms", "no_of_relative", "purpose", "remarks"];
+    protected $fillable = ["customer_id", "arrival_date", "nepali_arrival_date", "arrival_time", 
+        "departure_date", "nepali_departure_date", "departure_time", "no_of_rooms", 
+        "no_of_relative", "purpose", "remarks", "status"];
 
     public function customer()
     {
