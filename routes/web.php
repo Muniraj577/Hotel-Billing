@@ -99,4 +99,5 @@ Route::group(["prefix"=>"admin/", "middleware" => "auth", "as"=>"admin."], funct
     });
 
     Route::post('get-all-customers', [AdminDashboardController::class, 'getCustomer'])->name('getCustomer');
+    Route::post("get-room-price", [AdminDashboardController::class, "getRoomPrice"])->name("getRoomPrice");
 });

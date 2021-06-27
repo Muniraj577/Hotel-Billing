@@ -408,23 +408,67 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div>
-                                                <table class="table table-bordered">
-                                                    <thead>
-                                                        <th>Room No</th>
-                                                        <th>Price</th>
-                                                        <th>Action</th>
-                                                    </thead>
-                                                    <tbody class="room_data">
 
-                                                    </tbody>
-                                                </table>
-                                                @if (old('room_no') != '')
-                                                    @include('admin.partial.booking.redirectCreate')
-                                                @endif
-
-                                            </div>
                                         </div>
+                                    </div>
+                                </div>
+                                <div class="row roomTable d-none">
+                                    <div class="col-md-8">
+                                        
+                                        <table class="table table-bordered" id="roomTable">
+                                            <thead>
+                                                <th>Room No</th>
+                                                <th>Price</th>
+                                                <th>Discount</th>
+                                                <th>Amount</th>
+                                                
+                                            </thead>
+                                            <tbody class="room_data">
+
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td colspan="3" class="text-right">
+                                                        <label>Total</label>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" class="form-control" name="total_amount"
+                                                            id="total_amount">
+                                                    </td>
+
+
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="3" class="text-right">
+                                                        <label>Paid Amount</label>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" class="form-control" onkeyup="onPaid();"
+                                                            name="paid_amount" id="paid">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="3" class="text-right">
+                                                        <label>Change</label>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" class="form-control" name="change_amount"
+                                                            id="change">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="3" class="text-right">
+                                                        <label>Due</label>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" class="form-control" name="due_amount" id="due">
+                                                    </td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                        @if (old('room_no') != '')
+                                            @include('admin.partial.booking.redirectCreate')
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="text-center">
@@ -468,9 +512,24 @@
 
         let selectedList = [];
 
-        function onRoomChange() { // Working code;
+        function onRoomChange(room) { // Working code;
+            getPrice(room);
+            var tr = $(room).closest("tr");
+            var room_no = $(tr).find(".no_of_room").val(),
+                discount = $(tr).find(".discount"),
+                price = $(tr).find(".price");
+            if (room_no != '') {
+                price.removeAttr("readonly");
+                discount.removeAttr("readonly");
+            } else {
+                $(price).prop("readonly", true);
+                $(discount).prop("readonly", true);
+                $(discount).val('');
+            }
+
             updateSelectedList();
             disableAlreadySelected();
+
         }
 
         function updateSelectedList() {
@@ -494,31 +553,70 @@
             });
         }
 
+        function getPrice(room_price) {
+            var room_id = $(room_price).val();
+            var tr = $(room_price).closest("tr");
+            if (room_id) {
+                $.ajax({
+                    url: "{{ route('admin.getRoomPrice') }}",
+                    type: "POST",
+                    data: {
+                        "room_id": room_id
+                    },
+                    dataType: "json",
+                    success: function(resp) {
+                        $(tr).find(".price").val(resp);
+                        $(tr).find(".amount").val(resp);
+                        totalAmount();
+                    },
+                });
+            } else {
+                $(tr).find(".price").val('');
+                $(tr).find(".amount").val('');
+                totalAmount();
+            }
+        }
+        
+        var i = 0;
+
         function onEnterRoomNo(room_no) {
+            $(".roomTable").addClass("d-none");
             var count_room = "{{ $countRoom }}";
             var no_of_room = $(room_no).val();
-            console.log(count_room - no_of_room);
-            console.log(count_room >= no_of_room);
+            // console.log(count_room - no_of_room);
+            // console.log(count_room >= no_of_room);
             var html = "";
             if (no_of_room.match(/^\d+$/) && no_of_room != '') {
                 if ((count_room - no_of_room) >= 0) {
+                    $(".roomTable").removeClass("d-none");
                     for (var i = 0; i < no_of_room; i++) {
                         html +=
-                        `<tr>
+                            `<tr>
                             <td>
-                                <select name="room_no[]" onchange="onRoomChange();" class="form-control no_of_room" id="room_no` +
-                            i + `">
+                                <select name="room_no[]" onchange="onRoomChange($(this));" class="form-control no_of_room" id="room_no` +
+                            i +
+                            `">
                                     <option value="">Select Room</option>
                                     @foreach ($rooms as $room)
-                                        <option value="{{ $room->id }}">{{ $room->name . '(' . $room->room_no . ')' . '(Rs. ' . $room->price . ')' }}
+                                        <option value="{{ $room->id }}" data-value="{{ $room->price }}">
+                                            {{ $room->name . '(' . $room->room_no . ')' . '(Rs. ' . $room->price . ')' }}
                                         </option>
                                     @endforeach
                                 </select>
                             </td>
                             <td>
-                                <input type="text" class="form-control" value="500">
+                                <input type="text" onchange = "onPriceChange($(this));" class="form-control price" name="price[]" id="price_` +
+                            i +
+                            `" readonly="readonly">
                             </td>
-                            <td>X</td>
+                            <td>
+                                <input type="text" onchange ="onDiscountChange($(this));" class="form-control discount" name="discount[]" id="discount_` +
+                            i + `" readonly="readonly">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control amount" name="amount[]" id="amount_` + i + `" readonly>
+                            </td>
+                            
                         </tr>`;
                     }
                     $(".room_data").html(html);
@@ -539,6 +637,144 @@
                 });
             }
 
+        }
+
+        function add_row()
+        {
+            var count_room = $("table tbody tr").length;
+            console.log(count_room);
+            let total_room_no = $("#no_of_room").val(); 
+            // console.log(total_room_no);
+            if ((count_room - total_room_no) >= 0) {
+                addRow(i);
+            } else {
+                $.alert({
+                        title: "Alert !",
+                        content: "No of room exceeds the room available",
+                        icon: "fa fa-exclamationtriangle",
+                        theme: "modern",
+                    });
+            }
+            
+        }
+
+        function addRow(i){
+            let html = 
+            `<tr>
+                <td>
+                    <select name="room_no[]" onchange="onRoomChange($(this));" class="form-control no_of_room" id="room_no` +
+                i +
+                `">
+                        <option value="">Select Room</option>
+                        @foreach ($rooms as $room)
+                            <option value="{{ $room->id }}" data-value="{{ $room->price }}">
+                                {{ $room->name . '(' . $room->room_no . ')' . '(Rs. ' . $room->price . ')' }}
+                            </option>
+                        @endforeach
+                    </select>
+                </td>
+                <td>
+                    <input type="text" onchange = "onPriceChange($(this));" class="form-control price" name="price[]" id="price_` +
+                i +
+                `" readonly="readonly">
+                </td>
+                <td>
+                    <input type="text" onchange ="onDiscountChange($(this));" class="form-control discount" name="discount[]" id="discount_` +
+                i + `" readonly="readonly">
+                </td>
+                <td>
+                    <input type="text" class="form-control amount" name="amount[]" id="amount_` + i + `" readonly>
+                </td>
+                <td><button type="button" class="btn btn-sm btn-danger" onclick="removeRow($(this));">X</button></td>
+            </tr>`;
+            $(".room_data").append(html);
+            var room_no = $("#no_of_room").val();
+            var new_no = parseInt(room_no) + 1;
+            $("#no_of_room").val(new_no);
+            i++;
+        }
+
+        function totalAmount() {
+            let table_tbody = $("table#roomTable tbody"),
+                amounts = table_tbody.find(".amount");
+            let total_amount = 0;
+            $.each(amounts, function(key, value) {
+                if ($(value).val()) {
+                    total_amount += parseFloat($(value).val());
+                }
+            });
+            if (total_amount == 0) {
+                $("#total_amount").val('');
+            } else {
+                $("#total_amount").val(total_amount.toFixed(2));
+            }
+            onPaid();
+
+        }
+
+        function onDiscountChange(this_discount) {
+            var tr = $(this_discount).closest("tr"),
+                price = $(tr).find(".price"),
+                discount = $(tr).find(".discount");
+            var actual_price = $(tr).find(".no_of_room");
+            console.log(actual_price);
+            if ($(discount).val() != '') {
+                console.log("hi disocunt");
+                if (($(price).val() - $(discount).val()) > 0) {
+                    var amount = $(price).val() - $(discount).val();
+                    $(tr).find(".amount").val(amount.toFixed(2));
+                    totalAmount();
+                } else {
+                    $.alert({
+                        title: "Alert !",
+                        content: "Discount is greater than amount",
+                        icon: "fa fa-exclamation-triangle",
+                        theme: "modern",
+                    });
+                    // $(price).val(actual_price);
+                    $(discount).val('');
+                    $(tr).find(".amount").val($(price).val());
+                    totalAmount();
+                }
+            } else {
+                $(tr).find(".amount").val($(price).val());
+                totalAmount();
+            }
+
+
+        }
+
+        function onPriceChange(room_price) {
+            onDiscountChange(room_price);
+        }
+
+        function onPaid() {
+            var amount_paid = $("#paid");
+            var total = $("#total_amount").val();
+            if ((total - $(amount_paid).val()) < 0) {
+                $("#change").val(($(amount_paid).val() - total).toFixed(2));
+                $("#due").val(0.00);
+            } else {
+                $("#change").val(0.00);
+                $("#due").val((total - $(amount_paid).val()).toFixed(2));
+            }
+        }
+
+        function removeRow(row){
+            var no_of_room = $("#no_of_room").val();
+            let tr = $(row).closest("tr");
+            $(tr).remove();
+            totalAmount();
+            var new_num = no_of_room - 1;
+            $("#no_of_room").val(new_num);
+            if(new_num == 0){
+                $("#roomTable").addClass("d-none");
+                $("#no_of_room").val('');
+                $("#total_amount").val('');
+                $("#change").val('');
+                $("#due").val('');
+                $("paid").val('');
+            }
         }
 
         $('#form').validate({
@@ -593,6 +829,14 @@
                 },
 
                 "room_no[]": "required",
+                "price[]": {
+                    required: true,
+                    number: true,
+                },
+                "amount[]": {
+                    required: true,
+                    number: true,
+                },
             },
             messages: {
                 first_name: {

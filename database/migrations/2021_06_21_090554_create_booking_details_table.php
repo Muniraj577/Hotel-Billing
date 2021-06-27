@@ -22,6 +22,10 @@ class CreateBookingDetailsTable extends Migration
             $table->date("departure_date")->nullable();
             $table->date("nepali_departure_date")->nullable();
             $table->string("departure_time")->nullable();
+            $table->decimal("total", 10,2)->nullable();
+            $table->decimal("paid", 10,2)->nullable();
+            $table->decimal("change_amount", 10, 2)->nullable();
+            $table->decimal("due", 10, 2)->nullable();
             $table->integer("no_of_rooms")->nullable();
             $table->integer("no_of_relative")->nullable();
             $table->tinyInteger("status")->nullable()->default(1);

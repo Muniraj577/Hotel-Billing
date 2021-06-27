@@ -88,6 +88,7 @@ class BookingController extends Controller
                     'signature' => $image,
                     'profile_pic' => $profile,
                 ]);
+                // "total", "paid", "change_amount", "due"
                 $bkd = BookingDetail::create([
                     'customer_id' => $customer->id,
                     'arrival_date' => $request->arrival_date,
@@ -101,6 +102,10 @@ class BookingController extends Controller
                     'no_of_rooms' => $request->no_of_rooms,
                     'no_of_relative' => $request->no_of_relatives,
                     'status' => 1,
+                    'total' => $request->total_amount,
+                    'paid' => $request->paid_amount,
+                    'change_amount' => $request->change_amount,
+                    'due' => $request->due_amount,
                 ]);
                 $this->__createRoomDetail($request, $customer->id, $bkd->id);
                 DB::commit();
@@ -271,11 +276,15 @@ class BookingController extends Controller
 
     private function __createRoomDetail($data, $customerId, $booking_id)
     {
+        // "price", "discount", "amount"
         foreach ($data->input('room_no') as $key => $value) {
             $rd = BookingRoom::create([
                 'customer_id' => $customerId,
                 'booking_id' => $booking_id,
                 'room_id' => $value,
+                'price' => $data->get("price")[$key],
+                'discount' => $data->get("discount")[$key],
+                'amount' => $data->get("amount")[$key],
             ]);
             $room = Room::where("id", $value)->firstOrFail();
             $room->update(["status" => "UnAvailable"]);
@@ -369,7 +378,13 @@ class BookingController extends Controller
             "arrival_date" => "required",
             "arrival_time" => "required",
             "no_of_rooms" => "required|integer",
+            "total_amount" => "required|numeric",
+            "paid_amount" => "required|numeric",
+            "change_amount" => "required|numeric",
+            "due_amount" => "required|numeric",
             "room_no.*" => "required",
+            "price.*" => "required|numeric",
+            "amount.*" => "required|numeric",
             "relative_first_name.*" => "required_with:no_of_relatives|string",
             "relative_last_name.*" => "required_with:no_of_relatives|string",
             "relative_age.*" => "required_with:no_of_relatives|numeric",

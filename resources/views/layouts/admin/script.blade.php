@@ -1,4 +1,4 @@
-<script src="{{ asset('admin/plugins/jquery/jquery.min.js') }}"></script>
+<script src="{{ asset('newjs/jquery.min.js') }}"></script>
 <script src="{{ asset('admin/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 <script src="{{ asset('admin/plugins/chart.js/Chart.min.js') }}"></script>
 <script src="{{ asset('admin/plugins/moment/moment.min.js') }}"></script>

@@ -9,7 +9,7 @@ class BookingRoom extends Model
 {
     use HasFactory;
 
-    protected $fillable = ["customer_id", "booking_id", "room_id"];
+    protected $fillable = ["customer_id", "booking_id", "room_id", "price", "discount", "amount"];
 
     public function room()
     {

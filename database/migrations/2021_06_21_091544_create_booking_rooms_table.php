@@ -18,6 +18,9 @@ class CreateBookingRoomsTable extends Migration
             $table->foreignId("customer_id")->onDelete("set null")->nullable()->constrained("customers");
             $table->foreignId("booking_id")->onDelete("set null")->nullable()->constrained("booking_details");
             $table->foreignId("room_id")->onDelete("set null")->nullable()->constrained("rooms");
+            $table->decimal("price", 10, 2)->nullable();
+            $table->decimal("discount", 10, 2)->nullable();
+            $table->decimal("amount", 10, 2)->nullable();
             $table->timestamps();
         });
     }
