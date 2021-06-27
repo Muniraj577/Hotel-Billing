@@ -50,7 +50,9 @@
                                         <th>Arrival Time</th>
                                         <th>Departure Date</th>
                                         <th>Departure Time</th>
-                                        <th>No of rooms</th>
+                                        <th>Total</th>
+                                        <th>Paid</th>
+                                        <th>Due</th>
                                         <th>Status</th>
                                         <th class="hidden">Action</th>
                                     </tr>
@@ -75,7 +77,9 @@
                                                 <td>
                                                     {{ $booking_detail->departure_time != null ? date('h:i a', strtotime($booking_detail->departure_time)) : 'Not Available' }}
                                                 </td>
-                                                <td>{{ $booking_detail->no_of_rooms }}</td>
+                                                <td>{{ $booking_detail->total }}</td>
+                                                <td>{{ $booking_detail->totalPaid() }}</td>
+                                                <td>{{ $booking_detail->lastDue() }}</td>
                                                 <td>{{ $booking_detail->status == 1 ? 'Active' : 'Inactive' }}</td>
                                                 <td>
                                                     <div class='dropdown action_dropdown'>
@@ -89,14 +93,17 @@
                                                             <a class='dropdown-item'
                                                                 href="{{ route('admin.booking.show', $booking_detail->id) }}"><i
                                                                     class='fa fa-eye iCheck'></i>&nbsp;View Booking Detail</a>
-                                                            <a class="dropdown-item" @if ($status == 1) href="{{ route('admin.booking.edit', $booking_detail->id) }}"@else onclick="alertWarning();" @endif>
+                                                            <a class="dropdown-item" @if ($status == 1 || $booking_detail->paid == $booking_detail->total ) href="{{ route('admin.booking.edit', $booking_detail->id) }}"@else onclick="alertWarning();" @endif>
                                                                 <i class="fa fa-edit iCheck"></i>&nbsp;Edit Booking Detail</a>
                                                             <button class="dropdown-item" type="button" data-toggle="modal"
                                                                 data-target="#departureModal"
                                                                 data-target-id="{{ $booking_detail->id }}">
                                                                 <i class="fa fa-edit"></i>Update Departure
                                                             </button>
-
+                                                            {{-- Todo Check condition --}}
+                                                            <a class="dropdown-item" @if ($booking_detail->totalPaid() != $booking_detail->total ||  $booking_detail->totalPaid() < $booking_detail->total) href="{{ route("admin.booking.payment.create", $booking_detail->id) }}" @else onclick="alertPayMessage();" @endif>
+                                                                <i class="fa fa-money-check-alt iCheck"></i>&nbsp;Add Payment
+                                                            </a>
 
                                                             {{-- <button class='dropdown-item' onclick='alertPayMessage();'><i class='far fa-money-bill-alt iCheck'></i>&nbsp;Add Payment</button> --}}
                                                         </div>

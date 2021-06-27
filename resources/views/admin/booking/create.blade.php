@@ -717,9 +717,7 @@
                 price = $(tr).find(".price"),
                 discount = $(tr).find(".discount");
             var actual_price = $(tr).find(".no_of_room");
-            console.log(actual_price);
             if ($(discount).val() != '') {
-                console.log("hi disocunt");
                 if (($(price).val() - $(discount).val()) > 0) {
                     var amount = $(price).val() - $(discount).val();
                     $(tr).find(".amount").val(amount.toFixed(2));
@@ -751,13 +749,25 @@
         function onPaid() {
             var amount_paid = $("#paid");
             var total = $("#total_amount").val();
-            if ((total - $(amount_paid).val()) < 0) {
-                $("#change").val(($(amount_paid).val() - total).toFixed(2));
-                $("#due").val(0.00);
-            } else {
-                $("#change").val(0.00);
+            if((total - $(amount_paid).val()) > 0){
                 $("#due").val((total - $(amount_paid).val()).toFixed(2));
+            } else {
+                $.alert({
+                    title: "Alert !",
+                    content: "Paid amount is larger than actual amount",
+                    theme: "modern",
+                    icon: "fa fa-exclamation-triangle",
+                });
+                $("#paid").val('');
+                $("#due").val(total);
             }
+            // if ((total - $(amount_paid).val()) < 0) {
+            //     $("#change").val(($(amount_paid).val() - total).toFixed(2));
+            //     $("#due").val(0.00);
+            // } else {
+            //     $("#change").val(0.00);
+            //     $("#due").val((total - $(amount_paid).val()).toFixed(2));
+            // }
         }
 
         function removeRow(row){

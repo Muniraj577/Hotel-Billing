@@ -204,6 +204,56 @@
                                     </div>
                                 </div>
                             </div>
+                            <h3><u>{{ strtoupper('Payment Detail') }}</u></h3>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <label for="total_amount">Total Amount:</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <span>
+                                                        {{ $booking_detail->total }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <label for="paid">Paid Amount:</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <span>{{ $booking_detail->paid }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <label for="change">Change:</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <span>{{ $booking_detail->change_amount }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <label for="due">Due:</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <span>{{ $booking_detail->due }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
                             <h3><u>{{ strtoupper('Room Details') }}</u></h3>
                             <div class="row">
                                 <div class="col-md-6">
@@ -226,16 +276,22 @@
                                 <div class="col-md-12">
                                     @if($status == 1)
                                     <div class="float-right mb-1">
-                                        <button type="button" class="btn btn-primary" data-toggle="modal"
+                                        {{-- <button type="button" class="btn btn-primary" data-toggle="modal"
                                             data-target="#createRoomModal" data-target-id="{{ $booking_detail->id }}">
                                             Add Room
-                                        </button>
+                                        </button> --}}
+                                        <a href="{{ route('admin.booking_room.getForm', $booking_detail->id) }}" class="btn btn-primary">
+                                        Add Room
+                                        </a>
                                     </div>
                                     @endif
                                     <table class="table table-bordered">
                                         <thead>
                                             <th>Room No</th>
                                             <th>Room Name</th>
+                                            <th>Price</th>
+                                            <th>Discount</th>
+                                            <th>Amount</th>
                                             @if($status == 1)
                                             <th>Action</th>
                                             @endif
@@ -245,12 +301,18 @@
                                                 <tr>
                                                     <td>{{ $booking_room->room->room_no }}</td>
                                                     <td>{{ $booking_room->room->name }}</td>
+                                                    <td>{{ $booking_room->price }}</td>
+                                                    <td>{{ $booking_room->discount }}</td>
+                                                    <td>{{ $booking_room->amount }}</td>
                                                     @if($status == 1)
                                                     <td>
                                                         <div class="d-inline-flex">
-                                                            <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editRoomModal" data-target-id="{{ $booking_room->id }}">
+                                                            {{-- <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editRoomModal" data-target-id="{{ $booking_room->id }}">
                                                                 Edit
-                                                            </button>&nbsp;&nbsp;
+                                                            </button>&nbsp;&nbsp; --}}
+                                                            <a href="{{ route('admin.booking_room.edit', $booking_room->id) }}" class="btn btn-sm btn-primary">
+                                                                Edit
+                                                            </a>&nbsp;&nbsp;
                                                             <form
                                                                 action="{{ route('admin.booking_room.destroy', $booking_room->id) }}"
                                                                 method="POST">

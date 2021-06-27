@@ -16,7 +16,8 @@ class RoomController extends Controller
     {
         $booking_detail = BookingDetail::findOrFail($id);
         $rooms = Room::where("status", "Available")->where("is_active", 1)->get();
-        return view("admin.partial.room.createForm", compact("rooms", "booking_detail"));
+        return view("admin.booking.room.create", compact("rooms", "booking_detail"));
+        // return view("admin.partial.room.createForm", compact("rooms", "booking_detail"));
     }
 
     public function addRoom(Request $request, $id)
@@ -24,6 +25,8 @@ class RoomController extends Controller
         // dd($request->all());
         $validator = Validator::make($request->all(), [
             'room_id' => "required",
+            'price' => "required|numeric",
+            'amount' => "required|numeric",
         ], [
             "room_id.required" => "This field is required",
         ]);
@@ -38,11 +41,18 @@ class RoomController extends Controller
                 $booking_room->room_id = $request->room_id;
                 $booking_room->booking_id = $id;
                 $booking_room->customer_id = $bkd->customer_id;
+                $booking_room->price = $request->price;
+                $booking_room->discount = $request->discount;
+                $booking_room->amount = $request->amount;
                 $booking_room->save();
                 $no_of_room = $bkd->no_of_rooms;
                 $bkd->update([
                     "no_of_rooms" => $no_of_room + 1,
+                    "total" => $bkd->totalPrice(),
                 ]);
+                if(($bkd->total - $bkd->paid) > 0){
+                    $bkd->update(["due"=>$bkd->total - $bkd->paid]);
+                }
                 DB::commit();
                 return response()->json(["msg" => "Room added successfully"]);
             } catch (\Exception $e) {
@@ -56,14 +66,16 @@ class RoomController extends Controller
     {
         $booking_room = BookingRoom::findOrFail($id);
         $rooms = Room::where("is_active", 1)->where("status", "Available")->orWhere("id", $booking_room->room_id)->get();
-        return view("admin.partial.room.editForm", compact("booking_room", "rooms"));
+        return view("admin.booking.room.edit", compact("booking_room", "rooms"));
+        // return view("admin.partial.room.editForm", compact("booking_room", "rooms"));
     }
 
     public function update(Request $request, $id)
     {
-        // dd($request->all());
         $validator = Validator::make($request->all(), [
             'roomid' => "required",
+            'price' => "required|numeric",
+            'amount' => "required|numeric",
         ], [
             "roomid.required" => "This field is required",
         ]);
@@ -77,7 +89,18 @@ class RoomController extends Controller
                 $room = Room::where("id", $booking_room->room_id)->first()->update(["status" => "Available"]);
                 $booking_room->update([
                     "room_id" => $request->roomid,
+                    "discount" => $request->discount,
+                    "price" => $request->price,
+                    "amount" => $request->amount,
                 ]);
+                $bkd = BookingDetail::where("id", $booking_room->booking_id)->first();
+
+                $bkd->update([
+                    "total" => $bkd->totalPrice(),
+                ]);
+                if(($bkd->total - $bkd->paid) > 0){
+                    $bkd->update(["due"=>$bkd->total - $bkd->paid]);
+                }
                 Room::where("id", $booking_room->room_id)->first()->update(["status" => "UnAvailable"]);
                 DB::commit();
                 return response()->json(["msg" => "Room updated successfully"]);

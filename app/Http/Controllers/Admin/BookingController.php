@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\BookingDetail;
 use App\Models\BookingRoom;
 use App\Models\Customer;
+use App\Models\Payment;
 use App\Models\Relative;
 use App\Models\Room;
 use App\Models\Upload;
@@ -108,6 +109,7 @@ class BookingController extends Controller
                     'due' => $request->due_amount,
                 ]);
                 $this->__createRoomDetail($request, $customer->id, $bkd->id);
+                $this->__createPayment($request, $bkd->id);
                 DB::commit();
                 if ($request->save == "save") {
                     return redirect()->back()->with(notify("success", "Booking created successfully"));
@@ -290,6 +292,18 @@ class BookingController extends Controller
             $room->update(["status" => "UnAvailable"]);
         }
 
+    }
+
+    private function __createPayment($data, $booking_id)
+    {
+        Payment::create([
+            "booking_id" => $booking_id,
+            "paid" => $data->paid_amount,
+            "due" => $data->due_amount,
+            "change_amount" => $data->change_amount,
+            "date" => date("Y-m-d"),
+            "type" => ($data->paid_amount == 0 ? "Unpaid" : ($data->due_amount != '' || $data->due_amount != 0 ? "Partially Paid" : "Paid" )),
+        ]);
     }
 
     private function __updateCustomer($data, $customerId, $booking_id)

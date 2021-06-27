@@ -27,4 +27,29 @@ class BookingDetail extends Model
     {
         return $this->hasMany("App\Models\Customer", "booking_id", "id");
     }
+
+    public function payments()
+    {
+        return $this->hasMany("App\Models\Payment", "booking_id", "id");
+    }
+
+    public function totalPaid()
+    {
+        return $this->payments->sum("paid");
+    }
+
+    public function totalDue()
+    {
+        return $this->payments->sum("due");
+    }
+
+    public function lastDue()
+    {
+        return $this->payments()->latest()->first()->due;
+    }
+
+    public function totalPrice()
+    {
+        return $this->booking_rooms->sum("amount");
+    }
 }

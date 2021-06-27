@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
 use App\Http\Controllers\Admin\AdminController as AdminUserController;
 use App\Http\Controllers\Admin\Booking\RoomController as BookingRoomController;
 use App\Http\Controllers\Admin\RelativeController as AdminRelativeController;
+use App\Http\Controllers\Admin\PaymentController as BookingPaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -70,10 +71,15 @@ Route::group(["prefix"=>"admin/", "middleware" => "auth", "as"=>"admin."], funct
 
         Route::get("update-departure/{id}", [AdminBookingController::class, "getDepartureModel"])->name("getDepartureModel");
         Route::post("update-departure/{id}", [AdminBookingController::class, "updateDeparture"])->name("updateDeparture");
+
+        Route::group(["prefix" => "payment/", "as"=>"payment."],function(){
+            Route::get("create/{id}", [BookingPaymentController::class, "create"])->name("create");
+            Route::post("store/{id}",[BookingPaymentController::class, "store"])->name("store");
+        });
     });
 
     Route::group(["prefix"=>"booking/room/", "as" => "booking_room."],function(){
-        Route::get("create-form/{id}", [BookingRoomController::class, "getForm"])->name("getForm");
+        Route::get("create-room/{id}", [BookingRoomController::class, "getForm"])->name("getForm");
         Route::post("add-room/{id}", [BookingRoomController::class, "addRoom"])->name("addRoom");
         Route::get("edit/{id}", [BookingRoomController::class, "edit"])->name("edit");
         Route::post("update/{id}", [BookingRoomController::class, "update"])->name("update");
@@ -92,6 +98,8 @@ Route::group(["prefix"=>"admin/", "middleware" => "auth", "as"=>"admin."], funct
         Route::get("",[AdminCustomerController::class, "index"])->name("index");
         Route::get("show/{id}", [AdminCustomerController::class, "show"])->name("show");
     });
+
+    
 
     // Customer Booking Details
     Route::group(["prefix" => "customer/booking/", "as" => "customer.booking."], function(){
