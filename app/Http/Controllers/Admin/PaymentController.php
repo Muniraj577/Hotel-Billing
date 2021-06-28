@@ -14,7 +14,12 @@ class PaymentController extends Controller
     public function create($id)
     {
         $booking_detail = BookingDetail::where("id", $id)->firstOrFail();
-        return view($this->page."create", compact("booking_detail"));
+        if($booking_detail->totalPaid() != $booking_detail->total){
+            return view($this->page."create", compact("booking_detail"));
+        } else {
+            abort(403);
+        }
+        
     }   
 
     public function store(Request $request, $id)
@@ -52,6 +57,13 @@ class PaymentController extends Controller
             }
         }
 
+    }
+
+
+    public function show($id)
+    {
+        $booking_detail = BookingDetail::where("id", $id)->with("payments")->firstOrFail();
+        return view($this->page."show", compact("booking_detail"));
     }
 
 

@@ -1,6 +1,6 @@
 @extends('layouts.admin.app')
 @section('title', 'Booking')
-@section('add-booking', 'active')
+@section('booking', 'active')
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/datepicker.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/gif.css') }}">

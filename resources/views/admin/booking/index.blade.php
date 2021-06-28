@@ -101,8 +101,11 @@
                                                                 <i class="fa fa-edit"></i>Update Departure
                                                             </button>
                                                             {{-- Todo Check condition --}}
-                                                            <a class="dropdown-item" @if ($booking_detail->totalPaid() != $booking_detail->total ||  $booking_detail->totalPaid() < $booking_detail->total) href="{{ route("admin.booking.payment.create", $booking_detail->id) }}" @else onclick="alertPayMessage();" @endif>
+                                                            <a class="dropdown-item" @if ($booking_detail->totalPaid() != $booking_detail->total ) href="{{ route("admin.booking.payment.create", $booking_detail->id) }}" @else onclick="alertPayMessage();" @endif>
                                                                 <i class="fa fa-money-check-alt iCheck"></i>&nbsp;Add Payment
+                                                            </a>
+                                                            <a class="dropdown-item" href="{{ route('admin.booking.payment.show', $booking_detail->id) }}">
+                                                                <i class="fa fa-money-check-alt"></i>&nbsp;View Payments
                                                             </a>
 
                                                             {{-- <button class='dropdown-item' onclick='alertPayMessage();'><i class='far fa-money-bill-alt iCheck'></i>&nbsp;Add Payment</button> --}}

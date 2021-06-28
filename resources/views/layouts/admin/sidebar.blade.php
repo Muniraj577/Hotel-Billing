@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Auth;
 $menu = 'menu-open';
 $active = 'active menu-open';
 $bookNav = Request::is('admin/booking*');
+$userNav  = Request::is('admin/user*');
+$roomNav = Request::is('admin/room*');
 
 ?>
 <aside class="main-sidebar sidebar-dark-primary elevation-4">

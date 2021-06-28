@@ -75,6 +75,7 @@ Route::group(["prefix"=>"admin/", "middleware" => "auth", "as"=>"admin."], funct
         Route::group(["prefix" => "payment/", "as"=>"payment."],function(){
             Route::get("create/{id}", [BookingPaymentController::class, "create"])->name("create");
             Route::post("store/{id}",[BookingPaymentController::class, "store"])->name("store");
+            Route::get("show/{id}", [BookingPaymentController::class, "show"])->name("show");
         });
     });
 

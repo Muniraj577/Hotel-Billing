@@ -89,7 +89,6 @@ class BookingController extends Controller
                     'signature' => $image,
                     'profile_pic' => $profile,
                 ]);
-                // "total", "paid", "change_amount", "due"
                 $bkd = BookingDetail::create([
                     'customer_id' => $customer->id,
                     'arrival_date' => $request->arrival_date,
@@ -109,7 +108,9 @@ class BookingController extends Controller
                     'due' => $request->due_amount,
                 ]);
                 $this->__createRoomDetail($request, $customer->id, $bkd->id);
-                $this->__createPayment($request, $bkd->id);
+                if($request->paid_amount != 0 || $request->paid_amount != '' || $request->paid_amount != null){
+                    $this->__createPayment($request, $bkd->id);
+                }
                 DB::commit();
                 if ($request->save == "save") {
                     return redirect()->back()->with(notify("success", "Booking created successfully"));
