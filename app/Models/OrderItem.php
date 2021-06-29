@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Product extends Model
+class OrderItem extends Model
 {
     use HasFactory;
 
-    protected $fillable = ["unit_id", "name", "price"];
+    protected $fillable = ["product_id", "unit_id", "price", "qty", "discount", "amount"];
 }

@@ -1,5 +1,5 @@
-<li class="nav-item {{ $userNav || $roomNav ? $menu : '' }}">
-    <a href="#" class="nav-link {{ $userNav || $roomNav ? $active : '' }}">
+<li class="nav-item {{ $userNav || $roomNav || $productNav || $unitNav ? $menu : '' }}">
+    <a href="#" class="nav-link {{ $userNav || $roomNav || $productNav || $unitNav? $active : '' }}">
         <i class="nav-icon fa fa-th-list iCheck"></i>
         <p>
             Master
@@ -17,6 +17,18 @@
             <a href="{{route('admin.room.index')}}" class="nav-link @yield('room')">
                 <i class="nav-icon fa fa-dungeon iCheck"></i></i>
                 <p>Rooms</p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{route('admin.unit.index')}}" class="nav-link @yield('unit')">
+                <i class="nav-icon fab fa-product-hunt iCheck"></i></i>
+                <p>Units</p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{route('admin.product.index')}}" class="nav-link @yield('product')">
+                <i class="nav-icon fab fa-product-hunt iCheck"></i></i>
+                <p>Products</p>
             </a>
         </li>
     </ul>
@@ -40,6 +52,29 @@
             <a href="{{ route("admin.booking.create") }}" class="nav-link @yield("add-booking")">
                 <i class="nav-icon fa fa-plus iCheck"></i>
                 <p>Add Booking</p>
+            </a>
+        </li>
+    </ul>
+</li>
+<li class="nav-item {{ $orderNav ? $menu : '' }}">
+    <a href="#" class="nav-link {{ $orderNav ? $active : '' }}">
+        <i class="nav-icon fa fa-th-list iCheck"></i>
+        <p>
+            Orders
+            <i class="fas fa-angle-left right"></i>
+        </p>
+    </a>
+    <ul class="nav nav-treeview">
+        <li class="nav-item">
+            <a href="{{ route("admin.order.index") }}" class="nav-link @yield("order")">
+                <i class="nav-icon fa fa-th-list iCheck"></i>
+                <p>All Orders</p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ route("admin.order.create") }}" class="nav-link @yield("add-order")">
+                <i class="nav-icon fa fa-plus iCheck"></i>
+                <p>Add Order</p>
             </a>
         </li>
     </ul>

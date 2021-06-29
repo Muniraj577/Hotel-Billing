@@ -11,6 +11,9 @@ use App\Http\Controllers\Admin\AdminController as AdminUserController;
 use App\Http\Controllers\Admin\Booking\RoomController as BookingRoomController;
 use App\Http\Controllers\Admin\RelativeController as AdminRelativeController;
 use App\Http\Controllers\Admin\PaymentController as BookingPaymentController;
+use App\Http\Controllers\Admin\UnitController as AdminUnitController;
+use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -100,6 +103,30 @@ Route::group(["prefix"=>"admin/", "middleware" => "auth", "as"=>"admin."], funct
         Route::get("show/{id}", [AdminCustomerController::class, "show"])->name("show");
     });
 
+    // Unit
+    Route::group(["prefix"=>"unit/", "as"=>"unit."], function(){
+        Route::get("", [AdminUnitController::class, "index"])->name("index");
+        Route::get("create", [AdminUnitController::class, "create"])->name("create");
+        Route::post("store", [AdminUnitController::class, "store"])->name("store");
+        Route::get("edit/{id}", [AdminUnitController::class, "edit"])->name("edit");
+        Route::put("update/{id}", [AdminUnitController::class, "update"])->name("update");
+    });
+
+    // Product 
+    Route::group(["prefix" => "product/", "as" => "product."], function(){
+        Route::get("", [AdminProductController::class, "index"])->name("index");
+        Route::get("create", [AdminProductController::class, "create"])->name("create");
+        Route::post("store", [AdminProductController::class, "store"])->name("store");
+        Route::get("edit/{id}", [AdminProductController::class, "edit"])->name("edit");
+        Route::put("update/{id}", [AdminProductController::class, "update"])->name("update");
+    });
+
+    // Order
+    Route::group(["prefix"=> "order/", "as"=>"order."], function(){
+        Route::get("", [AdminOrderController::class, "index"])->name("index");
+        Route::get("create", [AdminOrderController::class, "create"])->name("create");
+    });
+
     
 
     // Customer Booking Details
@@ -109,4 +136,6 @@ Route::group(["prefix"=>"admin/", "middleware" => "auth", "as"=>"admin."], funct
 
     Route::post('get-all-customers', [AdminDashboardController::class, 'getCustomer'])->name('getCustomer');
     Route::post("get-room-price", [AdminDashboardController::class, "getRoomPrice"])->name("getRoomPrice");
+    Route::post("get-room-customers", [AdminDashboardController::class, "getRoomCustomer"])->name("getRoomCustomer");
+    Route::post("get-product-details", [AdminDashboardController::class, "getProductDetails"])->name("getProductDetails");
 });
