@@ -7,6 +7,7 @@ use App\Models\BookingRoom;
 use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Room;
+use App\Models\Unit;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -37,6 +38,13 @@ class DashboardController extends Controller
     public function getProductDetails(Request $request)
     {
         $product = Product::where("id", $request->product_id)->first();
-        return $product;
+        $unit = Unit::where("id", $product->unit_id)->first()->name;
+        return response()->json(["product" => $product, "unit"=>$unit]);
+    }
+
+    public function getProducts(Request $request)
+    {
+        $products = Product::where('name', 'LIKE', '%' . $request->input('product_name') . '%')->get();
+        return $products;
     }
 }

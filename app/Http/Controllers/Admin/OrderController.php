@@ -22,9 +22,11 @@ class OrderController extends Controller
     public function create()
     {
         $booking_details = BookingDetail::where("status", 1)->get();
+
         foreach($booking_details as $bkd){
-            $booking_rooms = BookingRoom::where("booking_id", $bkd->id)->get();
+            $bkd_ids[] = $bkd->id;
         }
+        $booking_rooms = BookingRoom::whereIn("booking_id", $bkd_ids)->get();
         foreach($booking_rooms as $booking_room){
             $room_ids[] = $booking_room->id;
         }

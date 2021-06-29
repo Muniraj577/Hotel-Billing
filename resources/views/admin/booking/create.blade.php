@@ -414,19 +414,19 @@
                                 </div>
                                 <div class="row roomTable d-none">
                                     <div class="col-md-8">
-                                        
+
                                         <table class="table table-bordered" id="roomTable">
                                             <thead>
                                                 <th>Room No</th>
                                                 <th>Price</th>
                                                 <th>Discount</th>
                                                 <th>Amount</th>
-                                                
+
                                             </thead>
                                             <tbody class="room_data">
                                                 @if (old('room_no') != '')
-                                                @include('admin.partial.booking.redirectCreate')
-                                            @endif
+                                                    @include('admin.partial.booking.redirectCreate')
+                                                @endif
                                             </tbody>
                                             <tfoot>
                                                 <tr>
@@ -434,7 +434,8 @@
                                                         <label>Total</label>
                                                     </td>
                                                     <td>
-                                                        <input type="text" class="form-control" value="{{ old("total_amount") }}" name="total_amount"
+                                                        <input type="text" class="form-control"
+                                                            value="{{ old('total_amount') }}" name="total_amount"
                                                             id="total_amount">
                                                     </td>
 
@@ -446,7 +447,8 @@
                                                     </td>
                                                     <td>
                                                         <input type="text" class="form-control" onkeyup="onPaid();"
-                                                            name="paid_amount" value="{{ old("paid_amount") }}" id="paid">
+                                                            name="paid_amount" value="{{ old('paid_amount') }}"
+                                                            id="paid">
                                                     </td>
                                                 </tr>
                                                 <tr class="d-none">
@@ -454,7 +456,8 @@
                                                         <label>Change</label>
                                                     </td>
                                                     <td>
-                                                        <input type="text" class="form-control" value="{{ old("change_amount") }}" name="change_amount"
+                                                        <input type="text" class="form-control"
+                                                            value="{{ old('change_amount') }}" name="change_amount"
                                                             id="change">
                                                     </td>
                                                 </tr>
@@ -463,12 +466,13 @@
                                                         <label>Due</label>
                                                     </td>
                                                     <td>
-                                                        <input type="text" class="form-control" value="{{ old("due_amount") }}" name="due_amount" id="due">
+                                                        <input type="text" class="form-control"
+                                                            value="{{ old('due_amount') }}" name="due_amount" id="due">
                                                     </td>
                                                 </tr>
                                             </tfoot>
                                         </table>
-                                        
+
                                     </div>
                                 </div>
                                 <div class="text-center">
@@ -576,7 +580,7 @@
                 totalAmount();
             }
         }
-        
+
         var count = 0;
 
         function onEnterRoomNo(room_no) {
@@ -641,31 +645,30 @@
 
         }
 
-        function add_row()
-        {
+        function add_row() {
             var count_room = $("table tbody tr").length;
             console.log(count_room);
-            let total_room_no = $("#no_of_room").val(); 
+            let total_room_no = $("#no_of_room").val();
             // console.log(total_room_no);
             if ((count_room - total_room_no) >= 0) {
                 addRow(count);
             } else {
                 $.alert({
-                        title: "Alert !",
-                        content: "No of room exceeds the room available",
-                        icon: "fa fa-exclamationtriangle",
-                        theme: "modern",
-                    });
+                    title: "Alert !",
+                    content: "No of room exceeds the room available",
+                    icon: "fa fa-exclamationtriangle",
+                    theme: "modern",
+                });
             }
-            
+
         }
 
-        function addRow(count){
-            let html = 
-            `<tr>
+        function addRow(count) {
+            let html =
+                `<tr>
                 <td>
                     <select name="room_no[]" onchange="onRoomChange($(this));" class="form-control no_of_room" id="room_no` +
-                    count +
+                count +
                 `">
                         <option value="">Select Room</option>
                         @foreach ($rooms as $room)
@@ -677,12 +680,12 @@
                 </td>
                 <td>
                     <input type="text" onchange = "onPriceChange($(this));" class="form-control price" name="price[]" id="price_` +
-                    count +
+                count +
                 `" readonly="readonly">
                 </td>
                 <td>
                     <input type="text" onchange ="onDiscountChange($(this));" class="form-control discount" name="discount[]" id="discount_` +
-                    count + `" readonly="readonly">
+                count + `" readonly="readonly">
                 </td>
                 <td>
                     <input type="text" class="form-control amount" name="amount[]" id="amount_` + count + `" readonly>
@@ -752,7 +755,7 @@
         function onPaid() {
             var amount_paid = $("#paid");
             var total = $("#total_amount").val();
-            if((total - $(amount_paid).val()) > 0){
+            if ((total - $(amount_paid).val()) > 0) {
                 $("#due").val((total - $(amount_paid).val()).toFixed(2));
             } else {
                 $.alert({
@@ -773,14 +776,14 @@
             // }
         }
 
-        function removeRow(row){
+        function removeRow(row) {
             var no_of_room = $("#no_of_room").val();
             let tr = $(row).closest("tr");
             $(tr).remove();
             totalAmount();
             var new_num = no_of_room - 1;
             $("#no_of_room").val(new_num);
-            if(new_num == 0){
+            if (new_num == 0) {
                 $("#roomTable").addClass("d-none");
                 $("#no_of_room").val('');
                 $("#total_amount").val('');

@@ -20,7 +20,7 @@ class BookingController extends Controller
     private $destination = 'images/customers/signature/';
     private $prfdest = "images/customers/profile/";
     private $redirectTo = "admin.booking.index";
-    
+
     public function index()
     {
         $booking_details = BookingDetail::with("customer")->orderBy("id", "desc")->get();
@@ -108,9 +108,9 @@ class BookingController extends Controller
                     'due' => $request->due_amount,
                 ]);
                 $this->__createRoomDetail($request, $customer->id, $bkd->id);
-                if($request->paid_amount != 0 || $request->paid_amount != '' || $request->paid_amount != null){
-                    $this->__createPayment($request, $bkd->id);
-                }
+                // if($request->paid_amount != 0 || $request->paid_amount != '' || $request->paid_amount != null){
+                $this->__createPayment($request, $bkd->id);
+                // }
                 DB::commit();
                 if ($request->save == "save") {
                     return redirect()->back()->with(notify("success", "Booking created successfully"));
@@ -303,7 +303,7 @@ class BookingController extends Controller
             "due" => $data->due_amount,
             "change_amount" => $data->change_amount,
             "date" => date("Y-m-d"),
-            "type" => ($data->paid_amount == 0 ? "Unpaid" : ($data->due_amount != '' || $data->due_amount != 0 ? "Partially Paid" : "Paid" )),
+            "type" => ($data->paid_amount == 0 ? "Unpaid" : ($data->due_amount != '' || $data->due_amount != 0 ? "Partially Paid" : "Paid")),
         ]);
     }
 
@@ -394,17 +394,17 @@ class BookingController extends Controller
             "arrival_time" => "required",
             "no_of_rooms" => "required|integer",
             "total_amount" => "required|numeric",
-            "paid_amount" => "required|numeric",
-            "change_amount" => "required|numeric",
-            "due_amount" => "required|numeric",
+            "paid_amount" => "nullable|numeric",
+            "change_amount" => "nullable|numeric",
+            "due_amount" => "nullable|numeric",
             "room_no.*" => "required",
             "price.*" => "required|numeric",
             "amount.*" => "required|numeric",
-            "relative_first_name.*" => "required_with:no_of_relatives|string",
-            "relative_last_name.*" => "required_with:no_of_relatives|string",
-            "relative_age.*" => "required_with:no_of_relatives|numeric",
-            "relative_relation.*" => "required_with:no_of_relatives|string",
-            "relative_gender.*" => "required_with:no_of_relatives|string",
+            // "relative_first_name.*" => "required_with:no_of_relatives|string",
+            // "relative_last_name.*" => "required_with:no_of_relatives|string",
+            // "relative_age.*" => "required_with:no_of_relatives|numeric",
+            // "relative_relation.*" => "required_with:no_of_relatives|string",
+            // "relative_gender.*" => "required_with:no_of_relatives|string",
         ], $this->messages());
     }
 

@@ -1,6 +1,15 @@
 @extends('layouts.admin.app')
 @section('title', 'Order')
 @section('add-order', 'active')
+@section('styles')
+    <link rel="stylesheet" href="{{ asset('css/gif.css') }}">
+    <style>
+        .spinner {
+            height: 38px !important;
+        }
+
+    </style>
+@endsection
 @section('content')
     <section class="content-header">
         <div class="container-fluid">
@@ -89,32 +98,41 @@
                                             <th style="width: 20%">Amount</th>
                                             <th>Action</th>
                                         </thead>
-                                        <tbody>
+                                        <tbody id="productRow">
+
+                                        </tbody>
+                                        <tfoot id="product_footer">
                                             <tr>
-                                                <td>MoMo</td>
-                                                <td>Bottle</td>
-                                                <td>
-                                                    <input type="text" name="price[]" class="form-control price"
-                                                        id="price_0" value="120">
+                                                <td colspan="5" class="text-right">
+                                                    <label>Total</label>
                                                 </td>
                                                 <td>
-                                                    <input type="text" name="qty[]" class="form-control qty" id="qty_0"
-                                                        value="1">
-                                                </td>
-                                                <td>
-                                                    <input type="text" name="discount[]" class="form-control discount"
-                                                        id="discount_0" value="100">
-                                                </td>
-                                                <td>
-                                                    <input type="text" name="amount[]" class="form-control amount"
-                                                        id="amount_0" value="20">
-                                                </td>
-                                                <td>
-                                                    <button class="btn btn-sm"><i class="fa fa-trash req"></i></button>
+                                                    <input type="text" name="total" class="form-control" id="total"
+                                                        readonly>
                                                 </td>
                                             </tr>
-                                        </tbody>
+                                            <tr>
+                                                <td colspan="5" class="text-right">
+                                                    <label>Paid Amount</label>
+                                                </td>
+                                                <td>
+                                                    <input type="text" name="paid" onchange="onPaid();" class="form-control"
+                                                        id="paid">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="5" class="text-right">
+                                                    <label>Due Amount</label>
+                                                </td>
+                                                <td>
+                                                    <input type="text" name="due" class="form-control" id="due" readonly>
+                                                </td>
+                                            </tr>
+                                        </tfoot>
                                     </table>
+                                </div>
+                                <div class="text-center">
+                                    <button class="btn btn-primary" type="submit" id="formSubmit">Submit</button>
                                 </div>
                             </form>
                         </div>
@@ -127,7 +145,25 @@
 @section('scripts')
     <script>
         $(document).ready(function() {
+            var trlength = $("#productRow tr").length;
+            if (trlength > 0) {
+                $("#product_footer").removeClass("d-none");
+            } else {
+                $("#product_footer").addClass("d-none");
+            }
 
+
+        });
+
+        $("#formSubmit").on("click",function(e) {
+            var trlength = $("#productRow tr").length;
+            if (trlength > 0) {
+                $("#form").submit();
+            } else {
+                alert("Please add product");
+                e.preventDefault();
+                return false;
+            }
         });
 
         var count = 0;
@@ -143,6 +179,7 @@
                     },
                     dataType: "json",
                     success: function(data) {
+                        $("#customer").html("<option value=''>Select Customer</option>");
                         $("#bookId").val(data.booking_id);
                         $.each(data.customers, function(key, customer) {
                             let $options = $('<option></option>').val(customer.id).html(customer
@@ -159,6 +196,9 @@
 
 
         function addRow(count, id) {
+            if (!check_same_item(id)) {
+                return false;
+            }
             if (id) {
                 $.ajax({
                     url: "{{ route('admin.getProductDetails') }}",
@@ -168,17 +208,199 @@
                     },
                     dataType: 'json',
                     success: function(resp) {
-                        console.log(resp);
+                        let row =
+                            `<tr id="item_` + id + `">
+                            <td>
+                                ` + resp.product.name + `
+                                <input type="hidden" value="` + resp.product.id +
+                            `" name="product_id[]" class="form-control product" id="product_` + id + `" />
+                            </td>
+                            <td>
+                                ` + resp.unit + `
+                                <input type="hidden" value="` + resp.product.unit_id +
+                            `" name="unit_id[]" class="form-control unit" id="unit_` + count + `" />
+                            </td>
+                            <td>
+                                <input type="text" name="price[]" onchange="onPriceChange($(this));" class="form-control price"
+                                    id="price_` + count + `" value="` + resp.product.price +
+                            `">
+                            </td>
+                            <td>
+                                <input type="text" name="qty[]" onchange="onQtyChange($(this));" class="form-control qty" id="qty_` +
+                            count + `">
+                            </td>
+                            <td>
+                                <input type="text" name="discount[]" onkeyup="onEnterDis($(this));" onchange="onDiscountChange($(this));" class="form-control discount"
+                                    id="discount_` + count + `" readonly>
+                            </td>
+                            <td>
+                                <input type="text" name="amount[]" class="form-control amount"
+                                    id="amount_` + count + `">
+                            </td>
+                            <td>
+                                <button class="btn btn-sm" onclick="removeRow($(this));"><i class="fa fa-trash req"></i></button>
+                            </td>
+                        </tr>`;
+
+                        $("#productRow").append(row);
+                        $("#product_footer").removeClass("d-none");
                     }
                 });
             }
         }
 
+        function onQtyChange(qty) {
+            let qty_value = $(qty).val(),
+                tr = $(qty).parents("tr").get();
+            if (qty_value) {
+                $(tr).find(".discount").removeAttr("readonly");
+                if (qty_value == 0) {
+                    $(tr).find(".discount").attr("readonly", true);
+                    $(tr).find(".discount").val('');
+                    $(tr).find("input.amount").val('');
+                } else {
+                    let price = $(tr).find("input.price").val(),
+                        amount = price * qty_value;
+                    $(tr).find("input.amount").val(amount.toFixed(2));
+                    totalAmount();
+                }
+            } else {
+                $(tr).find("input.amount").val(amount.toFixed(2));
+                $(tr).find(".discount").attr("readonly", true);
+                $(tr).find(".discount").val('');
+            }
+        }
 
-        $("#product_search").autocomplete({
+        function totalAmount() {
+            let table_tbody = $("#productRow");
+            let amounts = $(table_tbody).find(".amount");
+            let total_amount = 0.00;
+            $.each(amounts, function(key, value) {
+                if ($(value).val()) {
+                    total_amount += parseFloat($(value).val());
+                }
+            });
+            if (total_amount == 0) {
+                $("#total").val('');
+            } else {
+                $("#total").val(total_amount.toFixed(2));
+            }
+            onPaid();
+        }
+
+        function onEnterDis(this_row) {
+            let tr = $(this_row).closest("tr");
+            let qty = $(tr).find(".qty").val();
+            if (qty != '' || qty != 0) {
+                return false;
+            } else {
+                $.alert({
+                    title: "Alert !",
+                    content: "Please Enter qty first",
+                    icon: "fa fa-exclamation-triangle",
+                    theme: "modern",
+                });
+                $(tr).find(".discount").val('');
+                $(tr).find(".amount").vaL('');
+                totalAmount();
+            }
+        }
+
+        function onDiscountChange(this_discount) {
+            var tr = $(this_discount).closest("tr"),
+                price = $(tr).find(".price"),
+                qty = $(tr).find(".qty").val(),
+                discount = $(tr).find(".discount");
+            var this_amount = $(price).val() * qty;
+            if ($(discount).val() != '') {
+                if ((this_amount - $(discount).val()) >= 0) {
+                    var amount = $(price).val() * qty - $(discount).val();
+                    $(tr).find(".amount").val(amount.toFixed(2));
+                    totalAmount();
+                } else {
+                    $.alert({
+                        title: "Alert !",
+                        content: "Discount is greater than amount",
+                        icon: "fa fa-exclamation-triangle",
+                        theme: "modern",
+                    });
+                    // $(price).val(actual_price);
+                    $(discount).val('');
+                    $(tr).find(".amount").val(this_amount.toFixed(2));
+                    totalAmount();
+                }
+            } else {
+                $(tr).find(".amount").val(this_amount.toFixed(2));
+                totalAmount();
+            }
+
+        }
+
+        function onPriceChange(prod_price) {
+            onDiscountChange(prod_price);
+        }
+
+
+        function onPaid() {
+            var amount_paid = $("#paid");
+            var total = $("#total").val();
+            if ((total - $(amount_paid).val()) > 0) {
+                $("#due").val((total - $(amount_paid).val()).toFixed(2));
+            } else if ((total - $(amount_paid).val()) < 0) {
+                $.alert({
+                    title: "Alert !",
+                    content: "Paid amount is larger than actual amount",
+                    theme: "modern",
+                    icon: "fa fa-exclamation-triangle",
+                });
+                $("#paid").val('');
+                $("#due").val(total);
+            }
+        }
+
+
+        function check_same_item(item_id) {
+            var trLength = $("#productRow tr").length;
+            if (trLength) {
+                for (i = 0; i <= trLength; i++) {
+                    if ($("#product_" + item_id).val() == item_id) {
+                        var tr = $("#item_" + item_id);
+                        var qty = $(tr).find('input.qty').val();
+                        if (qty != '') {
+                            // var newQty = parseInt(qty) + 1;
+                            $(tr).find('input.qty').focus();
+                        } else if (qty == '') {
+                            // var newQty = 1;
+                            $(tr).find('input.qty').focus();
+                        }
+                        // $(tr).find('input.qty').val(qty);
+                        onQtyChange($(tr).find('input.qty'));
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        function removeRow(this_row) {
+            let tr = $(this_row).closest("tr");
+            $(tr).remove();
+            var trLength = $("#productRow tr").length;
+            if (trLength > 0) {
+                totalAmount();
+            } else {
+                $("#product_footer").addClass("d-none");
+                $("#total").val('');
+                $("#paid").val('');
+                $("#due").val('');
+            }
+        }
+
+
+        $("#search_product").autocomplete({
             source: function(data, cb) {
                 $.ajax({
-                    url: "#",
+                    url: "{{ route('admin.getProducts') }}",
                     type: "POST",
                     data: {
                         'product_name': data.term
@@ -239,27 +461,66 @@
 
                     var item_id = ui.item.id;
                 }
-                console.log(item_id);
                 addRow(count, item_id);
                 count++;
-                $("input#product_search").val('');
+                $("input#search_product").val('');
             },
 
         });
 
-        $("#product_search").bind('paste', (e) => {
-            $("#product_search").autocomplete('search');
+        $("#search_product").bind('paste', (e) => {
+            $("#search_product").autocomplete('search');
         });
 
         $('#form').validate({
             rules: {
                 room_id: "required",
                 customer_id: "required",
+                "price[]": {
+                    required: true,
+                    number: true,
+                },
+                "qty[]": {
+                    required: true,
+                    digits: true,
+                },
+                "amount[]": {
+                    required: true,
+                    number: true,
+                },
+                total: {
+                    required: true,
+                    number: true,
+                },
+                due: {
+                    required: true,
+                    number: true,
+                },
 
             },
             messages: {
                 room_id: "Select Room",
                 customer_id: "Select Customer",
+                "price[]": {
+                    required: "Price is required",
+                    number: "Please enter valid price",
+                },
+                "qty[]": {
+                    required: "Quatity is required",
+                    digist: "Please enter valid quantity"
+                },
+                "amount[]": {
+                    required: "Amount is required",
+                    number: "Amount must be valid price",
+                },
+                total: {
+                    required: "Total is required",
+                    number: "Total must be valid price",
+                },
+                due: {
+                    required: "Due is required",
+                    number: "Due amount must be valid price",
+                }
             },
             submitHandler: function(form) {
                 form.submit();
