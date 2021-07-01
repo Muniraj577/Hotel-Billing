@@ -7,6 +7,7 @@ use App\Models\BookingDetail;
 use App\Models\BookingRoom;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\OrderPayment;
 use App\Models\Product;
 use App\Models\Room;
 use App\Models\Unit;
@@ -56,11 +57,44 @@ class OrderController extends Controller
                 $order->due = $request->due;
                 $order->save();
                 $this->__createOrderItems($request, $order->id);
+                $this->__createPayment($request, $order->id);
                 DB::commit();
-                return redirect()->back()->with(notify("success", "Order created successfully"));
+                return redirect()->route($this->redirectTo)->with(notify("success", "Order created successfully"));
             } catch(\Exception $e){
                 DB::rollBack();
-                return redirect()->back()->with(notify("warning", $e->getMessage()));
+                return redirect()->back()->with(notify("warning", $e->getMessage()))->withInput();
+            }
+        }
+    }
+
+    public function edit($id)
+    {
+        $order = Order::where("id", $id)->with("order_items")->firstOrFail();
+        $booking_details = BookingDetail::where("status", 1)->get();
+
+        foreach($booking_details as $bkd){
+            $bkd_ids[] = $bkd->id;
+        }
+        $booking_rooms = BookingRoom::whereIn("booking_id", (array)$bkd_ids)->get();
+        foreach($booking_rooms as $booking_room){
+            $room_ids[] = $booking_room->id;
+        }
+        $rooms = Room::whereIn("id", (array)$room_ids)->get();
+        return view($this->page."edit",compact("order", "rooms"));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $validator = $this->validation($request->all());
+        if($validator->fails()){
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+        if($validator->passes()){
+            try{
+                
+            } catch(\Exception $e){
+                DB::rollBack();
+                return redirect()->back()->with(notify("warning", $e->getMessage()))->withInput();
             }
         }
     }
@@ -78,6 +112,19 @@ class OrderController extends Controller
             $order_item->amount = $data->get("amount")[$key];
             $order_item->save();
         }
+    }
+
+    private function __createPayment($data, $orderId)
+    {
+        $payment = OrderPayment::create([
+            'order_id' => $orderId,
+            'booking_id' => $data->booking_id,
+            'customer_id' => $data->customer_id,
+            'paid' => $data->paid,
+            'due' => $data->due,
+            'date' => date("Y-m-d"),
+            'pay_type' => ($data->paid == $data->total ? "Paid" : ($data->paid == 0 || $data->paid == '' ? "Unpaid" : "Partially Paid")),
+        ]);
     }
 
     private function validation(array $data)

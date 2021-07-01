@@ -25,4 +25,14 @@ class Order extends Model
     {
         return $this->belongsTo("App\Models\Customer", "customer_id", "id");
     }
+
+    public function order_items()
+    {
+        return $this->hasMany("App\Models\OrderItem", "order_id", "id");
+    }
+
+    public function payments()
+    {
+        return $this->hasMany("App\Models\OrderPayment", "order_id", "id");
+    }
 }

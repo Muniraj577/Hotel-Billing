@@ -60,7 +60,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <input type="hidden" class="form-control" name="booking_id" id="bookId">
+                                        <input type="hidden" class="form-control" value="{{ old("booking_id") }}" name="booking_id" id="bookId">
                                         <div class="form-group">
                                             <div class="row">
                                                 <div class="col-md-4">
@@ -185,6 +185,39 @@
             }
         });
 
+        $(document).ready(function(){
+            @if(old("product_id") != '')
+            var room_id = $("#room").val();
+            var old_customer_id = "{{ old("customer_id") }}";
+            console.log(old_customer_id);
+            if(room_id) {
+                $.ajax({
+                    url: "{{ route('admin.getRoomCustomer') }}",
+                    type: "POST",
+                    data: {
+                        "room_id": room_id
+                    },
+                    dataType: "json",
+                    success: function(data) {
+                        $("#customer").html("<option value=''>Select Customer</option>");
+                        $("#bookId").val(data.booking_id);
+                        $.each(data.customers, function(key, customer) {
+                            var $options = $('<option></option>').val(customer.id).html(customer
+                                .full_name);
+                            if(customer.id == old_customer_id)
+                                $options = $options.attr("selected", "selected");
+                            
+                            $("#customer").append($options);
+                        });
+                    }
+                });
+            } else {
+                $("#customer").html("<option value=''>Select Customer</option>");
+                $("#bookId").val('');
+            }
+            @endif
+        });
+
         @if (old('product_id') != '')
             var count = $("#count").val();
         @else
@@ -258,7 +291,7 @@
                             </td>
                             <td>
                                 <input type="text" name="amount[]" class="form-control amount"
-                                    id="amount_` + count + `">
+                                    id="amount_` + count + `" readonly>
                             </td>
                             <td>
                                 <button class="btn btn-sm" onclick="removeRow($(this));"><i class="fa fa-trash req"></i></button>
@@ -509,7 +542,7 @@
                 },
                 "qty[]": {
                     required: true,
-                    digits: true,
+                    number: true,
                 },
                 "amount[]": {
                     required: true,
@@ -534,7 +567,7 @@
                 },
                 "qty[]": {
                     required: "Quatity is required",
-                    digist: "Please enter valid quantity"
+                    number: "Please enter valid quantity"
                 },
                 "amount[]": {
                     required: "Amount is required",

@@ -38,15 +38,14 @@ $count = 0; ?>
         </td>
         <td>
             <input type="text" name="discount[]" value="{{ old('discount')[$key] }}" onkeyup="onEnterDis($(this));"
-                onchange="onDiscountChange($(this));" class="form-control discount" id="discount_{{ $count }}"
-                readonly>
+                onchange="onDiscountChange($(this));" class="form-control discount" id="discount_{{ $count }}" {{ old("qty")[$key] != '' ? "" : "readonly" }}>
             @error('discount' . '.' . $key)
                 <span class="text-danger">{{ $message }}</span>
             @enderror
         </td>
         <td>
             <input type="text" name="amount[]" value="{{ old('amount')[$key] }}" class="form-control amount"
-                id="amount_{{ $count }}">
+                id="amount_{{ $count }}" readonly>
             @error('amount' . '.' . $key)
                 <span class="text-danger">{{ $message }}</span>
             @enderror

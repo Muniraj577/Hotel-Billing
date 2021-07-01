@@ -42,9 +42,9 @@
                                         <tr>
                                             <td>{{ ++$id }}</td>
                                             <td>{{ $order->room->name }}</td>
-                                            <td>{{ $order->customer->name }}</td>
+                                            <td>{{ $order->customer->full_name }}</td>
                                             <td>{{ $order->total }}</td>
-                                            <td>{{ $order->paid }}</td>
+                                            <td>{{ $order->paid ? $order->paid : 0 }}</td>
                                             <td>{{ $order->due }}</td>
                                             <td>
                                                 <div class="d-inline-flex">
