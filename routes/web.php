@@ -134,6 +134,7 @@ Route::group(["prefix"=>"admin/", "middleware" => "auth", "as"=>"admin."], funct
     Route::group(["prefix"=> "order/", "as"=>"order."], function(){
         Route::get("", [AdminOrderController::class, "index"])->name("index");
         Route::get("create", [AdminOrderController::class, "create"])->name("create");
+        Route::post("store", [AdminOrderController::class, "store"])->name("store");
     });
 
     

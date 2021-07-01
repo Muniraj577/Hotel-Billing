@@ -33,7 +33,8 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <form action="#" method="POST" enctype="multipart/form-data" id="form">
+                            <form action="{{ route('admin.order.store') }}" method="POST" enctype="multipart/form-data"
+                                id="form">
                                 @csrf
                                 <div class="col-md-6">
                                     <div class="col-md-12">
@@ -53,6 +54,9 @@
                                                             </option>
                                                         @endforeach
                                                     </select>
+                                                    @error('room_id')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
                                                 </div>
                                             </div>
                                         </div>
@@ -66,6 +70,9 @@
                                                     <select name="customer_id" class="form-control" id="customer">
                                                         <option value="">Select Customer</option>
                                                     </select>
+                                                    @error('customer_id')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
                                                 </div>
                                             </div>
                                         </div>
@@ -99,7 +106,9 @@
                                             <th>Action</th>
                                         </thead>
                                         <tbody id="productRow">
-
+                                            @if (old('product_id') != '')
+                                                @include("admin.partial.order.redirectCreate")
+                                            @endif
                                         </tbody>
                                         <tfoot id="product_footer">
                                             <tr>
@@ -107,8 +116,11 @@
                                                     <label>Total</label>
                                                 </td>
                                                 <td>
-                                                    <input type="text" name="total" class="form-control" id="total"
-                                                        readonly>
+                                                    <input type="text" name="total" value="{{ old('total') }}"
+                                                        class="form-control" id="total" readonly>
+                                                    @error('total')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
                                                 </td>
                                             </tr>
                                             <tr>
@@ -116,8 +128,11 @@
                                                     <label>Paid Amount</label>
                                                 </td>
                                                 <td>
-                                                    <input type="text" name="paid" onchange="onPaid();" class="form-control"
-                                                        id="paid">
+                                                    <input type="text" name="paid" onchange="onPaid();"
+                                                        value="{{ old('paid') }}" class="form-control" id="paid">
+                                                    @error('paid')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
                                                 </td>
                                             </tr>
                                             <tr>
@@ -125,7 +140,11 @@
                                                     <label>Due Amount</label>
                                                 </td>
                                                 <td>
-                                                    <input type="text" name="due" class="form-control" id="due" readonly>
+                                                    <input type="text" name="due" class="form-control"
+                                                        value="{{ old('due') }}" id="due" readonly>
+                                                    @error('due')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
                                                 </td>
                                             </tr>
                                         </tfoot>
@@ -155,7 +174,7 @@
 
         });
 
-        $("#formSubmit").on("click",function(e) {
+        $("#formSubmit").on("click", function(e) {
             var trlength = $("#productRow tr").length;
             if (trlength > 0) {
                 $("#form").submit();
@@ -166,7 +185,11 @@
             }
         });
 
-        var count = 0;
+        @if (old('product_id') != '')
+            var count = $("#count").val();
+        @else
+            var count = 0;
+        @endif
 
         function onChangeRoom(room) {
             let room_id = $(room).val();
@@ -265,7 +288,7 @@
                     totalAmount();
                 }
             } else {
-                $(tr).find("input.amount").val(amount.toFixed(2));
+                $(tr).find("input.amount").val('');
                 $(tr).find(".discount").attr("readonly", true);
                 $(tr).find(".discount").val('');
             }
@@ -369,12 +392,16 @@
                         if (qty != '') {
                             // var newQty = parseInt(qty) + 1;
                             $(tr).find('input.qty').focus();
+
                         } else if (qty == '') {
                             // var newQty = 1;
                             $(tr).find('input.qty').focus();
+
                         }
                         // $(tr).find('input.qty').val(qty);
+                        $(".spinner").hide();
                         onQtyChange($(tr).find('input.qty'));
+
                         return false;
                     }
                 }

@@ -63,6 +63,11 @@
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <table class="table table-bordered">
+                    <thead></thead>
+                </table>
+            </div>
         </div>
     </section>
 @endsection
