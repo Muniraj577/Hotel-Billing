@@ -5,6 +5,7 @@ $menu = 'menu-open';
 $active = 'active menu-open';
 $bookNav = Request::is('admin/booking*');
 $userNav  = Request::is('admin/user*');
+$roomTypeNav = Request::is('admin/room-type*');
 $roomNav = Request::is('admin/room*');
 $productNav = Request::is('admin/product*');
 $unitNav = Request::is('admin/unit*');

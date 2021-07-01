@@ -1,5 +1,5 @@
-<li class="nav-item {{ $userNav || $roomNav || $productNav || $unitNav ? $menu : '' }}">
-    <a href="#" class="nav-link {{ $userNav || $roomNav || $productNav || $unitNav? $active : '' }}">
+<li class="nav-item {{ $userNav || $roomNav || $productNav || $unitNav || $roomTypeNav ? $menu : '' }}">
+    <a href="#" class="nav-link {{ $userNav || $roomNav || $productNav || $unitNav || $roomTypeNav ? $active : '' }}">
         <i class="nav-icon fa fa-th-list iCheck"></i>
         <p>
             Master
@@ -11,6 +11,12 @@
             <a href="{{ route("admin.user.index") }}" class="nav-link @yield("user")">
                 <i class="nav-icon fa fa-users iCheck"></i>
                 <p>Users</p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{route('admin.room_type.index')}}" class="nav-link @yield('room-type')">
+                <i class="nav-icon fa fa-dungeon iCheck"></i></i>
+                <p>Room Type</p>
             </a>
         </li>
         <li class="nav-item">

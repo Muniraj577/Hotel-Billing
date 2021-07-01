@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\RoomTypeController as AdminRoomTypeController;
 use App\Http\Controllers\Admin\RoomController as AdminRoomController;
 use App\Http\Controllers\Admin\BookingController as AdminBookingController;
 use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
@@ -53,6 +54,14 @@ Route::group(["prefix"=>"admin/", "middleware" => "auth", "as"=>"admin."], funct
         Route::post("change-admin-password", [AdminUserController::class, "adminNewPassword"])->name("adminNewPassword");
         Route::post("change-admin-email",[AdminUserController::class, "changeAdminEmail"])->name("changeAdminEmail");
         Route::post("change-admin-profile", [AdminUserController::class, "chageAdminAvatar"])->name("chageAdminAvatar");
+    });
+
+    Route::group(["prefix"=>"room-type/", "as"=>"room_type."],function(){
+        Route::get("", [AdminRoomTypeController::class, "index"])->name("index");
+        Route::get("create", [AdminRoomTypeController::class, "create"])->name("create");
+        Route::post("store", [AdminRoomTypeController::class, "store"])->name("store");
+        Route::get("edit/{id}", [AdminRoomTypeController::class, "edit"])->name("edit");
+        Route::put("update/{id}", [AdminRoomTypeController::class, "update"])->name("update");
     });
 
     Route::group(["prefix" => "room/", "as"=>"room."], function(){
