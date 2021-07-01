@@ -60,6 +60,27 @@
                                         <div class="form-group">
                                             <div class="row">
                                                 <div class="col-md-4">
+                                                    <label for="type_id">Room Type&nbsp;<span class="req">*</span></label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <select name="room_type_id" class="form-control">
+                                                        <option value="">Select Room Type</option>
+                                                        @foreach ($room_types as $room_type)
+                                                            <option value="{{ $room_type->id }}"
+                                                                {{ old('room_type_id') == $room_type->id ? 'selected' : '' }}>
+                                                                {{ $room_type->name }}
+                                                            </option>
+                                                        @endforeach
+                                                        @error("room_type_id")
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-md-4">
                                                     <label for="price">Price&nbsp;<span class="req">*</span></label>
                                                 </div>
                                                 <div class="col-md-8">
@@ -78,10 +99,12 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <select name="is_active" class="form-control">
-                                                        <option value="1" {{ old('is_active') == '1' ? 'selected' : '' }}>
+                                                        <option value="1"
+                                                            {{ old('is_active') == '1' ? 'selected' : '' }}>
                                                             Active
                                                         </option>
-                                                        <option value="0" {{ old('is_active') == '0' ? 'selected' : '' }}>
+                                                        <option value="0"
+                                                            {{ old('is_active') == '0' ? 'selected' : '' }}>
                                                             Inactive
                                                         </option>
                                                     </select>
@@ -122,19 +145,20 @@
             rules: {
                 name: {
                     required: true,
-                    lettersonly: true,
                 },
                 room_no: "required",
 
                 price: {
-                    number:true,
+                    number: true,
                 },
+                room_type_id : "required",
             },
             messages: {
                 name: {
                     required: "Name field is required",
                 },
-                room_no: "Enter room number"
+                room_no: "Enter room number",
+                room_type_id: "Room Type is required",
 
             },
             submitHandler: function(form) {

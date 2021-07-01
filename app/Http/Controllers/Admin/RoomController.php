@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RoomRequest;
 use App\Models\Room;
+use App\Models\RoomType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -21,7 +22,8 @@ class RoomController extends Controller
 
     public function create()
     {
-        return view($this->page."create");
+        $room_types = RoomType::where("status", 1)->get();
+        return view($this->page."create",compact("room_types"));
     }
 
     public function store(RoomRequest $request)
@@ -41,7 +43,8 @@ class RoomController extends Controller
     public function edit($id)
     {
         $room = Room::findOrFail($id);
-        return view($this->page."edit",compact("room"));
+        $room_types = RoomType::where("status", 1)->get();
+        return view($this->page."edit",compact("room", "room_types"));
     }
 
     public function update(RoomRequest $request, $id)

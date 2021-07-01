@@ -10,4 +10,9 @@ class RoomType extends Model
     use HasFactory;
 
     protected $fillable = ["name", "status"];
+
+    public function rooms()
+    {
+        return $this->hasMany("App\Models\Room", "room_type_id", "id");
+    }
 }

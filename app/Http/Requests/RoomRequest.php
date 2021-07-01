@@ -25,16 +25,20 @@ class RoomRequest extends FormRequest
     {
         if(request()->isMethod('post')){
             return [
-                'name' => 'required',
+                'room_type_id' => 'required',
+                'name' => 'required|string',
                 'room_no' => 'required',
                 'is_active' => 'required',
+                'price' => 'nullable|numeric'
             ];
         } elseif(request()->isMethod('put') || request()->isMethod('patch')){
             return [
-                'name' => 'required',
+                'room_type_id' => 'required',
+                'name' => 'required|string',
                 'room_no' => 'required',
                 'is_active' => 'required',
                 'status' => 'required',
+                'price' => 'nullable|numeric'
             ];
         }
         
@@ -47,6 +51,7 @@ class RoomRequest extends FormRequest
             'room_no.required' => 'Enter room number',
             'is_active.required' => 'This field is required',
             'status.required' => 'Status is required',
+            'room_type_id.required' => 'Room Type is required',
         ];
     }
 }

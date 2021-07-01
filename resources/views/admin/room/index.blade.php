@@ -34,6 +34,7 @@
                                         <th>S.N</th>
                                         <th>Name</th>
                                         <th>Room No</th>
+                                        <th>Room Type</th>
                                         <th>Price</th>
                                         <th>Is Active</th>
                                         <th>Status</th>
@@ -45,9 +46,9 @@
 
                                         <tr>
                                             <td>{{ ++$id }}</td>
-                                            
                                             <td>{{ $room->name }}</td>
                                             <td>{{ $room->room_no }}</td>
+                                            <td>{{ $room->room_type->name }}</td>
                                             <td>{{ $room->price }}</td>
                                             <td>
                                                 {{ $room->is_active ? 'Active' : 'Inactive' }}

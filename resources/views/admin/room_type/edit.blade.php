@@ -84,7 +84,6 @@
             rules: {
                 name: {
                     required: true,
-                    lettersonly: true,
                 },
             },
             messages: {

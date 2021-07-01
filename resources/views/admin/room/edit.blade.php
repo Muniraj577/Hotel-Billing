@@ -62,6 +62,27 @@
                                         <div class="form-group">
                                             <div class="row">
                                                 <div class="col-md-4">
+                                                    <label for="type_id">Room Type&nbsp;<span class="req">*</span></label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <select name="room_type_id" class="form-control">
+                                                        <option value="">Select Room Type</option>
+                                                        @foreach ($room_types as $room_type)
+                                                            <option value="{{ $room_type->id }}"
+                                                                {{ old('room_type_id', $room->room_type_id) == $room_type->id ? 'selected' : '' }}>
+                                                                {{ $room_type->name }}
+                                                            </option>
+                                                        @endforeach
+                                                        @error("room_type_id")
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-md-4">
                                                     <label for="price">Price</label>
                                                 </div>
                                                 <div class="col-md-8">
@@ -136,7 +157,6 @@
             rules: {
                 name: {
                     required: true,
-                    lettersonly: true,
                 },
                 room_no: "required",
                 price:{
