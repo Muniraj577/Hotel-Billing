@@ -33,9 +33,10 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <form action="{{ route('admin.order.store') }}" method="POST" enctype="multipart/form-data"
+                            <form action="{{ route('admin.order.update', $order->id) }}" method="POST" enctype="multipart/form-data"
                                 id="form">
                                 @csrf
+                                @method("PUT")
                                 <div class="col-md-6">
                                     <div class="col-md-12">
                                         <div class="form-group">
@@ -122,6 +123,7 @@
                                                             <input type="hidden" value="{{ $order_item->product_id }}"
                                                                 name="product_id[]" class="form-control product"
                                                                 id="product_{{ $order_item->product_id }}" />
+                                                            <input type="hidden" name="order_product_id[]" class="form-control" value="{{ $order_item->id }}">
                                                             @error('product_id' . '.' . $key)
                                                                 <span class="text-danger">{{ $message }}</span>
                                                             @enderror

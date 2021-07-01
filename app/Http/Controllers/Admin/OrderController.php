@@ -10,7 +10,6 @@ use App\Models\OrderItem;
 use App\Models\OrderPayment;
 use App\Models\Product;
 use App\Models\Room;
-use App\Models\Unit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -20,33 +19,33 @@ class OrderController extends Controller
     public function index()
     {
         $orders = Order::orderBy("id", "desc")->get();
-        return view($this->page."index",compact("orders"))->with("id");
+        return view($this->page . "index", compact("orders"))->with("id");
     }
 
     public function create()
     {
         $booking_details = BookingDetail::where("status", 1)->get();
 
-        foreach($booking_details as $bkd){
+        foreach ($booking_details as $bkd) {
             $bkd_ids[] = $bkd->id;
         }
         $booking_rooms = BookingRoom::whereIn("booking_id", $bkd_ids)->get();
-        foreach($booking_rooms as $booking_room){
+        foreach ($booking_rooms as $booking_room) {
             $room_ids[] = $booking_room->id;
         }
-        $rooms = Room::whereIn("id", (array)$room_ids)->get();
+        $rooms = Room::whereIn("id", (array) $room_ids)->get();
         $products = Product::all();
-        return view($this->page."create", compact("rooms", "products"));
+        return view($this->page . "create", compact("rooms", "products"));
     }
 
     public function store(Request $request)
     {
         $validator = $this->validation($request->all());
-        if($validator->fails()){
+        if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
-        if($validator->passes()){
-            try{
+        if ($validator->passes()) {
+            try {
                 DB::beginTransaction();
                 $order = new Order();
                 $order->booking_id = $request->booking_id;
@@ -60,7 +59,7 @@ class OrderController extends Controller
                 $this->__createPayment($request, $order->id);
                 DB::commit();
                 return redirect()->route($this->redirectTo)->with(notify("success", "Order created successfully"));
-            } catch(\Exception $e){
+            } catch (\Exception $e) {
                 DB::rollBack();
                 return redirect()->back()->with(notify("warning", $e->getMessage()))->withInput();
             }
@@ -72,27 +71,41 @@ class OrderController extends Controller
         $order = Order::where("id", $id)->with("order_items")->firstOrFail();
         $booking_details = BookingDetail::where("status", 1)->get();
 
-        foreach($booking_details as $bkd){
+        foreach ($booking_details as $bkd) {
             $bkd_ids[] = $bkd->id;
         }
-        $booking_rooms = BookingRoom::whereIn("booking_id", (array)$bkd_ids)->get();
-        foreach($booking_rooms as $booking_room){
+        $booking_rooms = BookingRoom::whereIn("booking_id", (array) $bkd_ids)->get();
+        foreach ($booking_rooms as $booking_room) {
             $room_ids[] = $booking_room->id;
         }
-        $rooms = Room::whereIn("id", (array)$room_ids)->get();
-        return view($this->page."edit",compact("order", "rooms"));
+        $rooms = Room::whereIn("id", (array) $room_ids)->get();
+        return view($this->page . "edit", compact("order", "rooms"));
     }
 
     public function update(Request $request, $id)
     {
         $validator = $this->validation($request->all());
-        if($validator->fails()){
+        if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
-        if($validator->passes()){
-            try{
-                
-            } catch(\Exception $e){
+        if ($validator->passes()) {
+            try {
+                DB::beginTransaction();
+                $order = Order::find($id);
+                $booking_id = $order->booking_id;
+                $customer_id = $order->customer_id;
+                $order->booking_id = $request->booking_id;
+                $order->room_id = $request->room_id;
+                $order->customer_id = $request->customer_id;
+                $order->total = $request->total;
+                $order->paid = $request->paid;
+                $order->due = $request->due;
+                $order->save();
+                $this->__updateOrCreateOrderItem($request, $order);
+                $this->__updateOrderPayment($request, $order->id, $booking_id, $customer_id);
+                DB::commit();
+                return redirect()->route($this->redirectTo)->with(notify("success", "Order updated"));
+            } catch (\Exception $e) {
                 DB::rollBack();
                 return redirect()->back()->with(notify("warning", $e->getMessage()))->withInput();
             }
@@ -101,7 +114,7 @@ class OrderController extends Controller
 
     private function __createOrderItems($data, $orderId)
     {
-        foreach($data->input("product_id") as $key=>$value){
+        foreach ($data->input("product_id") as $key => $value) {
             $order_item = new OrderItem();
             $order_item->order_id = $orderId;
             $order_item->product_id = $value;
@@ -127,9 +140,68 @@ class OrderController extends Controller
         ]);
     }
 
+    private function __updateOrCreateOrderItem($data, $order)
+    {
+        if ($data->order_product_id == null || empty($data->order_product_id)) {
+            if ($order->order_items != null || !empty($order->order_items)) {
+                $order->order_items()->delete();
+            }
+            $this->__createOrderItems($data, $order->id);
+        } elseif ($data->order_product_id != null || !empty($data->order_product_id)) {
+            $countDbOrderItem = count($order->order_items);
+            $countRequestOrderItem = count($data->input('order_product_id'));
+            if ($countDbOrderItem > $countRequestOrderItem) {
+                $ids = [];
+                $item_ids = [];
+                $diff_ids = array();
+                foreach ($data->input('product_id') as $k => $v) {
+                    $ids[] = $data->get('order_product_id')[$k];
+                }
+                foreach ($order->order_items as $order_item) {
+                    $item_ids[] = $order_item->id;
+                }
+                $diff_ids = array_diff($item_ids, $ids);
+                OrderItem::destroy($diff_ids);
+            }
+            foreach ($data->input('product_id') as $key => $value) {
+            
+                $order_items = OrderItem::updateOrCreate([
+                    'id' => !empty($data->get('order_product_id')[$key]) ? $data->get('order_product_id')[$key] : '',
+                ], [
+                    'order_id' => $order->id,
+                    'product_id' => $value,
+                    'unit_id' => $data->get("unit_id")[$key],
+                    'price' => $data->get("price")[$key],
+                    'qty' => $data->get("qty")[$key],
+                    'discount' => $data->get("discount")[$key],
+                    'amount' => $data->get("amount")[$key],
+                ]);
+            }
+        }
+    }
+
+    private function __updateOrderPayment($data, $orderId, $bookingId, $customerId)
+    {
+        $payment = OrderPayment::where("order_id", $orderId)->where("booking_id", $bookingId)->where("customer_id", $customerId);
+        if ($payment->exists()) {
+            $payment = $payment->orderBy("id", "asc")->first();
+            $payment->update([
+                'order_id' => $orderId,
+                'booking_id' => $data->booking_id,
+                'customer_id' => $data->customer_id,
+                'paid' => $data->paid,
+                'due' => $data->due,
+                'date' => date("Y-m-d"),
+                'pay_type' => ($data->paid == $data->total ? "Paid" : ($data->paid == 0 || $data->paid == '' ? "Unpaid" : "Partially Paid")),
+            ]);
+        } else {
+            $this->__createPayment($data, $orderId);
+        }
+    }
+
     private function validation(array $data)
     {
-        $validator = Validator::make($data,[
+        $validator = Validator::make($data, [
             "room_id" => "required",
             "customer_id" => "required",
             "product_id.*" => "required",

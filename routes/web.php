@@ -136,6 +136,7 @@ Route::group(["prefix"=>"admin/", "middleware" => "auth", "as"=>"admin."], funct
         Route::get("create", [AdminOrderController::class, "create"])->name("create");
         Route::post("store", [AdminOrderController::class, "store"])->name("store");
         Route::get("edit/{id}", [AdminOrderController::class, "edit"])->name("edit");
+        Route::put("update/{id}", [AdminOrderController::class, "update"])->name("update");
     });
 
     
