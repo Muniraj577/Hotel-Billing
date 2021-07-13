@@ -158,4 +158,5 @@ Route::group(["prefix"=>"admin/", "middleware" => "auth", "as"=>"admin."], funct
     Route::post("get-room-customers", [AdminDashboardController::class, "getRoomCustomer"])->name("getRoomCustomer");
     Route::post("get-product-details", [AdminDashboardController::class, "getProductDetails"])->name("getProductDetails");
     Route::post("get-all-products", [AdminDashboardController::class, "getProducts"])->name("getProducts");
+    Route::post("get-customer-details", [AdminDashboardController::class, "getCustomerDetails"])->name("getCustomerDetails");
 });

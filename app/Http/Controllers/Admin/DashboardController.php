@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\BookingDetail;
 use App\Models\BookingRoom;
 use App\Models\Customer;
 use App\Models\Product;
@@ -48,5 +49,12 @@ class DashboardController extends Controller
     {
         $products = Product::where('name', 'LIKE', '%' . $request->input('product_name') . '%')->get();
         return $products;
+    }
+
+    public function getCustomerDetails(Request $request)
+    {
+        $bkroom = BookingRoom::where("room_id", $request->room_id)->orderBy("id", "desc")->first();
+        $bkdetail = BookingDetail::where("id", $bkroom->booking_id)->where("status", 1)->orderBy("id", "desc")->first();
+        return view("admin.partial.customer.detail", compact("bkroom", "bkdetail"));
     }
 }

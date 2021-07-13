@@ -127,8 +127,8 @@
                                         <div class="row">
                                             @foreach ($room_type->rooms as $key => $room)
                                                 <div class="col-md-2 mb-2">
-                                                    <div class="{{ $room->status == "Available" ? "bgcolor1" : "bgcolor" }} bstyle">
-                                                        <h5>{{ $room->room_no }}</h5>
+                                                    <div class="{{ $room->status == 'Available' ? 'bgcolor1' : 'bgcolor' }} bstyle">
+                                                        <h5 @if($room->status == 'UnAvailable') style="cursor:pointer;" onclick="showDetailModal({{ $room->id }});" @endif>{{ $room->room_no }}</h5>
                                                     </div>
                                                 </div>
                                             @endforeach
@@ -163,8 +163,42 @@
                 </div>
             </div>
         </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Customer Detail</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body customerModal">
+                        
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 @endsection
 @section('scripts')
-
+<script>
+    function showDetailModal(room_id){
+        $.ajax({
+            url: "{{ route('admin.getCustomerDetails') }}",
+            type: "POST",
+            data: {"room_id" : room_id},
+            success: function(data){
+                $("#exampleModal").modal("show");
+                $(".customerModal").html(data);
+            }
+        });
+        
+    }
+</script>
 @endsection

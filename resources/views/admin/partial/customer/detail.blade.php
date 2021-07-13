@@ -1,0 +1,1 @@
+<h6><b>Customer Name: </b>{{ $bkroom->customer->full_name }}</h6>
