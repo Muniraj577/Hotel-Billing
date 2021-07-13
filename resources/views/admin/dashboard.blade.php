@@ -2,6 +2,57 @@
 @section('title', 'Dashboard')
 @section('dashboard', 'active')
 @section('content')
+    <style>
+        table td,
+        th {
+            padding: 15px 15px !important;
+        }
+
+        .color {
+            background-color: red;
+            color: #fff;
+        }
+
+    </style>
+    <style>
+        .bgcolor {
+            background-color: #d00000;
+            color: #fff;
+            padding: 8px;
+        }
+
+        .bgcolor1 {
+            background-color: #00b70c;
+            color: #fff;
+            padding: 8px;
+        }
+
+        .bstyle h5 {
+            margin-bottom: 0;
+            text-align: center;
+            font-size: 16px;
+            line-height: 1;
+        }
+
+        .paddingcol .col-md-2 {
+            padding-right: 5px;
+            padding-left: 5px;
+        }
+
+        .design {
+            height: 30px;
+            width: 30px;
+        }
+
+        .main {
+            padding: 30px 40px 30px 30px;
+        }
+
+        .main1 {
+            padding: 30px;
+        }
+
+    </style>
     <div class="content mt-3">
         <div class="container-fluid">
             <div class="row mb-2">
@@ -63,10 +114,53 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <table class="table table-bordered">
-                    <thead></thead>
-                </table>
+            <div class="card rounded-0 bg-light">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-7 border-right main">
+                            @foreach ($room_types as $room_type)
+                                <div class="row">
+                                    <div class="col-md-2 my-auto">
+                                        <h6>{{ $room_type->name }}</h6>
+                                    </div>
+                                    <div class="col-md-10 paddingcol">
+                                        <div class="row">
+                                            @foreach ($room_type->rooms as $key => $room)
+                                                <div class="col-md-2 mb-2">
+                                                    <div class="{{ $room->status == "Available" ? "bgcolor1" : "bgcolor" }} bstyle">
+                                                        <h5>{{ $room->room_no }}</h5>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
+                                @if (!$loop->last)
+                                    <hr class="mb-4" />
+                                @endif
+                            @endforeach
+                        </div>
+                        <div class="col-md-5 main1">
+                            <div class="row">
+                                <div class="col-md-1">
+                                    <h5 class="bgcolor1 design"></h5>
+                                </div>
+                                <div class="col-md-11 my-auto">
+                                    <h6 class="pl-2">Available</h6>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-1">
+                                    <h5 class="bgcolor design"></h5>
+                                </div>
+                                <div class="col-md-11 my-auto">
+                                    <h6 class="pl-2">Not Available</h6>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>

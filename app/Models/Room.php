@@ -20,4 +20,14 @@ class Room extends Model
     {
         return $this->belongsTo("App\Models\RoomType", "room_type_id", "id");
     }
+
+    public function orders()
+    {
+        return $this->hasMany("App\Models\Order", "room_id", "id");
+    }
+
+    public function totalAmount()
+    {
+        return $this->orders->where("status", "Unpaid")->sum("total");
+    }
 }

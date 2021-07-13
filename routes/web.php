@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\PaymentController as BookingPaymentController;
 use App\Http\Controllers\Admin\UnitController as AdminUnitController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Admin\BillController as AdminBillController;
 
 /*
 |--------------------------------------------------------------------------
@@ -137,6 +138,12 @@ Route::group(["prefix"=>"admin/", "middleware" => "auth", "as"=>"admin."], funct
         Route::post("store", [AdminOrderController::class, "store"])->name("store");
         Route::get("edit/{id}", [AdminOrderController::class, "edit"])->name("edit");
         Route::put("update/{id}", [AdminOrderController::class, "update"])->name("update");
+        
+        // Bill Section
+        Route::group(["prefix"=>"bill/", "as" => "bill."], function(){
+            Route::get("",[AdminOrderController::class, "viewOrderBill"])->name("viewOrderBill");
+            Route::post("add-payment", [AdminBillController::class, "markpaid"])->name("markpaid");
+        });
     });
 
     

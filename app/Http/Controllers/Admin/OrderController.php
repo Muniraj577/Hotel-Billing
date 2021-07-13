@@ -54,6 +54,7 @@ class OrderController extends Controller
                 $order->total = $request->total;
                 $order->paid = $request->paid;
                 $order->due = $request->due;
+                $order->status = $request->paid == $request->total ? "Paid" : "Unpaid";
                 $order->save();
                 $this->__createOrderItems($request, $order->id);
                 $this->__createPayment($request, $order->id);
@@ -100,6 +101,7 @@ class OrderController extends Controller
                 $order->total = $request->total;
                 $order->paid = $request->paid;
                 $order->due = $request->due;
+                $order->status = $request->total == $request->paid ? "Paid" : "Unpaid";
                 $order->save();
                 $this->__updateOrCreateOrderItem($request, $order);
                 $this->__updateOrderPayment($request, $order->id, $booking_id, $customer_id);
@@ -110,6 +112,37 @@ class OrderController extends Controller
                 return redirect()->back()->with(notify("warning", $e->getMessage()))->withInput();
             }
         }
+    }
+
+    public function viewOrderBill(Request $request)
+    {
+        $orders = DB::table('orders')
+            // ->where('status', 'Unpaid')
+            ->select("room_id")
+            ->orderBy('id', 'ASC')
+            ->groupBy('room_id')
+            ->get();
+        foreach ($orders as $order) {
+            $room_ids[] = $order->room_id;
+        }
+        $rooms = Room::whereIn("id", (array) $room_ids)->get();
+        // $rooms = Room::all();
+        return view($this->page . "bill", compact("rooms"))->with("id");
+    }
+
+    public function addPayment()
+    {
+        $booking_details = BookingDetail::where("status", 1)->get();
+
+        foreach ($booking_details as $bkd) {
+            $bkd_ids[] = $bkd->id;
+        }
+        $booking_rooms = BookingRoom::whereIn("booking_id", $bkd_ids)->get();
+        foreach ($booking_rooms as $booking_room) {
+            $room_ids[] = $booking_room->id;
+        }
+        $rooms = Room::whereIn("id", (array) $room_ids)->get();
+        return view($this->page."payment", compact("rooms"));
     }
 
     private function __createOrderItems($data, $orderId)
@@ -131,6 +164,7 @@ class OrderController extends Controller
     {
         $payment = OrderPayment::create([
             'order_id' => $orderId,
+            'room_id' => $data->room_id,
             'booking_id' => $data->booking_id,
             'customer_id' => $data->customer_id,
             'paid' => $data->paid,
@@ -164,7 +198,7 @@ class OrderController extends Controller
                 OrderItem::destroy($diff_ids);
             }
             foreach ($data->input('product_id') as $key => $value) {
-            
+
                 $order_items = OrderItem::updateOrCreate([
                     'id' => !empty($data->get('order_product_id')[$key]) ? $data->get('order_product_id')[$key] : '',
                 ], [
@@ -187,6 +221,7 @@ class OrderController extends Controller
             $payment = $payment->orderBy("id", "asc")->first();
             $payment->update([
                 'order_id' => $orderId,
+                'room_id' => $data->room_id,
                 'booking_id' => $data->booking_id,
                 'customer_id' => $data->customer_id,
                 'paid' => $data->paid,

@@ -83,6 +83,18 @@
                 <p>Add Order</p>
             </a>
         </li>
+        {{-- <li class="nav-item">
+            <a href="{{ route('admin.order.bill.viewOrderBill') }}" class="nav-link @yield('bills')">
+                <i class="nav-icon fa fa-th-list iCheck"></i>
+                <p>Order Bill</p>
+            </a>
+        </li> --}}
+        <li class="nav-item">
+            <a href="#" class="nav-link @yield("payment")">
+                <i class="nav-icon fa fa-plus iCheck"></i>
+                <p>Add Payment</p>
+            </a>
+        </li>
     </ul>
 </li>
 <li class="nav-item">

@@ -22,6 +22,7 @@ class CreateOrdersTable extends Migration
             $table->decimal("paid", 10, 2)->nullable();
             $table->decimal("due", 10, 2)->nullable();
             $table->decimal("change_amount", 10, 2)->nullable();
+            $table->string("status")->nullable();
             $table->timestamps();
         });
     }

@@ -7,6 +7,7 @@ use App\Models\BookingRoom;
 use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Room;
+use App\Models\RoomType;
 use App\Models\Unit;
 use Illuminate\Http\Request;
 
@@ -14,7 +15,8 @@ class DashboardController extends Controller
 {
     public function dashboard()
     {
-        return view('admin.dashboard');
+        $room_types = RoomType::all();
+        return view('admin.dashboard',compact("room_types"));
     }
 
     public function getCustomer(Request $request)

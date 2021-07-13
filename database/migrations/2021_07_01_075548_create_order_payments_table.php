@@ -16,6 +16,7 @@ class CreateOrderPaymentsTable extends Migration
         Schema::create('order_payments', function (Blueprint $table) {
             $table->id();
             $table->bigInteger("order_id")->nullable();
+            $table->bigInteger("room_id")->nullable();
             $table->bigInteger("booking_id")->nullable();
             $table->bigInteger("customer_id")->nullable();
             $table->decimal("paid", 10, 2)->nullable();
