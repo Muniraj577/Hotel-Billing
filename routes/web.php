@@ -29,7 +29,7 @@ use App\Http\Controllers\Admin\BillController as AdminBillController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
 
 // Route::get('/home')
