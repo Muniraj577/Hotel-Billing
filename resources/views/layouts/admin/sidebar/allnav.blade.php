@@ -90,7 +90,7 @@
             </a>
         </li>
         <li class="nav-item">
-            <a href="#" class="nav-link @yield("payment")">
+            <a href="{{ route("admin.order.addPayment") }}" class="nav-link @yield("payment")">
                 <i class="nav-icon fa fa-plus iCheck"></i>
                 <p>Add Payment</p>
             </a>

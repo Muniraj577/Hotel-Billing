@@ -28,6 +28,11 @@ class BookingDetail extends Model
         return $this->hasMany("App\Models\Customer", "booking_id", "id");
     }
 
+    public function customers()
+    {
+        return $this->hasMany("App\Models\Relative", "booking_id", "id");
+    }
+
     public function payments()
     {
         return $this->hasMany("App\Models\Payment", "booking_id", "id");

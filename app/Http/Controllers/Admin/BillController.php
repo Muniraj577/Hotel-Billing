@@ -22,7 +22,12 @@ class BillController extends Controller
             $order_payment->save();
             $orders = Order::where("room_id", $request->room_id)->get();
             foreach($orders as $order){
-                $order->update(["status"=>"Paid"]);
+                $total = $order->total;
+                $order->update([
+                    "status"=>"Paid",
+                    "paid" => $total,
+                    "due" => 0,
+                ]);
             }
             DB::commit();
             return redirect()->back()->with(notify("success", "Order payment created successfully"));

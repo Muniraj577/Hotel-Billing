@@ -39,5 +39,15 @@ class Customer extends Model
         return asset("images/customers/profile/".$avatar);
     }
 
+    public function orders()
+    {
+        return $this->hasMany("App\Models\Order", "customer_id", "id");
+    }
+
+    public function totalAmount()
+    {
+        return $this->orders->where("status", "Unpaid")->sum("total");
+    }
+
     protected $appends = ["full_name"];
 }

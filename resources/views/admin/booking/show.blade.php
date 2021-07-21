@@ -372,12 +372,12 @@
                                                 
                                             </thead>
                                             <tbody>
-                                                @foreach ($booking_detail->relatives as $relative)
+                                                @foreach ($booking_detail->customers as $relative)
                                                     <tr>
-                                                        <td>{{ $relative->full_name }}</td>
-                                                        <td>{{ $relative->contact_no }}</td>
-                                                        <td>{{ $relative->age }}</td>
-                                                        <td>{{ $relative->gender }}</td>
+                                                        <td>{{ $relative->customer->full_name }}</td>
+                                                        <td>{{ $relative->customer->contact_no }}</td>
+                                                        <td>{{ $relative->customer->age }}</td>
+                                                        <td>{{ $relative->customer->gender }}</td>
                                                         <td>{{ $relative->relation }}</td>
                                                         
                                                         <td>

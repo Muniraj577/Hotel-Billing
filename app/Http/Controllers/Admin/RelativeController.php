@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\BookingDetail;
 use App\Models\Customer;
+use App\Models\Relative;
 use App\Models\Upload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -65,7 +66,9 @@ class RelativeController extends Controller
 
     public function edit($id)
     {
-        $customer = Customer::findOrFail($id);
+        $relative = Relative::findOrFail($id);
+        $customer = Customer::where("id", $relative->customer_id)->first();
+        // $customer = Customer::findOrFail($id);
         return view($this->page . "edit", compact("customer"));
     }
 

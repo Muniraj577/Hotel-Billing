@@ -29,6 +29,9 @@ use App\Http\Controllers\Admin\BillController as AdminBillController;
 */
 
 Route::get('/', function () {
+    if(Auth::check()){
+        return redirect()->route("admin.dashboard");
+    }
     return view('auth.login');
 });
 
@@ -138,6 +141,7 @@ Route::group(["prefix"=>"admin/", "middleware" => "auth", "as"=>"admin."], funct
         Route::post("store", [AdminOrderController::class, "store"])->name("store");
         Route::get("edit/{id}", [AdminOrderController::class, "edit"])->name("edit");
         Route::put("update/{id}", [AdminOrderController::class, "update"])->name("update");
+        Route::get("add-payment", [AdminOrderController::class, "addPayment"])->name("addPayment");
         
         // Bill Section
         Route::group(["prefix"=>"bill/", "as" => "bill."], function(){

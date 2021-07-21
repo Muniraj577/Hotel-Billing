@@ -57,4 +57,9 @@ class DashboardController extends Controller
         $bkdetail = BookingDetail::where("id", $bkroom->booking_id)->where("status", 1)->orderBy("id", "desc")->first();
         return view("admin.partial.customer.detail", compact("bkroom", "bkdetail"));
     }
+
+    public function getCustomerPrice(Request $request)
+    {
+        $customer = Customer::where("id", $request->customer_id)->firstOrFail();
+    }
 }
