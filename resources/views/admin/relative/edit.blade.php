@@ -23,15 +23,38 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <div class="card-title">
-                                <a href="{{ route('admin.booking.show', $customer->booking_id) }}"
+                            <div class="row">
+                                <div class="col-md-5 my-auto">
+                                    <div class="input-group inputcontainer">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bar-input" id="basic-addon1"><i
+                                                    class="fa fa-user barcode"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control" placeholder="Search by user name or phone"
+                                            id="search_user" value="">
+                                        <div class="spinner">
+                                            <div class="rect1"></div>
+                                            <div class="rect2"></div>
+                                            <div class="rect3"></div>
+                                            <div class="rect4"></div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-md-7 my-auto float-right">
+                                    <a href="{{ route('admin.booking.show', $relative->booking_id) }}" class="btn btn-primary float-right"><i
+                                            class="fa fa-arrow-left iCheck"></i>&nbsp;Back to Booking Detail</a>
+                                </div>
+                            </div>
+                            {{-- <div class="card-title">
+                                <a href="{{ route('admin.booking.show', $relative->booking_id) }}"
                                     class="btn btn-primary float-right"><i class="fa fa-arrow-left iCheck"></i>&nbsp;Back to
                                     Booking Detail</a>
 
-                            </div>
+                            </div> --}}
                         </div>
                         <div class="card-body">
-                            <form action="{{ route('admin.relative.udpate', $customer->id) }}" method="POST"
+                            <form action="{{ route('admin.relative.udpate', $relative->id) }}" method="POST"
                                 enctype="multipart/form-data" id="form">
                                 @csrf
                                 @method('put')
@@ -392,5 +415,141 @@
                 form.submit();
             }
         });
+
+        $("#search_user").autocomplete({
+            source: function(data, cb) {
+                $.ajax({
+                    url: "{{ route('admin.getCustomer') }}",
+                    type: "POST",
+                    data: {
+                        'keyword': data.term
+                    },
+                    dataType: 'json',
+                    autoFocus: true,
+                    showHintOnFocus: true,
+                    autoSelect: true,
+                    selectInitial: true,
+
+                    success: function(res) {
+                        if (res.length) {
+                            var datas = $.map(res, function(value) {
+                                return {
+                                    label: value.first_name + "(" + value.contact_no + ")",
+                                    id: value.id,
+                                    first_name: value.first_name,
+                                    middle_name: value.middle_name,
+                                    last_name: value.last_name,
+                                    gender: value.gender,
+                                    age: value.age,
+                                    nationality: value.nationality,
+                                    address: value.address,
+                                    contact_no: value.contact_no,
+                                    occupation: value.occupation,
+                                    identity: value.identity_no,
+                                    license: value.driving_license_no,
+                                    sign: value.signature,
+                                }
+                            });
+                        } else {
+
+                            $('.spinner').hide();
+                        }
+                        cb(datas);
+
+                    },
+                    error: function() {
+                        $('.spinner').hide();
+                    },
+
+                });
+            },
+            search: function(e, ui) {
+                $('.spinner').show();
+
+
+
+            },
+            response: function(e, el) {
+                if (el.content == undefined) {
+                    // console.log('no data found');
+                } else if (el.content.length == 1) {
+                    // $(this).data('ui-autocomplete')._trigger('select', 'autocompleteselect', el);
+                    // $(this).autocomplete("close");
+
+                }
+                $('.spinner').hide();
+                // console.log('hiding');
+            },
+
+
+            select: function(e, ui) {
+                console.log(typeof ui.content);
+                e.preventDefault();
+                if (typeof ui.content != 'undefined') {
+                    if (isNaN(ui.content[0].id)) {
+                        return;
+                    }
+                    var cus_id = ui.content[0].id,
+                        first_name = ui.content[0].first_name,
+                        middle_name = ui.content[0].middle_name,
+                        last_name = ui.content[0].last_name,
+                        gender = ui.content[0].gender,
+                        age = ui.content[0].age,
+                        nationality = ui.content[0].nationality,
+                        address = ui.content[0].address,
+                        contact_no = ui.content[0].contact_no,
+                        occupation = ui.content[0].occupation,
+                        identity = ui.content[0].identity,
+                        license = ui.content[0].license,
+                        sign = ui.content[0].sign;
+                } else {
+                    console.log(ui.item);
+                    var cus_id = ui.item.id,
+                        first_name = ui.item.first_name,
+                        middle_name = ui.item.middle_name,
+                        last_name = ui.item.last_name,
+                        gender = ui.item.gender,
+                        age = ui.item.age,
+                        nationality = ui.item.nationality,
+                        address = ui.item.address,
+                        contact_no = ui.item.contact_no,
+                        occupation = ui.item.occupation,
+                        identity = ui.item.identity,
+                        license = ui.item.license,
+                        sign = ui.item.sign;
+
+                }
+
+                // set value
+
+                set_values(cus_id, first_name, middle_name, last_name, gender, age,
+                    nationality, address, contact_no, occupation, identity, license,
+                    sign);
+
+                $("input#search_user").val('');
+            },
+
+        });
+
+        $("#search_user").bind('paste', (e) => {
+            $("#search_user").autocomplete('search');
+        });
+
+        function set_values(customer_id, fname, midname, lname, gender, age, nationality, address, contact_no, occupation,
+            identity,
+            license, sign) {
+            $("#client_id").val(customer_id);
+            $("#firstName").val(fname);
+            $("#middleName").val(midname);
+            $("#surName").val(lname);
+            $("#gender").val(gender);
+            $("#age").val(age);
+            $("#nationality").val(nationality);
+            $("#address").val(address);
+            $("#contact_no").val(contact_no);
+            $("#occupation").val(occupation);
+            $("#identity").val(identity);
+            $("#license").val(license);
+        }
     </script>
 @endsection

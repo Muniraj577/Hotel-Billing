@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
-class RelativeController extends Controller
+class RelativeControllerCopy extends Controller
 {
     public function create($id)
     {
@@ -29,52 +29,28 @@ class RelativeController extends Controller
             try {
                 DB::beginTransaction();
                 $bkd = BookingDetail::findOrFail($id);
-                $client = Customer::find($request->customer_id);
-                if ($client != null) {
-                    $oldImage = $client->signature;
-                    $oldProfile = $client->profile_pic;
-                    if ($request->hasFile('signature')) {
-                        $image = Upload::image($request, 'signature', $this->destination, $oldImage);
-                    } else {
-                        $image = $oldImage;
-                    }
-                    if ($request->hasFile("profile_pic")) {
-                        $profile = Upload::image($request, "profile_pic", $this->prfdest, $oldProfile);
-                    } else {
-                        $profile = $oldProfile;
-                    }
-                } else {
-                    if ($request->hasFile('signature')) {
-                        $image = Upload::image($request, 'signature', $this->destination, null);
-                    } else {
-                        $image = '';
-                    }
-                    if ($request->hasFile("profile_pic")) {
-                        $profile = Upload::image($request, "profile_pic", $this->prfdest, null);
-                    } else {
-                        $profile = '';
-                    }
+                $customer = new Customer();
+                $customer->first_name = $request->first_name;
+                $customer->middle_name = $request->middle_name;
+                $customer->last_name = $request->last_name;
+                $customer->gender = $request->gender;
+                $customer->age = $request->age;
+                $customer->nationality = $request->nationality;
+                $customer->address = $request->address;
+                $customer->contact_no = $request->contact_no;
+                $customer->occupation = $request->occupation;
+                $customer->identity_no = $request->identity_no;
+                $customer->driving_license_no = $request->driving_license_no;
+                if ($request->hasFile("signature")) {
+                    $customer->signature = Upload::image($request, "signature", $this->destination, null);
                 }
-                $customer = Customer::updateOrCreate([
-                    'id' => $request->customer_id,
-                ], [
-                    'first_name' => $request->first_name,
-                    'middle_name' => $request->middle_name,
-                    'last_name' => $request->last_name,
-                    'gender' => $request->gender,
-                    'age' => $request->age,
-                    'nationality' => $request->nationality,
-                    'address' => $request->address,
-                    'contact_no' => $request->contact_no,
-                    'occupation' => $request->occupation,
-                    'identity_no' => $request->identity_no,
-                    'driving_license_no' => $request->driving_license_no,
-                    'signature' => $image,
-                    'profile_pic' => $profile,
-                    'parent_id' => $bkd->customer_id,
-                    'booking_id' => $id,
-                    'relation' => $request->relation,
-                ]);
+                if ($request->hasFile("profile_pic")) {
+                    $customer->profile_pic = Upload::image($request, "profile_pic", $this->prfdest, null);
+                }
+                $customer->parent_id = $bkd->customer_id;
+                $customer->booking_id = $id;
+                $customer->relation = $request->relation;
+                $customer->save();
                 $relative = new Relative();
                 $relative->customer_id = $customer->id;
                 $relative->booking_id = $id;
@@ -98,7 +74,7 @@ class RelativeController extends Controller
         $relative = Relative::findOrFail($id);
         $customer = Customer::where("id", $relative->customer_id)->first();
         // $customer = Customer::findOrFail($id);
-        return view($this->page . "edit", compact("customer", "relative"));
+        return view($this->page . "edit", compact("customer"));
     }
 
     public function update(Request $request, $id)
@@ -110,24 +86,34 @@ class RelativeController extends Controller
         if ($validator->passes()) {
             try {
                 DB::beginTransaction();
-                $relative = Relative::findOrFail($id);
-                $client = Customer::find($request->customer_id);
-                if($client != null){
-                    $this->__updateCustomer($request, $request->customer_id);
-                    $relative->update([
-                        "customer_id" => $request->customer_id,
-                        "relation" => $request->relation,
-                    ]);
+                $customer = Customer::find($id);
+                $oldSign = $customer->signature;
+                $oldPic = $customer->profile_pic;
+                $customer->first_name = $request->first_name;
+                $customer->middle_name = $request->middle_name;
+                $customer->last_name = $request->last_name;
+                $customer->gender = $request->gender;
+                $customer->age = $request->age;
+                $customer->nationality = $request->nationality;
+                $customer->address = $request->address;
+                $customer->contact_no = $request->contact_no;
+                $customer->occupation = $request->occupation;
+                $customer->identity_no = $request->identity_no;
+                $customer->driving_license_no = $request->driving_license_no;
+                if ($request->hasFile("signature")) {
+                    $customer->signature = Upload::image($request, "signature", $this->destination, $oldSign);
                 } else {
-                    $customer_id = Customer::where("id", $relative->customer_id)->first()->id;
-                    $this->__updateCustomer($request, $customer_id);
-                    $relative->update([
-                        "customer_id" => $customer_id,
-                        "relation" => $request->relation,
-                    ]);
+                    $customer->signature = $oldSign;
                 }
+                if ($request->hasFile("profile_pic")) {
+                    $customer->profile_pic = Upload::image($request, "profile_pic", $this->prfdest, $oldPic);
+                } else {
+                    $customer->profile_pic = $oldPic;
+                }
+                $customer->relation = $request->relation;
+                $customer->save();
                 DB::commit();
-                return redirect()->route("admin.booking.show", $relative->booking_id)->with(notify("success", "Relative updated successfully"));
+                return redirect()->route("admin.booking.show", $customer->booking_id)->with(notify("success", "Relative updated successfully"));
             } catch (\Exception $e) {
                 DB::rollBack();
                 return redirect()->back()->with(notify("warning", $e->getMessage()));
@@ -146,49 +132,17 @@ class RelativeController extends Controller
         // $relative->delete();
         try {
             DB::beginTransaction();
-            // $customer = Customer::findOrFail($id);
-            // FileUnlink($this->prfdest, $customer->profile_pic);
-            // FileUnlink($this->destination, $customer->signature);
-            // $customer->delete();
-            $relative = Relative::findOrFail($id);
-            $relative->delete();
-            DB::commit();
+            $customer = Customer::findOrFail($id);
+            FileUnlink($this->prfdest, $customer->profile_pic);
+            FileUnlink($this->destination, $customer->signature);
+            $customer->delete();
             return redirect()->back()->with(notify("success", "Relative deleted successfully"));
+            DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with(notify("warning", $e->getMessage()));
         }
 
-    }
-
-    private function __updateCustomer($data, $customer_id)
-    {
-        $customer = Customer::find($customer_id);
-        $oldSign = $customer->signature;
-        $oldPic = $customer->profile_pic;
-        $customer->first_name = $data->first_name;
-        $customer->middle_name = $data->middle_name;
-        $customer->last_name = $data->last_name;
-        $customer->gender = $data->gender;
-        $customer->age = $data->age;
-        $customer->nationality = $data->nationality;
-        $customer->address = $data->address;
-        $customer->contact_no = $data->contact_no;
-        $customer->occupation = $data->occupation;
-        $customer->identity_no = $data->identity_no;
-        $customer->driving_license_no = $data->driving_license_no;
-        if ($data->hasFile("signature")) {
-            $customer->signature = Upload::image($data, "signature", $this->destination, $oldSign);
-        } else {
-            $customer->signature = $oldSign;
-        }
-        if ($data->hasFile("profile_pic")) {
-            $customer->profile_pic = Upload::image($data, "profile_pic", $this->prfdest, $oldPic);
-        } else {
-            $customer->profile_pic = $oldPic;
-        }
-        $customer->relation = $data->relation;
-        $customer->save();
     }
 
     private function validation(array $data)
