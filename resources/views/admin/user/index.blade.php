@@ -24,7 +24,7 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <table id="Admin" class="table">
+                            <table id="Admin" class="table table-responsive-xl">
                                 <thead>
                                     <tr>
                                         <th>S.N</th>
@@ -92,7 +92,7 @@
     <script>
         $(document).ready(function() {
             $("#Admin").DataTable({
-                "responsive": true,
+                "responsive": false,
                 "autoWidth": false,
                 "dom": 'lBfrtip',
                 "buttons": [{

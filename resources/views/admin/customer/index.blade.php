@@ -28,7 +28,7 @@
                         <!-- /.card-header -->
                         <div class="card-body">
 
-                            <table id="Customer" class="table text-center">
+                            <table id="Customer" class="table table-responsive-xl text-center">
                                 <thead>
                                     <tr>
                                         <th>S.N</th>
@@ -92,7 +92,7 @@
     <script>
         $(document).ready(function() {
             $("#Customer").DataTable({
-                "responsive": true,
+                "responsive": false,
                 "lengthChange": true,
                 "autoWidth": false,
                 "dom": 'lBfrtip',

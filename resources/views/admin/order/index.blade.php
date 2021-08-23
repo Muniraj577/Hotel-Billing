@@ -25,7 +25,7 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <table id="Order" class="table text-center">
+                            <table id="Order" class="table table-responsive-xl text-center">
                                 <thead>
                                     <tr>
                                         <th>S.N</th>
@@ -47,11 +47,39 @@
                                             <td>{{ $order->paid ? $order->paid : 0 }}</td>
                                             <td>{{ $order->due }}</td>
                                             <td>
-                                                <div class="d-inline-flex">
+                                                {{-- <div class="d-inline-flex">
                                                     <a href="{{ route('admin.order.edit', $order->id) }}"
                                                         class="btn btn-sm btn-primary" title="Edit Order">
                                                         <i class="fa fa-edit iCheck"></i> Edit
                                                     </a>
+                                                </div> --}}
+                                                <div class='dropdown action_dropdown'>
+                                                    <button class='action_button btn dropdown-toggle' type='button'
+                                                        id='dropdownMenuButton' data-toggle='dropdown' aria-haspopup='true'
+                                                        aria-expanded='false'>
+                                                        Action
+                                                    </button>
+                                                    <div class='dropdown-menu dropdown-menu-right'
+                                                        aria-labelledby='dropdownMenuButton'>
+                                                        <a class="dropdown-item"
+                                                            href="{{ route('admin.order.edit', $order->id) }}">
+                                                            <i class="fa fa-edit iCheck"></i>&nbsp;Edit</a>
+                                                        @if ($order->status == 'Unpaid')
+                                                            <form action="{{ route('admin.order.markpaid', $order->id) }}"
+                                                                method="POST">
+                                                                @csrf
+                                                                @method('put')
+                                                                <button class="dropdown-item" type="submit">
+                                                                    <i class="fa fa-check-circle"></i>&nbsp;Mark as Paid
+                                                                </button>
+                                                            </form>
+                                                            @else
+                                                            <button class="dropdown-item" type="button" onclick="alertPaid();">
+                                                                <i class="fa fa-check-circle"></i>&nbsp;Mark as Paid
+                                                            </button>
+                                                        @endif
+                                                    </div>
+
                                                 </div>
                                             </td>
                                         </tr>
@@ -70,7 +98,7 @@
     <script>
         $(document).ready(function() {
             $("#Order").DataTable({
-                "responsive": true,
+                "responsive": false,
                 "lengthChange": true,
                 "autoWidth": false,
                 "dom": 'lBfrtip',
@@ -128,5 +156,15 @@
             });
             dataTablePosition();
         });
+
+        function alertPaid()
+        {
+            $.alert({
+                title: "Alert !",
+                content: "This order is already paid",
+                icon: "fa fa-exclamation-triangle",
+                theme: "modern",
+            });
+        }
     </script>
 @endsection

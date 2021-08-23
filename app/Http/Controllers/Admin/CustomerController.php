@@ -16,8 +16,8 @@ class CustomerController extends Controller
 
     public function show($id)
     {
-        $customer = Customer::findOrFail($id);
-        return view("admin.customer.show", compact("customer"));
+        $customer = Customer::where("id", $id)->with("booking_details")->firstOrFail();
+        return view("admin.customer.show", compact("customer"))->with("id");
     }
 
     public function booking_detail($id)

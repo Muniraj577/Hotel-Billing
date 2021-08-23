@@ -32,6 +32,7 @@
             .innerHTML = moment().format('YYYY-MM-DD h:mm a');
     }
     $(function() {
+        $(".alert-warning").css("display", "none");
         selectRefresh();
         var mainInput = document.getElementsByClassName("nepaliDatePicker");
         mainInput.nepaliDatePicker({

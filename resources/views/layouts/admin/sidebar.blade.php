@@ -10,6 +10,7 @@ $roomNav = Request::is('admin/room*');
 $productNav = Request::is('admin/product*');
 $unitNav = Request::is('admin/unit*');
 $orderNav = Request::is('admin/order*');
+$identityNav = Request::is('admin/identity*');
 
 ?>
 <aside class="main-sidebar sidebar-dark-primary elevation-4">

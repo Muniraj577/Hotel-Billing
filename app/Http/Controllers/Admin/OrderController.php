@@ -117,7 +117,7 @@ class OrderController extends Controller
     public function viewOrderBill(Request $request)
     {
         $orders = DB::table('orders')
-            // ->where('status', 'Unpaid')
+        // ->where('status', 'Unpaid')
             ->select("room_id")
             ->orderBy('id', 'ASC')
             ->groupBy('room_id')
@@ -142,7 +142,27 @@ class OrderController extends Controller
             $room_ids[] = $booking_room->id;
         }
         $rooms = Room::whereIn("id", (array) $room_ids)->get();
-        return view($this->page."payment", compact("rooms"));
+        return view($this->page . "payment", compact("rooms"));
+    }
+
+    public function markpaid(Request $request, $id)
+    {
+        try {
+            DB::beginTransaction();
+            $order = Order::findOrFail($id);
+            $total = $order->total;
+            $order->update([
+                'paid' => $total,
+                'due' => 0,
+                'status' => 'Paid',
+            ]);
+            DB::commit();
+            return redirect()->back()->with(notify("success", "Order Payment added"));
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with(notify("warning", "Something went wrong"));
+        }
+
     }
 
     private function __createOrderItems($data, $orderId)

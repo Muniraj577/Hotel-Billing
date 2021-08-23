@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\BookingDetail;
 use App\Models\BookingRoom;
 use App\Models\Customer;
+use App\Models\Identification;
 use App\Models\Payment;
 use App\Models\Relative;
 use App\Models\Room;
@@ -31,7 +32,8 @@ class BookingController extends Controller
     {
         $rooms = Room::where("is_active", 1)->where("status", "Available")->get();
         $countRoom = Room::where("is_active", 1)->where("status", "Available")->count();
-        return view($this->page . "create", compact("rooms", "countRoom"));
+        $identities = Identification::all();
+        return view($this->page . "create", compact("rooms", "countRoom", "identities"));
     }
 
     public function store(Request $request)
@@ -75,6 +77,7 @@ class BookingController extends Controller
                 $customer = Customer::updateOrCreate([
                     'id' => $request->customer_id,
                 ], [
+                    'identity_id' => $request->identity_id,
                     'first_name' => $request->first_name,
                     'middle_name' => $request->middle_name,
                     'last_name' => $request->last_name,
@@ -133,12 +136,14 @@ class BookingController extends Controller
     public function edit($id)
     {
         $booking_detail = BookingDetail::where("id", $id)->with("customer")->firstOrFail();
-        return view($this->page . "edit", compact("booking_detail"));
+        $identities = Identification::all();
+        return view($this->page . "edit", compact("booking_detail", "identities"));
     }
 
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
+            "identity_id" => "required",
             "first_name" => "required|string",
             "last_name" => "required|string",
             "gender" => "required|string",
@@ -148,11 +153,12 @@ class BookingController extends Controller
             "contact_no" => "required|numeric|digits_between:10,13",
             "occupation" => "required|string",
             "identity_no" => "required",
-            "signature" => "image|mimes:jpeg,jpg,png|max:2048",
-            "profile_pic" => "image|mimes:jpeg,jpg,png|max:2048",
+            "signature" => "nullable|image|mimes:jpeg,jpg,png|max:2048",
+            "profile_pic" => "nullable|image|mimes:jpeg,jpg,png|max:2048",
             "arrival_date" => "required",
             "arrival_time" => "required",
         ], [
+            "identity_id.required" => "Identity Type is required",
             "first_name.required" => "First Name is required",
             "last_name.required" => "Surname is required",
             "gender.required" => "Gender is required",
@@ -166,7 +172,7 @@ class BookingController extends Controller
             "contact_no.numeric" => "Contact number must contain only numeric value",
             "contact_no.digits_between" => "The Contact number length must be 10 to 13",
             "occupation.required" => "Occupation is required",
-            "identity_no.required" => "Citizenship number is required",
+            "identity_no.required" => "Identity number is required",
             "signature.image" => "Please upload a valid image",
             "signature.mimes" => "Image must be of type jpg, jpeg, png",
             "profile_pic.image" => "Please upload a valid image",
@@ -232,7 +238,7 @@ class BookingController extends Controller
                 date_default_timezone_set("Asia/Kathmandu");
                 $a = date("y-m-d H:i");
                 $b = $request->departure_date . " " . $request->departure_time;
-                if (strtotime($a) > strtotime($b)) {
+                if (strtotime($a) >= strtotime($b)) {
                     $booking->update(["status" => 0]);
                     foreach ($booking->booking_rooms as $booking_room) {
                         $room = Room::where('id', $booking_room->room_id)->first();
@@ -312,6 +318,7 @@ class BookingController extends Controller
         $customer = Customer::where("id", $customerId)->firstOrFail();
         $oldSign = $customer->signature;
         $oldProfile = $customer->profile_pic;
+        $customer->identity_id = $data->identity_id;
         $customer->first_name = $data->first_name;
         $customer->middle_name = $data->middle_name;
         $customer->last_name = $data->last_name;
@@ -338,7 +345,7 @@ class BookingController extends Controller
         date_default_timezone_set("Asia/Kathmandu");
         $a = date("y-m-d H:i");
         $b = $data->departure_date . " " . $data->departure_time;
-        if (strtotime($a) > strtotime($b)) {
+        if (strtotime($a) >= strtotime($b)) {
             $booking_detail->update(["status" => 0]);
             foreach ($booking_detail->booking_rooms as $booking_room) {
                 $room = Room::where('id', $booking_room->room_id)->first();
@@ -379,6 +386,7 @@ class BookingController extends Controller
     private function validation(array $data)
     {
         return Validator::make($data, [
+            "identity_id" => "required",
             "first_name" => "required|string",
             "last_name" => "required|string",
             "gender" => "required|string",
@@ -388,8 +396,8 @@ class BookingController extends Controller
             "contact_no" => "required|numeric|digits_between:10,13",
             "occupation" => "required|string",
             "identity_no" => "required",
-            "signature" => "image|mimes:jpeg,jpg,png|max:2048",
-            "profile_pic" => "image|mimes:jpeg,jpg,png|max:2048",
+            "signature" => "nullable|image|mimes:jpeg,jpg,png|max:2048",
+            "profile_pic" => "nullable|image|mimes:jpeg,jpg,png|max:2048",
             "arrival_date" => "required",
             "arrival_time" => "required",
             "no_of_rooms" => "required|integer",
@@ -411,6 +419,7 @@ class BookingController extends Controller
     private function messages()
     {
         return [
+            "identity_id.required" => "Identity Type is required",
             "first_name.required" => "First Name is required",
             "last_name.required" => "Surname is required",
             "gender.required" => "Gender is required",
@@ -424,7 +433,7 @@ class BookingController extends Controller
             'contact_no.numeric' => "Contact number must contain only numeric value",
             'contact_no.digits_between' => "The Contact number length must be 10 to 13",
             "occupation.required" => "Occupation is required",
-            "identity_no.required" => "Citizenship number is required",
+            "identity_no.required" => "Identity number is required",
             "signature.image" => "Please upload a valid image",
             "signature.mimes" => "Image must be of type jpg, jpeg, png",
             "profile_pic.image" => "Please upload a valid image",

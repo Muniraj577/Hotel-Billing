@@ -28,7 +28,7 @@
                         <!-- /.card-header -->
                         <div class="card-body">
 
-                            <table id="RoomType" class="table text-center">
+                            <table id="RoomType" class="table table-responsive-xl text-center">
                                 <thead>
                                     <tr>
                                         <th>S.N</th>
@@ -72,7 +72,7 @@
     <script>
         $(document).ready(function() {
             $("#RoomType").DataTable({
-                "responsive": true,
+                "responsive": false,
                 "lengthChange": true,
                 "autoWidth": false,
                 "dom": 'lBfrtip',

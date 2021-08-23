@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Intervention\Image\Facades\Image;
 
 class Upload extends Model
 {
@@ -21,5 +22,22 @@ class Upload extends Model
         }
         $image->move($path, $imageName);
         return $imageName;
+    }
+
+    public static function resizeImage($request, $filename, $path, $h, $w)
+    {
+        $_this = new self;
+        $_this->createDirectory($path);
+        $image = $request->file($filename);
+        $imageName = time() . '.' . $image->getClientOriginalExtension();
+        Image::make($image)->resize($h, $w)->save($path . $imageName);
+        return $imageName;
+    }
+
+    private function createDirectory($path)
+    {
+        if (!file_exists($path)) {
+            mkdir($path, 0777, true);
+        }
     }
 }

@@ -33,6 +33,7 @@ class AdminController extends Controller
             DB::beginTransaction();
             $input = $request->except("_token");
             if ($request->hasFile('avatar')) {
+                // $input['avatar'] = Upload::resizeImage($request,"avatar",$this->destination, 200,200);
                 $input['avatar'] = Upload::image($request, 'avatar', $this->destination, '');
             }
             if ($request->filled('type')) {
@@ -44,7 +45,7 @@ class AdminController extends Controller
             return redirect()->route($this->redirectTo)->with(notify("success", "User created successfully"));
         } catch(\Exception $e){
             DB::rollBack();
-            return redirect()->back()->with(notify("warning", $e->getMessage()));
+            return redirect()->back()->with(notify("warning", $e->getMessage()))->withInput();
         }
     }
 
@@ -63,6 +64,7 @@ class AdminController extends Controller
         try {
             DB::beginTransaction();
             if ($request->hasFile('avatar')) {
+                // $input['avatar'] = Upload::resizeImage($request, "avatar", $this->destination, 200, 200);
                 $input['avatar'] = Upload::image($request, 'avatar', $this->destination, $oldImage);
             } else {
                 $input['avatar'] = $oldImage;
@@ -79,10 +81,13 @@ class AdminController extends Controller
             }
             $user->update($input);
             DB::commit();
+            if($request->hasFile('avatar')){
+                FileUnlink($this->destination, $oldImage);
+            }
             return redirect()->route($this->redirectTo)->with(notify("success", "User updated successfully"));
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with(notify('warning', $e->getMessage()));
+            return redirect()->back()->with(notify('warning', $e->getMessage()))->withInput();
         }
     }
 

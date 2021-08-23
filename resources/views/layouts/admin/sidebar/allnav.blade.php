@@ -1,5 +1,5 @@
-<li class="nav-item {{ $userNav || $roomNav || $productNav || $unitNav || $roomTypeNav ? $menu : '' }}">
-    <a href="#" class="nav-link {{ $userNav || $roomNav || $productNav || $unitNav || $roomTypeNav ? $active : '' }}">
+<li class="nav-item {{ $userNav || $roomNav || $productNav || $unitNav || $roomTypeNav || $identityNav ? $menu : '' }}">
+    <a href="#" class="nav-link {{ $userNav || $roomNav || $productNav || $unitNav || $roomTypeNav || $identityNav ? $active : '' }}">
         <i class="nav-icon fa fa-th-list iCheck"></i>
         <p>
             Master
@@ -26,8 +26,14 @@
             </a>
         </li>
         <li class="nav-item">
+            <a href="{{route('admin.identity.index')}}" class="nav-link @yield('identity')">
+                <i class="nav-icon fas fa-id-card iCheck"></i></i>
+                <p>Identity Type</p>
+            </a>
+        </li>
+        <li class="nav-item">
             <a href="{{route('admin.unit.index')}}" class="nav-link @yield('unit')">
-                <i class="nav-icon fab fa-product-hunt iCheck"></i></i>
+                <i class="nav-icon fas fa-balance-scale iCheck"></i></i>
                 <p>Units</p>
             </a>
         </li>
@@ -83,7 +89,7 @@
                 <p>Add Order</p>
             </a>
         </li>
-        <li class="nav-item">
+        {{--  <li class="nav-item">
             <a href="{{ route('admin.order.bill.viewOrderBill') }}" class="nav-link @yield('bills')">
                 <i class="nav-icon fa fa-th-list iCheck"></i>
                 <p>Order Bill</p>
@@ -94,7 +100,7 @@
                 <i class="nav-icon fa fa-plus iCheck"></i>
                 <p>Add Payment</p>
             </a>
-        </li>
+        </li>  --}}
     </ul>
 </li>
 <li class="nav-item">

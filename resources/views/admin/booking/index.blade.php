@@ -41,7 +41,7 @@
                         <!-- /.card-header -->
                         <div class="card-body">
 
-                            <table id="BookingDetail" class="table text-center">
+                            <table id="BookingDetail" class="table table-responsive-xl text-center">
                                 <thead>
                                     <tr>
                                         <th>S.N</th>
@@ -152,7 +152,7 @@
     <script>
         $(document).ready(function() {
             $("#BookingDetail").DataTable({
-                "responsive": true,
+                "responsive": false,
                 "lengthChange": true,
                 "autoWidth": false,
                 "dom": 'lBfrtip',

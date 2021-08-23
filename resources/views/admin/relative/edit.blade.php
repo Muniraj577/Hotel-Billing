@@ -225,7 +225,28 @@
                                             <div class="form-group">
                                                 <div class="row">
                                                     <div class="col-md-4">
-                                                        <label for="identity_no">Citizenship No&nbsp;<span
+                                                        <label for="identity_id">Identity Type&nbsp;<span
+                                                                class="req">*</span></label>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <select name="identity_id" class="form-control" id="identity_id">
+                                                            <option value="">Select Identity Type</option>
+                                                            @foreach($identities as $key => $identity)
+                                                                <option value="{{ $identity->id }}" {{ $identity->id == old('identity_id', $customer->identity_id) ? "selected": "" }}>
+                                                                    {{ $identity->name }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                        @error('identity_id')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <label for="identity_no">Identity No&nbsp;<span
                                                                 class="req">*</span></label>
                                                     </div>
                                                     <div class="col-md-8">
@@ -238,7 +259,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="form-group">
+                                            {{-- <div class="form-group">
                                                 <div class="row">
                                                     <div class="col-md-4">
                                                         <label for="driving_license_no">Driving License No</label>
@@ -253,7 +274,7 @@
                                                         @enderror
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> --}}
                                             <div class="form-group">
                                                 <div class="row">
                                                     <div class="col-md-4">
@@ -324,6 +345,7 @@
     <script>
         $('#form').validate({
             rules: {
+                identity_id: "required",
                 first_name: {
                     required: true,
                     lettersonly: true,
@@ -371,6 +393,7 @@
                 },
             },
             messages: {
+                identity_id: "Identity Type is required",
                 first_name: {
                     required: "First Name is required",
                     lettersonly: "Only alphabets suppported",
@@ -398,7 +421,7 @@
                 occupation: {
                     required: "Occupation is required",
                 },
-                identity_no: "Citizenship number is required",
+                identity_no: "Identity number is required",
                 relation: {
                     required: "Relation field is required",
                 },
@@ -436,6 +459,7 @@
                                 return {
                                     label: value.first_name + "(" + value.contact_no + ")",
                                     id: value.id,
+                                    identity_id: value.identity_id,
                                     first_name: value.first_name,
                                     middle_name: value.middle_name,
                                     last_name: value.last_name,
@@ -490,6 +514,7 @@
                         return;
                     }
                     var cus_id = ui.content[0].id,
+                        identity_id = ui.content[0].identity_id,
                         first_name = ui.content[0].first_name,
                         middle_name = ui.content[0].middle_name,
                         last_name = ui.content[0].last_name,
@@ -505,6 +530,7 @@
                 } else {
                     console.log(ui.item);
                     var cus_id = ui.item.id,
+                        identity_id = ui.item.identity_id,
                         first_name = ui.item.first_name,
                         middle_name = ui.item.middle_name,
                         last_name = ui.item.last_name,
@@ -522,7 +548,7 @@
 
                 // set value
 
-                set_values(cus_id, first_name, middle_name, last_name, gender, age,
+                set_values(cus_id, identity_id, first_name, middle_name, last_name, gender, age,
                     nationality, address, contact_no, occupation, identity, license,
                     sign);
 
@@ -535,10 +561,11 @@
             $("#search_user").autocomplete('search');
         });
 
-        function set_values(customer_id, fname, midname, lname, gender, age, nationality, address, contact_no, occupation,
+        function set_values(customer_id, identity_id, fname, midname, lname, gender, age, nationality, address, contact_no, occupation,
             identity,
             license, sign) {
             $("#client_id").val(customer_id);
+            $("#identity_id").val(identity_id);
             $("#firstName").val(fname);
             $("#middleName").val(midname);
             $("#surName").val(lname);

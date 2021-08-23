@@ -1,12 +1,12 @@
 @extends('layouts.admin.app')
-@section('title', 'Room')
-@section('room', 'active')
+@section('title', 'Identity Type')
+@section('identity', 'active')
 @section('content')
     <section class="content-header">
         <div class="container-fluid">
             <div class="row col-12 mb-2">
                 <div class="col-sm-6">
-                    <h1>Room</h1>
+                    <h1>Identity Type</h1>
                 </div>
 
             </div>
@@ -17,53 +17,39 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card">
-                        
+
                         <div class="card-header">
                             <div class="card-title float-right">
-                                <a href="{{ route('admin.room.create') }}" class="btn btn-primary">
-                                    <i class="fas fa-plus"></i> Add Room
+                                <a href="{{ route('admin.identity.create') }}" class="btn btn-primary">
+                                    <i class="fas fa-plus"></i> Add Identity Type
                                 </a>
                             </div>
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">
 
-                            <table id="Room" class="table table-responsive-xl text-center">
+                            <table id="Identity" class="table table-responsive-xl text-center">
                                 <thead>
                                     <tr>
                                         <th>S.N</th>
-                                        <th>Name</th>
-                                        <th>Room No</th>
-                                        <th>Room Type</th>
-                                        <th>Price</th>
-                                        <th>Is Active</th>
+                                        <th>Title</th>
                                         <th>Status</th>
                                         <th class="hidden">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($rooms as $key => $room)
-
+                                    @foreach ($identities as $key => $identity)
                                         <tr>
                                             <td>{{ ++$id }}</td>
-                                            <td>{{ $room->name }}</td>
-                                            <td>{{ $room->room_no }}</td>
-                                            <td>{{ $room->room_type->name }}</td>
-                                            <td>{{ $room->price }}</td>
+                                            <td>{{ $identity->name }}</td>
+                                            <td>{{ $identity->status ? "Active" : "Inactive" }}</td>
                                             <td>
-                                                {{ $room->is_active ? 'Active' : 'Inactive' }}
-                                            </td>
-                                            <td>
-                                                {{ $room->status }}
-                                            </td>
-                                            <td>
-                                                <div class="d-inline-flex">
-                                                    <a href="{{ route('admin.room.edit', $room->id) }}"
-                                                        class="btn btn-sm btn-primary" title="Edit Room">
-                                                        <i class="fa fa-edit iCheck"></i> Edit
-                                                    </a>
-                                                    
-                                                </div>
+                                            <div class="d-inline-flex">
+                                                <a href="{{ route('admin.identity.edit', $identity->id) }}"
+                                                    class="btn btn-sm btn-primary" title="Edit Identity Type">
+                                                    <i class="fa fa-edit iCheck"></i> Edit
+                                                </a>
+                                            </div>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -83,7 +69,7 @@
 
     <script>
         $(document).ready(function() {
-            $("#Room").DataTable({
+            $("#Identity").DataTable({
                 "responsive": false,
                 "lengthChange": true,
                 "autoWidth": false,
@@ -130,8 +116,8 @@
 
                     },
                     {
-                       extend:'colvis',
-                       columns: ':not(.hidden)' 
+                        extend: 'colvis',
+                        columns: ':not(.hidden)'
                     }
                 ],
                 "language": {
@@ -142,6 +128,5 @@
             });
             dataTablePosition();
         });
-
     </script>
 @endsection

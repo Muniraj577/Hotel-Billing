@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\UnitController as AdminUnitController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\BillController as AdminBillController;
+use App\Http\Controllers\Admin\IdentificationController as AdminIdentityController;
 
 /*
 |--------------------------------------------------------------------------
@@ -142,6 +143,7 @@ Route::group(["prefix"=>"admin/", "middleware" => "auth", "as"=>"admin."], funct
         Route::get("edit/{id}", [AdminOrderController::class, "edit"])->name("edit");
         Route::put("update/{id}", [AdminOrderController::class, "update"])->name("update");
         Route::get("add-payment", [AdminOrderController::class, "addPayment"])->name("addPayment");
+        Route::put("mark-paid/{id}",[AdminOrderController::class, "markpaid"])->name("markpaid");
         
         // Bill Section
         Route::group(["prefix"=>"bill/", "as" => "bill."], function(){
@@ -150,6 +152,14 @@ Route::group(["prefix"=>"admin/", "middleware" => "auth", "as"=>"admin."], funct
         });
     });
 
+
+    Route::group(["prefix"=>"identity-type/", "as"=>"identity."], function(){
+        Route::get("",[AdminIdentityController::class, "index"])->name("index");
+        Route::get("create", [AdminIdentityController::class, "create"])->name("create");
+        Route::post("store", [AdminIdentityController::class, "store"])->name("store");
+        Route::get("edit/{id}", [AdminIdentityController::class, "edit"])->name("edit");
+        Route::match(["put", "patch"], "update/{id}", [AdminIdentityController::class, "update"])->name("update");
+    });
     
 
     // Customer Booking Details
@@ -163,4 +173,9 @@ Route::group(["prefix"=>"admin/", "middleware" => "auth", "as"=>"admin."], funct
     Route::post("get-product-details", [AdminDashboardController::class, "getProductDetails"])->name("getProductDetails");
     Route::post("get-all-products", [AdminDashboardController::class, "getProducts"])->name("getProducts");
     Route::post("get-customer-details", [AdminDashboardController::class, "getCustomerDetails"])->name("getCustomerDetails");
+
+
+    Route::get("get-chart-data", [AdminDashboardController::class, "chartData"])->name("chartData");
+    Route::get("get-monthly-day-booking-chart", [AdminDashboardController::class, "getMonthlyDayBooking"])->name("getMonthlyBooking");
+    Route::get("get-monthly-booking-chart", [AdminDashboardController::class, "getBooking"])->name("getBooking");
 });

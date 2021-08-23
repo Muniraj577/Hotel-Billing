@@ -1,6 +1,13 @@
 <?php
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+
+if(!function_exists('getSlug')){
+    function getSlug($title){
+        return Str::slug($title);
+    }
+}
 
 if(!function_exists("notify")){
     function notify($type, $msg){

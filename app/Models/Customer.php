@@ -9,7 +9,7 @@ class Customer extends Model
 {
     use HasFactory;
 
-    protected $fillable = ["parent_id", "booking_id", "first_name", "middle_name", "last_name", "gender", "age", "nationality",
+    protected $fillable = ["parent_id", "identity_id", "booking_id", "first_name", "middle_name", "last_name", "gender", "age", "nationality",
         "address", "contact_no", "occupation", "identity_no", "driving_license_no", "signature", "profile_pic", "relation"];
 
     public function booking_details()
@@ -17,26 +17,35 @@ class Customer extends Model
         return $this->hasMany("App\Models\BookingDetail", "customer_id", "id");
     }
 
+    public function identity_type()
+    {
+        return $this->belongsTo("App\Models\Identification", "identity_id", "id");
+    }
+
     public static function getCustomer($keyword)
     {
-        return self::where("parent_id",null)->where('first_name', "LIKE", "%". $keyword . "%")->orWhere('contact_no', $keyword)->get();
+        return self::where('first_name', "LIKE", "%" . $keyword . "%")
+            ->orWhere('contact_no', $keyword)
+            ->orWhere('identity_no', $keyword)
+            ->get();
+        // return self::where("parent_id",null)->where('first_name', "LIKE", "%". $keyword . "%")->orWhere('contact_no', $keyword)->get();
     }
-    
+
     public function getFullNameAttribute()
     {
-        return ucfirst($this->first_name) . " " . ucfirst($this->middle_name) . " ". ucfirst($this->last_name);
+        return ucfirst($this->first_name) . " " . ucfirst($this->middle_name) . " " . ucfirst($this->last_name);
     }
 
     public function getSign($sign)
     {
-        if($sign != null){
-            return asset("images/customers/signature/".$sign);
+        if ($sign != null) {
+            return asset("images/customers/signature/" . $sign);
         }
     }
 
     public function getAvatar($avatar = "default.png")
     {
-        return asset("images/customers/profile/".$avatar);
+        return asset("images/customers/profile/" . $avatar);
     }
 
     public function orders()

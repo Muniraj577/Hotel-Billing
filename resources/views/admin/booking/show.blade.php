@@ -2,7 +2,7 @@
 @section('title', 'Booking')
 @section('booking', 'active')
 @section('content')
-    <?php 
+    <?php
     $customer = $booking_detail->customer;
     $status = $booking_detail->status;
     ?>
@@ -32,61 +32,61 @@
                             <h3><u>{{ strtoupper('Customer Details') }}</u></h3>
                             <input type="hidden" class="form-control" name="customer_id" id="client_id">
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-5">
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <div class="row">
-                                                <div class="col-md-4">
+                                                <div class="col-md-3">
                                                     <label for="first_name">Name: </label>
                                                 </div>
-                                                <div class="col-md-8">
+                                                <div class="col-md-9">
                                                     <span>{{ $customer->full_name }}</span>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <div class="row">
-                                                <div class="col-md-4">
+                                                <div class="col-md-3">
                                                     <label for="gender">Gender:</label>
                                                 </div>
-                                                <div class="col-md-8">
+                                                <div class="col-md-9">
                                                     <span>{{ $customer->gender }}</span>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <div class="row">
-                                                <div class="col-md-4">
+                                                <div class="col-md-3">
                                                     <label for="age">Age:</label>
                                                 </div>
-                                                <div class="col-md-8">
+                                                <div class="col-md-9">
                                                     <span>{{ $customer->age }}</span>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <div class="row">
-                                                <div class="col-md-4">
+                                                <div class="col-md-3">
                                                     <label for="nationality">Nationality:</label>
                                                 </div>
-                                                <div class="col-md-8">
+                                                <div class="col-md-9">
                                                     <span>{{ $customer->nationality }}</span>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <div class="row">
-                                                <div class="col-md-4">
+                                                <div class="col-md-3">
                                                     <label for="address">Address:</label>
                                                 </div>
-                                                <div class="col-md-8">
+                                                <div class="col-md-9">
                                                     <span>{{ $customer->address }}</span>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <div class="row">
@@ -111,14 +111,24 @@
                                         <div class="form-group">
                                             <div class="row">
                                                 <div class="col-md-4">
-                                                    <label for="identity_no">Citizenship No:</label>
+                                                    <label for="identity_type">Identity Type:</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <span>{{ $customer->identity_type->name }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <label for="identity_no">Identity No:</label>
                                                 </div>
                                                 <div class="col-md-8">
                                                     <span>{{ $customer->identity_no }}</span>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="form-group">
+                                        {{-- <div class="form-group">
                                             <div class="row">
                                                 <div class="col-md-4">
                                                     <label for="driving_license_no">Driving License No:</label>
@@ -127,8 +137,14 @@
                                                     <span>{{ $customer->driving_license_no }}</span>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> --}}
                                     </div>
+                                </div>
+                                <div class="col-md-3 text-center">
+                                    <div class="col-md-12 text-center">
+                                        <img src="{{ $customer->getAvatar($customer->profile_pic) }}" style="width: 180px; height: 180px;" alt="">
+                                    </div>
+
                                 </div>
                             </div>
                             <h3><u>{{ strtoupper('Booking Details') }}</u></h3>
@@ -252,7 +268,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
                             </div>
                             <h3><u>{{ strtoupper('Room Details') }}</u></h3>
                             <div class="row">
@@ -274,16 +290,17 @@
                             @include('admin.partial.room.createModal')
                             <div class="row">
                                 <div class="col-md-12">
-                                    @if($status == 1)
-                                    <div class="float-right mb-1">
-                                        {{-- <button type="button" class="btn btn-primary" data-toggle="modal"
+                                    @if ($status == 1)
+                                        <div class="float-right mb-1">
+                                            {{-- <button type="button" class="btn btn-primary" data-toggle="modal"
                                             data-target="#createRoomModal" data-target-id="{{ $booking_detail->id }}">
                                             Add Room
                                         </button> --}}
-                                        <a href="{{ route('admin.booking_room.getForm', $booking_detail->id) }}" class="btn btn-primary">
-                                        Add Room
-                                        </a>
-                                    </div>
+                                            <a href="{{ route('admin.booking_room.getForm', $booking_detail->id) }}"
+                                                class="btn btn-primary">
+                                                Add Room
+                                            </a>
+                                        </div>
                                     @endif
                                     <table class="table table-bordered">
                                         <thead>
@@ -292,8 +309,8 @@
                                             <th>Price</th>
                                             <th>Discount</th>
                                             <th>Amount</th>
-                                            @if($status == 1)
-                                            <th>Action</th>
+                                            @if ($status == 1)
+                                                <th>Action</th>
                                             @endif
                                         </thead>
                                         <tbody>
@@ -304,26 +321,27 @@
                                                     <td>{{ $booking_room->price }}</td>
                                                     <td>{{ $booking_room->discount }}</td>
                                                     <td>{{ $booking_room->amount }}</td>
-                                                    @if($status == 1)
-                                                    <td>
-                                                        <div class="d-inline-flex">
-                                                            {{-- <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editRoomModal" data-target-id="{{ $booking_room->id }}">
+                                                    @if ($status == 1)
+                                                        <td>
+                                                            <div class="d-inline-flex">
+                                                                {{-- <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editRoomModal" data-target-id="{{ $booking_room->id }}">
                                                                 Edit
                                                             </button>&nbsp;&nbsp; --}}
-                                                            <a href="{{ route('admin.booking_room.edit', $booking_room->id) }}" class="btn btn-sm btn-primary">
-                                                                Edit
-                                                            </a>&nbsp;&nbsp;
-                                                            <form
-                                                                action="{{ route('admin.booking_room.destroy', $booking_room->id) }}"
-                                                                method="POST">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button type="submit" class="btn btn-sm btn-danger">
-                                                                    Delete
-                                                                </button>
-                                                            </form>
-                                                        </div>
-                                                    </td>
+                                                                <a href="{{ route('admin.booking_room.edit', $booking_room->id) }}"
+                                                                    class="btn btn-sm btn-primary">
+                                                                    Edit
+                                                                </a>&nbsp;&nbsp;
+                                                                <form
+                                                                    action="{{ route('admin.booking_room.destroy', $booking_room->id) }}"
+                                                                    method="POST">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                    <button type="submit" class="btn btn-sm btn-danger">
+                                                                        Delete
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        </td>
                                                     @endif
                                                 </tr>
                                             @endforeach
@@ -342,7 +360,7 @@
                                                         <label for="no_of_room">No of relatives:</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <span>{{ count($booking_detail->relatives) }}</span>
+                                                        <span>{{ count($booking_detail->customers) }}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -352,13 +370,13 @@
                                 @include('admin.partial.room.editModal')
                                 <div class="row">
                                     <div class="col-md-12">
-                                        @if($status == 1)
-                                        <div class="float-right mb-1">
-                                            <a href="{{ route('admin.relative.create', $booking_detail->id) }}"
-                                                class="btn btn-primary">
-                                                Add Relative
-                                            </a>
-                                        </div>
+                                        @if ($status == 1)
+                                            <div class="float-right mb-1">
+                                                <a href="{{ route('admin.relative.create', $booking_detail->id) }}"
+                                                    class="btn btn-primary">
+                                                    Add Relative
+                                                </a>
+                                            </div>
                                         @endif
                                         <table class="table table-bordered">
                                             <thead>
@@ -367,9 +385,9 @@
                                                 <th>Age</th>
                                                 <th>Gender</th>
                                                 <th>Relation</th>
-                                            
+
                                                 <th>Action</th>
-                                                
+
                                             </thead>
                                             <tbody>
                                                 @foreach ($booking_detail->customers as $relative)
@@ -379,31 +397,31 @@
                                                         <td>{{ $relative->customer->age }}</td>
                                                         <td>{{ $relative->customer->gender }}</td>
                                                         <td>{{ $relative->relation }}</td>
-                                                        
+
                                                         <td>
                                                             <div class="d-inline-flex">
-                                                                @if($status == 1)
-                                                                <a href="{{ route('admin.relative.edit', $relative->id) }}"
-                                                                    class="btn btn-sm btn-primary">Edit</a>&nbsp;&nbsp;
+                                                                @if ($status == 1)
+                                                                    <a href="{{ route('admin.relative.edit', $relative->id) }}"
+                                                                        class="btn btn-sm btn-primary">Edit</a>&nbsp;&nbsp;
                                                                 @endif
                                                                 <a href="{{ route('admin.customer.show', $relative->id) }}"
                                                                     class="btn btn-sm btn-primary">
                                                                     View Detail
                                                                 </a>&nbsp;&nbsp;
-                                                                @if($status == 1)
-                                                                <form
-                                                                    action="{{ route('admin.relative.destroy', $relative->id) }}"
-                                                                    method="POST">
-                                                                    @csrf
-                                                                    @method('DELETE')
-                                                                    <button type="submit" class="btn btn-sm btn-danger">
-                                                                        Delete
-                                                                    </button>
-                                                                </form>
+                                                                @if ($status == 1)
+                                                                    <form
+                                                                        action="{{ route('admin.relative.destroy', $relative->id) }}"
+                                                                        method="POST">
+                                                                        @csrf
+                                                                        @method('DELETE')
+                                                                        <button type="submit" class="btn btn-sm btn-danger">
+                                                                            Delete
+                                                                        </button>
+                                                                    </form>
                                                                 @endif
                                                             </div>
                                                         </td>
-                                                        
+
                                                     </tr>
                                                 @endforeach
                                             </tbody>
@@ -452,7 +470,7 @@
             });
         });
 
-        $("#saveRoom").on("click", function(e){
+        $("#saveRoom").on("click", function(e) {
             $('.require').css('display', 'none');
             e.preventDefault();
             var formData = $('#roomForm').serialize();
@@ -486,8 +504,8 @@
         });
 
 
-        $("#editRoom").on("click", function(e){
-        
+        $("#editRoom").on("click", function(e) {
+
             console.log("Hi");
             $('.require').css('display', 'none');
             e.preventDefault();
@@ -495,7 +513,7 @@
             // console.log(formData);
             var formData = $("#editRoomForm").serialize();
             console.log(formData);
-            
+
             var action = $("#editRoomForm").attr('action');
             $.ajax({
                 url: action,

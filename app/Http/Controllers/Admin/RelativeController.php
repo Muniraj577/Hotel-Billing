@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\BookingDetail;
 use App\Models\Customer;
+use App\Models\Identification;
 use App\Models\Relative;
 use App\Models\Upload;
 use Illuminate\Http\Request;
@@ -16,7 +17,8 @@ class RelativeController extends Controller
     public function create($id)
     {
         $booking_detail = BookingDetail::findOrFail($id);
-        return view($this->page . "create", compact("booking_detail"));
+        $identities = Identification::all();
+        return view($this->page . "create", compact("booking_detail", "identities"));
     }
 
     public function store(Request $request, $id)
@@ -58,6 +60,7 @@ class RelativeController extends Controller
                 $customer = Customer::updateOrCreate([
                     'id' => $request->customer_id,
                 ], [
+                    'identity_id' => $request->identity_id,
                     'first_name' => $request->first_name,
                     'middle_name' => $request->middle_name,
                     'last_name' => $request->last_name,
@@ -97,8 +100,9 @@ class RelativeController extends Controller
     {
         $relative = Relative::findOrFail($id);
         $customer = Customer::where("id", $relative->customer_id)->first();
+        $identities = Identification::all();
         // $customer = Customer::findOrFail($id);
-        return view($this->page . "edit", compact("customer", "relative"));
+        return view($this->page . "edit", compact("customer", "relative", "identities"));
     }
 
     public function update(Request $request, $id)
@@ -166,6 +170,7 @@ class RelativeController extends Controller
         $customer = Customer::find($customer_id);
         $oldSign = $customer->signature;
         $oldPic = $customer->profile_pic;
+        $customer->identity_id = $data->identity_id;
         $customer->first_name = $data->first_name;
         $customer->middle_name = $data->middle_name;
         $customer->last_name = $data->last_name;
@@ -194,6 +199,7 @@ class RelativeController extends Controller
     private function validation(array $data)
     {
         return Validator::make($data, [
+            "identity_id" => "required",
             "first_name" => "required|string",
             "last_name" => "required|string",
             "gender" => "required|string",
@@ -203,8 +209,8 @@ class RelativeController extends Controller
             "contact_no" => "required|numeric|digits_between:10,13",
             "occupation" => "required|string",
             "identity_no" => "required",
-            "signature" => "image|mimes:jpeg,jpg,png|max:2048",
-            "profile_pic" => "image|mimes:jpeg,jpg,png|max:2048",
+            "signature" => "nullable|image|mimes:jpeg,jpg,png|max:2048",
+            "profile_pic" => "nullable|image|mimes:jpeg,jpg,png|max:2048",
             "relation" => "required|string",
         ], $this->messages());
     }
@@ -212,6 +218,7 @@ class RelativeController extends Controller
     private function messages()
     {
         return [
+            "identity_id.required" => "Identity Type is required",
             "first_name.required" => "First Name is required",
             "last_name.required" => "Surname is required",
             "gender.required" => "Gender is required",
@@ -225,7 +232,7 @@ class RelativeController extends Controller
             "contact_no.numeric" => "Contact number must contain only numeric value",
             "contact_no.digits_between" => "The Contact number length must be 10 to 13",
             "occupation.required" => "Occupation is required",
-            "identity_no.required" => "Citizenship number is required",
+            "identity_no.required" => "Identity number is required",
             "signature.image" => "Please upload a valid image",
             "signature.mimes" => "Image must be of type jpg, jpeg, png",
             "profile_pic.image" => "Please upload a valid image",
