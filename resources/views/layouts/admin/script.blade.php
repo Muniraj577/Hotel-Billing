@@ -25,7 +25,6 @@
 <script src="{{ asset('jquery-validation/dist/additional-methods.min.js') }}"></script>
 <script src="{{ asset('custom-validation/validation.js') }}"></script>
 <script src="{{ asset('bootstrap-timepicker/js/bootstrap-timepicker.min.js') }}"></script>
-
 <script>
     var update = function() {
         document.getElementById("display_time")
